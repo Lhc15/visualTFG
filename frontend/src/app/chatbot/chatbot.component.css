@@ -1,0 +1,136 @@
+/* Reinicio global */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #fff8d4; /* Fondo amarillo claro */
+    min-height: 100vh;
+  }
+  
+  .main-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f5f5dc;
+  }
+  
+  .header {
+    background-color: #f4b400; /* Fondo amarillo fuerte */
+    padding: 20px 0;
+    text-align: center;
+    width: 100%;
+  }
+  
+  .header-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #000;
+    text-transform: uppercase;
+  }
+  
+  .content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 50px;
+    gap: 20px; /* Espacio entre la imagen y el formulario */
+    
+  }
+  
+  .image-container {
+    flex: 1; /* Toma espacio proporcional */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .side-image {
+    max-width: 100%; /* Imagen responsiva */
+    height: auto;
+    max-height: 400px; /* Ajusta el tamaño máximo */
+  }
+  
+  .login-container {
+    flex: 1; /* Toma espacio proporcional */
+    max-width: 400px;
+    padding: 30px;
+    text-align: center;
+    background-color: #f9e59f; /* Fondo amarillo suave */
+    border-radius: 15px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombras */
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .input-field {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+  }
+  
+  .btn {
+    width: 90%;
+    padding: 12px;
+    margin: 15px 0;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .google-login {
+    background-color: #f4b400;
+  }
+  
+  .divider {
+    width: 90%;
+    height: 1px;
+    background-color: #ccc;
+    margin: 15px 0;
+    position: relative;
+  }
+  
+  .divider-text {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f9e59f;
+    padding: 0 10px;
+    font-size: 0.9rem;
+    color: #666;
+  }
+  
+  .forgot-password {
+    color: #000;
+    text-decoration: none;
+    font-size: 0.9rem;
+    margin: 10px 0;
+  }
+  
+  .register {
+    font-size: 0.9rem;
+    margin-top: 10px;
+  }
+  
+  .register a {
+    color: #f4b400;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
