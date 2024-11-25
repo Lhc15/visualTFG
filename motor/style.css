@@ -1,0 +1,72 @@
+*
+{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body,html
+{
+  overflow-x: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+.webgl
+{
+  background-color: #1e1e1e; /* Fondo gris oscuro */
+  color: aqua;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
+nav 
+{
+  background-color: red;
+  color: white;
+  z-index: 2;
+  position: relative;
+  padding: 4rem 8rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+nav a
+{
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
+}
+
+nav ul
+{
+  list-style: none;
+  display: flex;
+  gap: 4rem;
+}
+
+.title
+{
+  color: white;
+  z-index: 0;
+  position: absolute;
+  font-size: 3rem;
+  
+  
+  transform: translate(-50%, 75%);
+}
+
+form
+{
+  color: aliceblue; /* Color del texto */
+  background-color: rgba(30, 30, 30, 0.9); /* Fondo oscuro con algo de transparencia */
+  padding: 10px 20px; /* Espaciado interno */
+  border-radius: 8px; /* Bordes redondeados */
+  border: 1px solid #555; /* Borde para resaltar */
+  position: absolute; /* Permite posicionarlo en la página */
+  bottom: 20px; /* Ajusta la posición del formulario */
+  left: 20px; /* Ajusta la posición del formulario */
+  z-index: 10; /* Asegura que esté sobre la escena */
+}
