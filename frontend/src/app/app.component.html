@@ -1,6 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GraphicCare</title>
+</head>
+<body>
+    <!-- Header con logo y botones -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="bombillita.png" alt="Logo de GraphicCare" class="logo">
+        </div>
+        <div class="buttons">
+            <button class="btn register">REGÍSTRATE</button>
+            <button class="btn login" id="scroll-to-login">INICIA SESIÓN</button>
+        </div>
+    </header>
 
-<!--<router-outlet></router-outlet> -->
-<!-- app.component.html -->
-<h1>Prueba de carga de la página</h1>
-<app-usuarios></app-usuarios>
+    <!-- Contenido principal -->
+    <main class="main-container">
+      <div class="text-content">
+          <h1>Visual Voices: La lengua de signos al alcance de todos</h1>
+          <p>Aprende la lengua de signos, sigue tu progreso, descubre nuevo vocabulario de manera interactiva y reta tus habilidades.</p>
+      </div>
+  
+      <div class="graphic">
+          <img src="image.png" alt="Ilustración de apretón de manos" class="imagen">
+      </div>
+
+      <!-- Formulario de inicio de sesión -->
+<section id="login-section" class="login-form">
+  <h2>Inicia Sesión</h2>
+  <form>
+      <label for="username">Usuario:</label>
+      <input type="text" id="username" placeholder="Introduce tu usuario" required>
+      <label for="password">Contraseña:</label>
+      <input type="password" id="password" placeholder="Introduce tu contraseña" required>
+      <button type="submit" class="btn">Iniciar Sesión</button>
+  </form>
+</section>
+  </main>
+  
+    <footer class="footer">
+      <p>© 2024 GraphicCare. Todos los derechos reservados.</p>
+  </footer>
+  
+
+    
+</body>
+</html>
+
+<script>
+  // Scroll automático hacia el formulario
+  document.querySelector('.btn.login').addEventListener('click', (event) => {
+    event.preventDefault(); // Evitar comportamiento por defecto
+    document.querySelector('#login-section').scrollIntoView({ behavior: 'smooth' });
+  });
+</script>
+
+
+
 
