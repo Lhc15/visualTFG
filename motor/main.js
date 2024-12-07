@@ -12,6 +12,7 @@ import { GLTFLoader } from 'three/examples/jsm/Addons.js';
 const scene = new THREE.Scene();
 //Creacion del objeto que queremos cargar
 const loader = new GLTFLoader();
+console.log("Es hora de motorear")
 
 
 loader.load(
