@@ -14,5 +14,6 @@ export const routes: Routes = [
   { path: 'home', component: HomeComponent },
   { path: 'guiado', component: ModoGuiadoComponent },
   { path: 'test-upload', component: TestUploadComponent },
+  { path: '**', redirectTo: 'landing' },
 ];
 

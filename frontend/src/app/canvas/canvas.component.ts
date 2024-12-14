@@ -67,6 +67,7 @@ export class CanvasComponent implements AfterViewInit {
     this.renderer = new THREE.WebGLRenderer({ canvas });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    this.renderer.setClearColor(0xf5f5dc); // Color de fondo del canvas
   }
 
   private addLights(): void {

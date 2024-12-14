@@ -2,6 +2,7 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { UsuariosService } from '../services/usuarios.service';
 import { FormsModule } from '@angular/forms';
 import { RouterModule,Router  } from '@angular/router';
+import { CanvasComponent } from '../canvas/canvas.component';
 
 
 
@@ -9,7 +10,7 @@ import { RouterModule,Router  } from '@angular/router';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule,RouterModule],
+  imports: [FormsModule,RouterModule, CanvasComponent],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css'],
 })
