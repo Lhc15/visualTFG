@@ -28,7 +28,7 @@ router.put('/:id', [
     check('email', 'El argumento email es obligatorio').not().isEmpty(),
     check('id', 'El identificador no es válido').isMongoId(),
     validarCampos,
-    tieneRol,
+    tieneRol('ROL_ADMIN'),
 ], actualizarUsuario);
 
 router.delete('/:id', [

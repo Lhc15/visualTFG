@@ -54,39 +54,85 @@ body {
 }
 
 .registro-form {
+    width: 100%;
+    min-width: 320px;
+    max-width: 450px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
+    padding: 40px;
+    background-color: #f9e59f;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    p{
+        text-align: center;        
+    }
 }
 
 .registro-title {
-    font-size: 1.2rem;
+    font-family: "ChauPhilomene", sans-serif; 
+    font-size: 45px;
     font-weight: bold;
-    margin-bottom: 20px;
-    color: #000;
     text-align: center;
+    margin-bottom: 15px;
+    color: #000;
 }
 
 .input-field {
-    width: 90%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 16px;
+    background-color: white;
 }
 
 .btn {
-    width: 90%;
-    padding: 12px;
-    margin: 15px 0;
-    background-color: #000; /* Fondo negro */
-    color: #fff;
+    width: 100%;
+    padding: 16px;
+    background-color: #000;
+    color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+    background-color: #333;
+}
+
+.login {
+    text-align: center;
+    /* margin-top: 15px; */
+    font-size: 16px;
+}
+
+.login a {
+    color: #f4b400;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+}
+
+.login a:hover {
+    color: #d19600;
+}
+
+/* Cuadro con el mensaje "Inicia sesión" */
+.login-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    background-color: #f9e59f; /* Fondo similar al de los campos */
+    padding: 15px;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 70px;
 }
 
 .google-login {
@@ -112,15 +158,36 @@ body {
     color: #666;
 }
 
-.login {
-    font-size: 0.9rem;
-    margin-top: 10px;
+.password-container {
+    position: relative;
+    width: 100%; /* Asegura que el contenedor de la contraseña tenga el mismo ancho que los otros inputs */
+  }
+  
+  .password-container .input-field {
+    width: 100%; /* Asegura que el input ocupe todo el ancho del contenedor */
+    padding-right: 40px; /* Añade espacio para el ícono del ojo */
+  }
+
+.toggle-password-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    outline: none;
+    padding: 0;
+
+  }
+  
+.toggle-password-btn:hover {
+  background-color: inherit; /* O usa un color específico */
+  color: inherit; /* Mantiene el color original */
+  text-decoration: none; /* Elimina subrayados en enlaces */
+  cursor: default; /* Opcional, si no quieres el puntero de enlace */
+
+  /* Añadido para centrar el contenido en pantallas pequeñas */
 }
-
-.login a {
-    color: #f4b400;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-

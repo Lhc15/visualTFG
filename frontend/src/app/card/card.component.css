@@ -1,14 +1,15 @@
 .card-container {
     position: relative;
-    width: 500px;
-    height: 300px;
+    width: 700px;
+    height: 400px;
     overflow: hidden;
-    background-color: #f4cf7b; /* Fondo amarillo */
+    background-color: #ffeb99; /* Fondo amarillo */
     border-radius: 10px;
-    padding: 16px;
+    padding: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
+    
   }
   
   .card {
@@ -21,6 +22,11 @@
     background-color: transparent;
     box-shadow: none;
     animation: slide-in 0.3s ease-in-out; /* Animación de entrada por defecto */
+    --cui-card-border-width: 0;
+    --cui-card-border-color: transparent;
+    border: none !important;
+    border-width: 0 !important;
+    border-color: transparent !important;
   }
   
   .card-leaving {
@@ -28,13 +34,19 @@
   }
   
   .explanation {
-    font-size: 30px;
-    color: #9a5416; /* Texto naranja oscuro */
-    background-color: #ffae66; /* Fondo anaranjado */
+    font-size: 25px;
+    /* color: #9a5416; Texto naranja oscuro */
+    color: black;
+    /* background-color: #ffae66; Fondo anaranjado */
+    background-color: #41b8d5;
+    border-color: #000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8); /* Sombra para resaltar */
     padding: 12px;
     border-radius: 8px;
     text-align: center;
     width: auto;
+    font-family: "ChauPhilomene", sans-serif; 
+
   }
   
   .word-repeat-container {
@@ -46,15 +58,20 @@
     width: 150px; /* Botón más grande */
     height: 60px;
     font-size: 18px;
-    color: white;
-    background-color: #b3b3b3; /* Gris */
-    border: none;
+    color: black;
+    /* background-color: #b3b3b3; Gris */
     border-radius: 8px;
     cursor: pointer;
+    font-family: "Lexend", sans-serif; 
+    border: 2px solid black;
+    font-weight: bold;
+
   }
   
   .word-button:hover {
     background-color: #a1a1a1; /* Gris oscuro al pasar el ratón */
+    transform: translateY(-2px);
+
   }
   
   .repeat-button {
@@ -79,6 +96,15 @@
     justify-content: space-between;
     width: 100%;
     padding: 0 16px;
+  }
+
+  .word-navigation-container {
+    display: flex;
+    align-items: center; /* Centrar verticalmente el contenido */
+    justify-content: space-between; /* Separar las flechas y el botón */
+    width: 100%; /* Tomar todo el ancho disponible */
+    padding: 0 16px; /* Espaciado interno */
+    margin-top: 16px; /* Espaciado respecto a la explicación */
   }
   
   .prev-button,

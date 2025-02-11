@@ -1,12 +1,9 @@
 @font-face {
-  font-family: 'Chauphilomene';
-  src: url('../../assets/fonts/chauphilomene.ttf') format('truetype');
+  font-family: "Chauphilomene";
+  src: url("../../assets/fonts/chauphilomene.ttf") format("truetype");
   font-weight: normal;
   font-style: normal;
 }
-
-
-
 
 .header {
   display: flex;
@@ -14,117 +11,140 @@
   align-items: center;
   padding: 10px 20px;
   background-color: #f2c464;
-  font-family: 'Chauphilomene', sans-serif; /* Usa la fuente personalizada */
+  font-family: 'Chauphilomene', sans-serif; 
 }
-  
-  .logo img {
-    height: 80px;
-  }
-  
-  .menu-buttons {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .menu-buttons button {
-    background: black; /* Fondo negro */
-    color: white; /* Texto blanco */
-    border: none;
-    border-radius: 20px; /* Bordes redondeados */
-    font-size: 20px;
-    
-    padding: 8px 20px; /* Espaciado interno */
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    font-family: 'Chauphilomene', sans-serif; /* Usa la fuente personalizada */
-  }
-  
-  .menu-buttons button.active {
-    background: #ff9800; /* Fondo naranja para el botón activo */
-    color: black; /* Texto negro para el botón activo */
-  }
-  
-  .menu-buttons button:hover {
-    background: #ff9800; /* Fondo naranja al pasar el mouse */
-    color: black; /* Texto negro al pasar el mouse */
-  }
-  
+
+/* .header {
+  position: fixed;
+  top: 10px;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f2c464;
+  border-radius: 15px 15px 15px 15px;
+  font-family: "Chauphilomene", sans-serif;
+  margin-left: 10px;
+  margin-right: 10px;
+} */
+
+.logo img {
+  height: 80px;
+}
+
+.menu-buttons {
+  display: flex;
+  gap: 25px;
+  margin: 10px 0px;
+}
+
+.menu-buttons button {
+  background: #41b8d5; /* Fondo negro */
+  color: rgb(0, 0, 0); /* Texto blanco */
+  border: 3px solid black;
+  border-radius: 20px; /* Bordes redondeados */
+  font-size: 20px;
+
+  padding: 8px 20px; /* Espaciado interno */
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-family: "Chauphilomene", sans-serif; /* Usa la fuente personalizada */
+}
+
+.menu-buttons button.active {
+  background: #93dff2; /* Fondo naranja para el botón activo */
+  color: rgb(0, 0, 0); /* Texto negro para el botón activo */
+  transform: scale(1.1);
+}
+
+.menu-buttons button:hover {
+  background: #93dff2; /* Fondo naranja al pasar el mouse */
+  color: rgb(0, 0, 0); /* Texto negro al pasar el mouse */
+  transform: scale(1.1);
+}
+
+.user-icon {
+  position: relative;
+  cursor: pointer;
+}
+
+.user-info {
+  color: black;
+  font-size: 20px;
+}
+
+.user-icon img {
+  width: 50px; /* Tamaño ajustable */
+  height: 50px; /* Tamaño ajustable */
+}
+
+.user-icon .dropdown {
+  position: absolute;
+  top: 50px; /* Ajusta este valor según el tamaño de la imagen */
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  min-width: 200px; /* Hacer el desplegable más ancho */
+}
+
+.user-icon .dropdown a {
+  padding: 10px;
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
+
+.user-icon .dropdown a:hover {
+  background-color: #f0f0f0;
+}
+
+.hamburger-menu {
+  font-size: 24px;
+  cursor: pointer;
+  display: none;
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 70px;
+  left: 0;
+  right: 0;
+  background-color: white;
+  border-top: 1px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+}
+
+.mobile-menu a {
+  padding: 10px 20px;
+  text-decoration: none;
+  color: black;
+}
+
+.mobile-menu a:hover {
+  background-color: #f0f0f0;
+}
+
+.mobile-menu hr {
+  margin: 10px 0;
+}
+
+@media (max-width: 768px) {
+  .menu-buttons,
   .user-icon {
-    position: relative;
-    cursor: pointer;
-  }
-  
-  .user-icon img {
-    width: 50px; /* Tamaño ajustable */
-    height: 50px; /* Tamaño ajustable */
-    
-  }
-  
-  .user-icon .dropdown {
-    position: absolute;
-    top: 50px; /* Ajusta este valor según el tamaño de la imagen */
-    right: 0;
-    background-color: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
-    z-index: 10;
-    min-width: 200px; /* Hacer el desplegable más ancho */
-  }
-  
-  .user-icon .dropdown a {
-    padding: 10px;
-    text-decoration: none;
-    color: black;
-    cursor: pointer;
-  }
-  
-  .user-icon .dropdown a:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .hamburger-menu {
-    font-size: 24px;
-    cursor: pointer;
     display: none;
   }
-  
-  .mobile-menu {
-    position: absolute;
-    top: 70px;
-    left: 0;
-    right: 0;
-    background-color: white;
-    border-top: 1px solid #ccc;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
+
+  .hamburger-menu {
+    display: block;
   }
-  
-  .mobile-menu a {
-    padding: 10px 20px;
-    text-decoration: none;
-    color: black;
-  }
-  
-  .mobile-menu a:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .mobile-menu hr {
-    margin: 10px 0;
-  }
-  
-  @media (max-width: 768px) {
-    .menu-buttons,
-    .user-icon {
-      display: none;
-    }
-  
-    .hamburger-menu {
-      display: block;
-    }
-  }
-  
+}

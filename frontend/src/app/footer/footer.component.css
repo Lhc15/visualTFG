@@ -1,23 +1,54 @@
 .footer {
-    background-color: #f2c464;
-    color: black;
-    text-align: center;
-    padding: 20px;
-    width: 100%;
-    bottom: 0;
-    left: 0;
-    font-family: "ChauPhilomene" !important;
-    margin: 0;
-    padding: 20px 0;
-    
-    
-  }
-  
-  footer p {
-    font-family: "ChauPhilomene", sans-serif;
-  }
-  
-  p {
-    font-family: "Lexend", sans-serif;
-  }
-  
+  background-color: #f2c464; 
+  color: black;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  position: relative;
+  font-family: "Lexend" !important;
+  margin: 0;
+  display: flex;
+  justify-content: space-between; /* Alinea los elementos a izquierda, centro y derecha */
+  align-items: center; /* Alinea los items verticalmente */
+}
+
+.footer-left, .footer-center, .footer-right {
+  display: flex;
+  align-items: center; /* Asegura que el texto y los iconos estén alineados correctamente */
+}
+
+.footer-left a, .footer-center a, .footer-right a {
+  color: black; /* Color de los enlaces */
+  text-decoration: none; /* Elimina el subrayado */
+  margin: 0 10px; /* Espaciado entre los enlaces */
+}
+
+.footer-left a:hover, .footer-center a:hover, .footer-right a:hover {
+  text-decoration: underline; /* Subrayado al pasar el mouse */
+}
+
+.footer-center p {
+  margin: 0; /* Elimina márgenes adicionales */
+}
+
+.footer-right i {
+  font-size: 24px; /* Tamaño del icono de Instagram */
+  margin-left: 10px; /* Espacio entre el icono y el texto */
+}
+
+/* Estilo específico para el enlace "Graphicare" */
+.footer-center .button-link {
+  background-color: black; /* Fondo negro para el botón */
+  color: white !important; /* Texto blanco */
+  padding: 10px 20px; /* Espaciado dentro del "botón" */
+  border-radius: 20px; /* Bordes redondeados */
+  font-weight: bold; /* Texto en negrita */
+  text-transform: uppercase; /* Texto en mayúsculas */
+  display: inline-block; /* Asegura que se comporte como un botón */
+  text-decoration: none !important; /* Elimina el subrayado */
+}
+
+.footer-center .button-link:hover {
+  background-color: #333 !important; /* Color de fondo al pasar el mouse */
+  text-decoration: none !important; /* Elimina el subrayado al pasar el mouse */
+}

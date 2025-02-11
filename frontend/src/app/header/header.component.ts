@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, NavigationEnd } from '@angular/router';
 import { UsuariosService } from '../services/usuarios.service';
 
+
 @Component({
   standalone: true,
   selector: 'app-header',
@@ -40,7 +41,7 @@ export class HeaderComponent {
   }
 
   selectMode(mode: string) {
-    this.router.navigate([mode === 'modo1' ? '/home' : '/guiado']);
+    this.router.navigate([mode === 'modo1' ? '/guiado' : '/home']);
   }
 
   toggleDropdown() {
@@ -59,6 +60,12 @@ export class HeaderComponent {
   navigateTo(destination: string) {
     this.closeMenus();
     console.log(`Navigating to ${destination}`);
+    if (destination === 'admin') {
+      this.router.navigate(['/admin']); // Redirigir a la ruta de administración
+    } else if (destination === 'ajustes') {
+      this.router.navigate(['/ajustes']);}
+      else if (destination === 'perfil') {
+        this.router.navigate(['/perfil']);}
   }
 
   logout() {
@@ -81,9 +88,9 @@ export class HeaderComponent {
 
   private updateSelectedModeFromUrl(url: string) {
     if (url.includes('/home')) {
-      this.selectedMode = 'modo1';
-    } else if (url.includes('/guiado')) {
       this.selectedMode = 'modo2';
+    } else if (url.includes('/guiado')) {
+      this.selectedMode = 'modo1';
     } else {
       this.selectedMode = ''; // Opcional: manejar rutas no definidas
     }

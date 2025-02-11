@@ -43,10 +43,11 @@
   }
   
   .image-container {
-    flex: 1; /* Toma espacio proporcional */
+    flex: 2; /* Aumentado de 1 a 2 para dar más espacio */
     display: flex;
-    justify-content: center;
+    justify-content: flex-start; /* Cambiado de center a flex-start para mover a la izquierda */
     align-items: center;
+    padding-left: 50px; /* Añadido padding a la izquierda */
   }
   
   .side-image {
@@ -56,45 +57,139 @@
   }
   
   .login-container {
-    flex: 1; /* Toma espacio proporcional */
+    flex: 1; /* Mantiene el espacio original */
     max-width: 400px;
     padding: 30px;
     text-align: center;
     background-color: #f9e59f; /* Fondo amarillo suave */
     border-radius: 15px;
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombras */
+    margin-left: 20px; /* Añadido margen a la izquierda */
   }
   
   .login-form {
+    width: 100%;
+    min-width: 320px;
+    max-width: 450px;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 20px;
+    padding: 40px;
+    background-color: #f9e59f;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .registro-title {
+    font-family: "ChauPhilomene", sans-serif; 
+    font-size: 45px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 15px;
+    color: #000;
   }
   
   .input-field {
-    width: 90%;
-    padding: 12px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 16px;
+    background-color: white;
   }
   
   .btn {
-    width: 90%;
-    padding: 12px;
-    margin: 15px 0;
+    width: 100%;
+    padding: 16px;
     background-color: #000;
-    color: #fff;
+    color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 16px;
     font-weight: bold;
     cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
   }
   
-  .google-login {
-    background-color: #f4b400;
+  .btn:hover {
+    background-color: #333;
+  }
+  
+  .remember-me {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 5px 0;
+    /* font-size: 14px; */
+  }
+
+  .remember-forgot {
+    display: flex;
+    justify-content: space-between; /* Espaciado entre los elementos */
+    align-items: center; /* Centrar verticalmente */
+    margin: 10px 0; /* Espaciado vertical */
+    width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
+    font-size: 14px; /* Tamaño del texto */
+}
+
+  
+  .forgot-password {
+    color: #666;
+    text-decoration: none;
+    /* font-size: 14px; */
+    transition: color 0.3s ease;
+  }
+  
+  .forgot-password:hover {
+    color: #333;
+  }
+
+  .register-box {
+    margin-top: 20px; /* Espacio entre el formulario y el cuadro */
+    padding: 15px; /* Espaciado interno */
+    background-color: #f9e59f; /* Fondo amarillo suave */
+    border-radius: 15px; /* Bordes redondeados */
+    text-align: center; /* Centra el texto */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombras para resaltar */
+
+    /* Añadido para centrar completamente el texto */
+    display: flex; /* Activar flexbox */
+    justify-content: center; /* Centrar horizontalmente */
+    align-items: center; /* Centrar verticalmente */
+    height: 70px; /* Ajustar la altura del cuadro según sea necesario */
+}
+
+.register-box .register {
+    font-size: 16px; /* Tamaño del texto */
+}
+
+.register-box .register a {
+    color: #f4b400; /* Color del enlace */
+    font-weight: bold;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.register-box .register a:hover {
+    color: #d19600;
+}
+
+  
+  .register {
+    text-align: center;
+    font-size: 14px;
+  }
+  
+  .register a {
+    color: #f4b400;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s ease;
+  }
+  
+  .register a:hover {
+    color: #d19600;
   }
   
   .divider {
@@ -115,22 +210,44 @@
     font-size: 0.9rem;
     color: #666;
   }
-  
-  .forgot-password {
-    color: #000;
-    text-decoration: none;
-    font-size: 0.9rem;
-    margin: 10px 0;
-  }
-  
-  .register {
-    font-size: 0.9rem;
+
+  .error-message {
+    color: red;
+    font-size: 0.93rem;
     margin-top: 10px;
   }
-  
-  .register a {
-    color: #f4b400;
-    text-decoration: none;
-    font-weight: bold;
+
+  .password-container {
+    position: relative;
+    width: 100%; /* Asegura que el contenedor de la contraseña tenga el mismo ancho que los otros inputs */
   }
+  
+  .password-container .input-field {
+    width: 100%; /* Asegura que el input ocupe todo el ancho del contenedor */
+    padding-right: 40px; /* Añade espacio para el ícono del ojo */
+  }
+  
+  .toggle-password-btn {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    outline: none;
+    padding: 0;
+
+  }
+  
+.toggle-password-btn:hover {
+  background-color: inherit; /* O usa un color específico */
+  color: inherit; /* Mantiene el color original */
+  text-decoration: none; /* Elimina subrayados en enlaces */
+  cursor: default; /* Opcional, si no quieres el puntero de enlace */
+
+  /* Añadido para centrar el contenido en pantallas pequeñas */
+}
   

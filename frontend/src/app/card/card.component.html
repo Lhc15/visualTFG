@@ -6,18 +6,33 @@
   >
     <!-- Explicación dinámica -->
     <div class="explanation">{{ explanation || 'Explicación guiada para cada botón' }}</div>
+
+     <!-- Palabra dinámica y navegación agrupadas -->
+     <div class="word-navigation-container">
+      <button class="prev-button" (click)="prevCard()">
+        <img src="assets/left-arrow.png" alt="Anterior" class="arrow-icon">
+      </button>
+      
+      <div class="word-repeat-container">
+        <button class="word-button" (click)="onWordButtonClick()">
+          {{ word || 'Cargando...' }}
+        </button>
+      </div>
+      
+      <button class="next-button" (click)="nextCard()">
+        <img src="assets/right-arrow.png" alt="Siguiente" class="arrow-icon">
+      </button>
+    </div>
+  </div>
+</div>
     
-    <!-- Palabra dinámica -->
+    <!-- Palabra dinámica
     <div class="word-repeat-container">
       <button class="word-button" (click)="onWordButtonClick()">
         {{ word || 'Cargando...' }}
       </button>
-      <button class="repeat-button" (click)="onRepeatButtonClick()">
-        <img src="assets/repeat-icon.png" alt="Repetir" class="icon">
-      </button>
     </div>
     
-    <!-- Navegación -->
     <div class="navigation">
       <button class="prev-button" (click)="prevCard()">
         <img src="assets/left-arrow.png" alt="Anterior" class="arrow-icon">
@@ -27,4 +42,4 @@
       </button>
     </div>
   </div>
-</div>
+</div> -->

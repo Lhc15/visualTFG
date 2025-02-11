@@ -1,11 +1,27 @@
 const mongoose = require('mongoose');
+require('../models/gltfFiles'); // Registrar el modelo
 const Palabra = require('../models/palabras');
+const GltfFile = require('../models/gltfFiles'); // Importar el esquema vacío
 
 // Obtener todas las palabras
 const obtenerPalabras = async (req, res) => {
-    const palabras = await Palabra.find().populate('categoria', 'nombre');
-    res.json(palabras);
+    try {
+        const palabras = await Palabra.find()
+            .populate('categoria', 'nombre')
+            .populate({
+                path: 'animaciones',
+                select: 'filename',
+            });
+
+        console.log('Palabras desde el backend:', JSON.stringify(palabras, null, 2));
+        res.json(palabras);
+    } catch (error) {
+        console.error('Error al obtener las palabras:', error);
+        res.status(500).json({ msg: 'Error al obtener las palabras' });
+    }
 };
+
+
 
 // Obtener una palabra específica
 const obtenerPalabra = async (req, res) => {
@@ -22,9 +38,12 @@ const crearPalabra = async (req, res) => {
     try {
         const nuevaPalabra = new Palabra(req.body);
         await nuevaPalabra.save();
+        //usamos populate después de guardar la nueva palabra para asegurarnos que la respuesta enviada al cliente incluya la información completa de la categoría
+        const palabraConCategoria = await nuevaPalabra.populate('categoria', 'nombre');
+
         res.status(201).json({
             ok: true,
-            palabra: nuevaPalabra,
+            palabra: palabraConCategoria,
         });
     } catch (error) {
         console.error(error);
@@ -38,29 +57,38 @@ const crearPalabra = async (req, res) => {
 // Editar una palabra
 const editarPalabra = async (req, res) => {
     const { id } = req.params;
-    const { palabra, categoria } = req.body;
+    const { palabra, categoria, animaciones,explicacion } = req.body; // Asegurarse de incluir animaciones
 
     try {
         const palabraEditada = await Palabra.findByIdAndUpdate(
             id,
-            { palabra, categoria },
-            { new: true }
-        );
+            { 
+                ...(palabra && { palabra }), // Actualiza si existe
+                ...(categoria && { categoria }), // Actualiza si existe
+                ...(animaciones && { animaciones }), // Actualiza si existe
+                ...(explicacion && { explicacion }), // Actualiza la explicación si existe
+
+            },
+            { new: true } // Devuelve el documento actualizado
+        ).populate('categoria', 'nombre');
+
         if (!palabraEditada) {
             return res.status(404).json({ ok: false, msg: 'Palabra no encontrada' });
         }
+
         res.json({
             ok: true,
             palabra: palabraEditada,
         });
     } catch (error) {
-        console.error(error);
+        console.error('Error al actualizar la palabra:', error);
         res.status(500).json({
             ok: false,
             msg: 'Error al actualizar la palabra',
         });
     }
 };
+
 
 // Borrar una palabra
 const borrarPalabra = async (req, res) => {
@@ -91,8 +119,6 @@ const asociarCategoria = async (req, res) => {
 const obtenerPalabrasPorCategoria = async (req, res) => {
     const { categoria } = req.query;
 
-    console.log('Request recibido:', req.query);
-
     try {
         if (!categoria) {
             return res.status(400).json({
@@ -101,19 +127,15 @@ const obtenerPalabrasPorCategoria = async (req, res) => {
             });
         }
 
-        if (!mongoose.Types.ObjectId.isValid(categoria)) {
-            console.error(`ID de categoría inválido: ${categoria}`);
-            return res.status(400).json({
-                ok: false,
-                msg: 'El ID de la categoría no es válido',
+        const palabras = await Palabra.find({ categoria })
+            .populate('categoria', 'nombre')
+            .populate({
+                path: 'animaciones', // Resolver completamente las animaciones
+                model: 'gltfFiles.files', 
+                select: 'filename', // Seleccionar solo el campo 'filename'
             });
-        }
 
-        const categoriaId = new mongoose.Types.ObjectId(categoria);
-        const palabras = await Palabra.find({ categoria: categoriaId }).populate('categoria', 'nombre');
-
-        console.log('Palabras encontradas:', palabras);
-
+        console.log('Palabras encontradas con animaciones completas:', JSON.stringify(palabras, null, 2));
         res.json(palabras);
     } catch (error) {
         console.error('Error al obtener palabras por categoría:', error);
@@ -123,6 +145,7 @@ const obtenerPalabrasPorCategoria = async (req, res) => {
         });
     }
 };
+
 
 
 

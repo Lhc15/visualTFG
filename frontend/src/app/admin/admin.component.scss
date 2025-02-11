@@ -1,0 +1,185 @@
+@import "../../scss/variables";
+
+html, body {
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 100%;
+  height: 100%;
+}
+
+h1, h2, h3, h4, h5, h6,
+ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+
+.wrapper {
+  display: flex; /* Alinea la barra lateral y el contenido principal horizontalmente */
+  width: 100%; /* Ocupa todo el ancho de la pantalla */
+  min-height: 100vh; /* Cubre todo el alto */
+  margin: 0; /* Elimina márgenes */
+  padding: 0; /* Elimina padding */
+}
+
+.sidebar {
+  width: 250px; /* Define el ancho fijo de la barra lateral */
+  flex-shrink: 0; /* Evita que cambie de tamaño */
+  background: #ffeb99;
+  margin: 0; /* Elimina márgenes */
+  padding: 0; /* Elimina padding interno */
+  display: flex;
+  flex-direction: column; /* Asegura que los elementos estén alineados verticalmente */  
+}
+
+.sidebar-brand {
+  padding: 20px;
+  h3 {
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+  }
+}
+
+.sidebar-home {
+  padding: 10px;
+  text-align: center;
+
+  button {
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 5px;
+  }
+}
+
+.sidebar-nav {
+  margin-top: 10px;
+}
+
+
+.body {
+  flex-grow: 1; /* Asegura que ocupe todo el espacio restante */
+  display: flex; /* Permite el flujo interno */
+  flex-direction: column; /* Coloca los elementos verticalmente */
+  margin: 0; /* Elimina márgenes */
+  padding: 0; /* Elimina padding interno */
+  background-color: #f8f9fa;
+}
+
+.card {
+  width: 100%; /* Ocupa todo el ancho del contenedor */
+  margin: 0; /* Elimina márgenes */
+  padding: 20px; /* Añade espacio interno */
+  border-radius: 10px; /* Bordes redondeados opcionales */
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box; /* Asegura que el padding se incluya en el ancho total */
+
+  .card-header {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center; /* Centra el texto */
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.nav-link {
+  color: rgb(0, 0, 0);
+  padding: 0.75rem 1rem;
+
+  &:hover {
+    background: rgba(26, 21, 21, 0.1);
+  }
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  font-size: 16px;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+thead {
+  background-color: #f4f4f4;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+button {
+  margin-right: 5px;
+}
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2050;
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 2051;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+textarea {
+  width: 100%; /* Asegura que ocupe todo el ancho disponible */
+  height: 100px; /* Ajusta la altura del cuadro */
+  resize: vertical; /* Permite cambiar la altura si es necesario */
+}
+
+.table td button {
+  margin: 0 5px 5px 0; /* Espaciado entre botones */
+}
+
+
+

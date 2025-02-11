@@ -5,99 +5,156 @@
   font-style: normal;
 }
 
+/* Importar la fuente personalizada desde la carpeta public */
+@font-face {
+  font-family: "ChauPhilomene";
+  src: url("../../assets/fonts/chauphilomene.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 20px;
-  
+  background-color: #fff8d4;
+  max-width: 100% !important; 
+  width: 100% !important;
+}
+
+.content{
+  background-color: #fff8d4;
+
 }
 
 .instructions {
+  margin-top: 25px;
   font-size: 1.2rem;
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: -27px;
   font-family: 'lexend';
   
 }
 
 .layout {
   display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 30px; /* Espacio entre la imagen y el botón */
+  justify-content: space-between;
+  align-items: center;
+  gap: 60px;
   width: 100%;
-  padding: 20px;
+  padding: 20px 40px;
+  min-height: 70vh;
 }
 
 .image-container {
-  flex: 0 0 auto; /* Mantén el tamaño original de la imagen */
-  text-align: center;
+  flex: 0 1 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  max-width: 500px;
 }
 
-.monigote {
-  width: 100%;
-  max-width: 300px;
-}
 
-/* Contenedor del recuadro amarillo */
 .button-grid {
-  flex: 0 0 auto; /* No depende del tamaño de otros contenedores */
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
   background-color: #ffeb99;
-  padding: 20px;
+  padding: 30px;
   border-radius: 10px;
-  max-width: 500px; /* Opcional: limita el ancho */
-  text-align: center;
+  width: 550px;
+  height: 400px; 
+  margin-right: 20px;
+  margin-left: 120px;
+  overflow: hidden; 
 }
 
-/* Botones principales */
+
 .main-buttons {
   display: flex;
   justify-content: center;
-  gap: 10px;
-  
+  align-items: center;
+  gap: 15px;
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  flex-wrap: wrap; 
+  font-family: "ChauPhilomene", sans-serif; 
+
 }
 
 .main-button {
-  padding: 10px 20px;
+  padding: 10px 15px;
   font-size: 1rem;
+  text-align: center; 
   border: 2px solid black;
-  background-color: white;
+  background-color: #41b8d5;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  border-radius: 6px;
+  white-space: normal;
+  word-wrap: break-word; 
+  overflow: visible; 
+  max-width: 150px; 
+  font-size: 20px;
+
+}
+
+.main-button:hover {
+  background-color: #41b8d5;
+  transform: translateY(-4px);
 }
 
 .main-button.active {
-  background-color: yellow;
+  background-color: #41b8d5;
+  border-color: #000;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8); /* Sombra para resaltar */
+  
+
+
 }
 
-/* Contenedor de botones secundarios */
+
 .grid-buttons {
   display: grid;
-  
-  gap: 10px;
-  width: 50%;
-  flex-wrap: wrap; /* Permite que los botones se ajusten en pantallas pequeñas */
+  grid-template-columns: repeat(3, 1fr); 
+  grid-template-rows: auto; 
+  row-gap: 30px; 
+  column-gap: 15px; 
+  width: 100%;
+  height: 100%; 
+  align-content: center; 
+  justify-items: center; 
+  font-family: "Lexend", sans-serif; 
+
 }
 
 .secondary-button {
-  padding: 10px;
-  font-size: 0.9rem;
-  border: 1px solid black;
-  background-color: white;
+  display: flex;
+  justify-content: center; 
+  align-items: center; 
+  font-size: 1rem;
+  font-weight: bold;
+  text-align: center;
+  border: 2px solid black;
+  /* background-color: #93dff2; */
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  border-radius: 10px;
+  width: 150px; 
+  height: 60px; 
+  white-space: normal; 
+  word-wrap: break-word; 
 }
 
 .secondary-button:hover {
-  background-color: #e8e8e8;
+  background-color: #B6B5B5;
+  transform: translateY(-2px);
 }
 
 .secondary-button:active {
-  background-color: #cccccc;
+  background-color: #B6B5B5;
 }

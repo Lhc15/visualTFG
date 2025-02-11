@@ -14,6 +14,7 @@
   "dependencies": {
     "gsap": "^3.12.5",
     "gsp": "^0.5.4",
+    "prueba-motor": "file:",
     "three": "^0.170.0"
   }
 }

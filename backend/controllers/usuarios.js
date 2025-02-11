@@ -123,14 +123,14 @@ const crearUsuario = async (req, res = response) => {
     }
 };
 
-   
-
 const actualizarUsuario = async(req, res = response) => {
     
     const { password, email, ...object } = req.body;
     const uid = req.params.id;
 
     try{
+        console.log('Datos recibidos para actualizar:', req.body); // LOG para depuración
+
         const existeEmail = await Usuario.findOne({ email: email });
 
         if(existeEmail){
@@ -147,6 +147,8 @@ const actualizarUsuario = async(req, res = response) => {
 
         object.email = email;
         const usuario = await Usuario.findByIdAndUpdate(uid, object, { new: true });
+        
+        console.log('Usuario actualizado:', usuario); // LOG para depuración
 
         res.json({
             ok: true,
@@ -181,7 +183,7 @@ const borrarUsuario = async(req, res = response) => {
             });
         }
 
-        const resultado = await Usuario.findByIdAndRemove(uid);
+        const resultado = await Usuario.findByIdAndDelete(uid);
 
         res.json({
             ok: true,

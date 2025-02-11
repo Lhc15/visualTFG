@@ -2,9 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { ApiService } from './services/api.service';
 import { CommonModule } from '@angular/common'; // Importa CommonModule para tener acceso a directivas como *ngIf y *ngFor
 import { UsuariosComponent } from './usuarios/usuarios.component'; // Importar UsuariosComponent
-import { RouterModule, Router } from '@angular/router';
+import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from "./header/header.component"; // Importar RouterModule para router-outlet
 import { UsuariosService } from './services/usuarios.service'; 
+import { AnimacionService } from './services/animacion.service';
 
 @Component({
   selector: 'app-root',
@@ -18,7 +19,7 @@ export class AppComponent implements OnInit {
   response: any;
   usuario: any = null;
 
-  constructor(private apiService: ApiService, private usuariosService: UsuariosService, private router: Router) {}
+  constructor(private apiService: ApiService, private usuariosService: UsuariosService, private router: Router,private animacionService: AnimacionService) {}
 
   ngOnInit() {
     this.apiService.getHelloWorld().subscribe({
@@ -31,38 +32,58 @@ export class AppComponent implements OnInit {
       },
     });
   
-    // Llamar solo una vez a cargar autenticación y redirección inicial
+    // Solo cargar el usuario autenticado
     this.cargarUsuarioAutenticado();
-    this.redirigirSiAutenticado(); 
+    
+    // Suscribirse a los cambios de ruta
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        console.log('[DEBUG] Ruta cambiada, limpiando animaciones.');
+        this.animacionService.limpiarAnimaciones(); // Limpia las animaciones al cambiar de ruta
+        this.redirigirSiAutenticado();
+        
+        // Permitir nuevas animaciones después de un breve retraso
+        setTimeout(() => {
+          this.animacionService.finalizarCambioPagina();
+        }, 500);
+      }
+    });
   }
-  
 
   redirigirSiAutenticado(): void {
     const currentRoute = this.router.url;
-  
     console.log('[DEBUG] Ruta actual:', currentRoute);
   
-    // Lista de rutas permitidas sin autenticación
-    const allowedRoutes = ['/test-upload', '/landing'];
+    // Si la ruta es test-upload, permitir acceso sin importar autenticación
+    if (currentRoute === '/test-upload') {
+      console.log('[DEBUG] Accediendo a /test-upload - acceso permitido');
+      return;
+    }
   
-    // Si la ruta actual está permitida, no redirigir
+    // Lista de rutas permitidas sin autenticación
+    const allowedRoutes = ['/landing', '/guiado'];
+  
+    // Si la ruta actual está permitida, no hacer nada
     if (allowedRoutes.includes(currentRoute)) {
       console.log('[DEBUG] Ruta actual permitida sin autenticación:', currentRoute);
       return;
     }
   
-    // Verifica con el backend si el usuario está autenticado
+    // Verifica si el usuario está autenticado
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: (response) => {
-        console.log('[DEBUG] Usuario autenticado, redirigiendo si es necesario:', response);
-        if (currentRoute === '/landing') {
-          this.router.navigate(['/home']);
+        console.log('[DEBUG] Usuario autenticado:', response);
+  
+        // Si el usuario está en `/landing` o `/`, redirigir a `/home`
+        if (currentRoute === '/landing' || currentRoute === '/') {
+          console.log('[DEBUG] Redirigiendo a /home para usuario autenticado');
+          this.router.navigate(['/guiado']);
         }
       },
       error: (error) => {
         console.error('[ERROR] No autenticado o token inválido:', error);
   
-        // Redirige a /landing solo si no es una ruta permitida
+        // Si no está autenticado y la ruta no es permitida, redirigir a `/landing`
         if (!allowedRoutes.includes(currentRoute)) {
           console.log('[DEBUG] Redirigiendo a /landing debido a falta de autenticación');
           this.router.navigate(['/landing']);

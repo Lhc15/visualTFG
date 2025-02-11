@@ -1,0 +1,93 @@
+@font-face {
+    font-family: "Lexend";
+    src: url("../../assets/fonts/lexend.ttf") format("truetype");
+    font-weight: normal;
+    font-style: normal;
+  }
+.settings-panel {
+    
+    width: 100%;
+    background-color: #f5f5d6;
+    padding: 20px;
+    position: relative;
+    font-family: "Lexend", sans-serif;
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+    align-items: center; /* Centra el contenido verticalmente */
+    height: 75vh; /* Asegura que ocupe toda la altura de la pantalla */
+  }
+  .cuadrofondo{
+    width: 850px; /* Reduce el ancho del cuadro fondo */
+    background-color: #cacac089;
+    padding: 40px;
+    border-radius: 8px;
+    
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* Sombra para darle un efecto flotante */
+    position: relative;
+  }
+  h2 {
+    margin: 0 0 20px;
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+  
+  .setting-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px; /* Reduce la separación entre elementos */
+    position: relative; /* Necesario para los separadores */
+  }
+  
+  .setting-item label {
+    flex: 1;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-left: 10px;
+  }
+  
+  .setting-item span,
+.setting-item input {
+    flex: 2;
+    font-size: 16px;
+    padding: 5px 0;
+    border: none;
+    outline: none;
+    color: #000;
+}
+
+.setting-item span {
+    display: block;
+    border-bottom: 1px solid #000; /* Línea negra separadora */
+    width: 40%; /* Hace que la línea sea menos de la mitad del cuadro */
+    margin-left: 0; /* Alinea la línea con la izquierda */
+}
+  
+.setting-item button {
+    background-color: #e63946; /* Botón rojo */
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-left: 15px; /* Ajusta la separación con el contenido */
+}
+
+.setting-item button:hover {
+    background-color: #d62839; /* Color más oscuro al pasar el mouse */
+}
+  
+  
+  
+  .close-btn {
+    position: absolute; /* Posiciona la "X" relativa al cuadrofondo */
+    top: 10px; /* Espaciado desde el borde superior */
+    right: 10px; /* Espaciado desde el borde derecho */
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #000;
+  }
+  

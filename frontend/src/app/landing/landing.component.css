@@ -34,7 +34,7 @@
   position: relative;
   top: 0;
   left: 0;
-  
+  border-bottom: none !important;
 }
 
 .logo-container {
@@ -55,7 +55,6 @@
 /* ---------------------------------------------------------------------------
                             FIN DEL HEADER
 --------------------------------------------------------------------------- */
-
 
 /* ---------------------------------------------------------------------------
                             BOTONES
@@ -108,7 +107,6 @@
                        LANDING PRINCIPAL
 --------------------------------------------------------------------------- */
 
-
 .text-content {
   flex: 1; 
   flex-direction: column; 
@@ -131,6 +129,8 @@
   font-family: "Lexend", sans-serif;
   font-size: 2rem;
   color: black;
+  font-weight: bold; /* Esto pone el texto en negrita */
+
 }
 
 .frase-2{
@@ -152,8 +152,82 @@
                     FIN DEL LANDING PRINCIPAL
 --------------------------------------------------------------------------- */
 
+/* ---------------------------------------------------------------------------
+                            CONTENEDOR DE LOGIN/REGISTRO
+--------------------------------------------------------------------------- */
+.container_abajo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    width: 100%;
+    background-color: #fff8d4;
+    
+}
 
+.landing-register, .landing-login {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0 auto;
+    gap: 100px;
+    padding-right: 80px;
+}
 
+.canvas-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 0;
+    max-width: 500px;
+}
+
+.form-section {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    min-width: 320px;
+    max-width: 450px;
+}
+
+/* Ocultar el formulario no activo */
+.landing-register:not(.visible),
+.landing-login:not(.visible) {
+    display: none;
+}
+
+app-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+app-login, app-registro {
+    width: 100%;
+    display: block;
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #fff8d4;
+}
+
+.container_arriba {
+    background-color: #f2c464;
+    padding: 40px;
+    margin-bottom: 40px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ---------------------------------------------------------------------------
+                            FIN DEL CONTENEDOR DE LOGIN/REGISTRO
+--------------------------------------------------------------------------- */
 
 html,
 body {
@@ -172,9 +246,7 @@ body {
   background-color: #f2c464 !important;
   height: 100vh;
 
-
-
-} 
+}
 
  body, html {
   height: 100%;
@@ -208,18 +280,8 @@ body {
   margin-top: -70px; 
 
 
-}
-
-
-.container_abajo {
-  display: flex;
-  flex-direction: column;
-  width: 100%; 
-  max-width: 100%; 
-  min-height: 100vh; 
 
 }
-
 
 .graphic {
   flex: 1; 
@@ -293,31 +355,156 @@ body {
                               FOOTER
 --------------------------------------------------------------------------- */
 
- .footer {
-  background-color:  #f2c464; 
+
+/* 
+.footer {
+  background-color: #f2c464; 
   color: black;
   text-align: center;
   padding: 20px;
   width: 100%;
-  /* position: fixed; */
-  bottom: 0;
-  left: 0;
+  position: relative;
   font-family: "ChauPhilomene" !important;
   margin: 0;
-  padding: 20px 0;
-
+  display: flex;
+  justify-content: space-between; 
+  align-items: center; 
 }
 
-footer p {
-  font-family: "ChauPhilomene", sans-serif;
+.footer-left, .footer-center, .footer-right {
+  display: flex;
+  align-items: center; 
 }
 
-p {
-  font-family: "Lexend", sans-serif;
-} 
+.footer-left a, .footer-center a, .footer-right a {
+  color: black; 
+  text-decoration: none; 
+  margin: 0 10px; 
+}
+
+.footer-left a:hover, .footer-center a:hover, .footer-right a:hover {
+  text-decoration: underline; 
+}
+
+.footer-center p {
+  margin: 0; 
+}
+
+.footer-right i {
+  font-size: 24px; 
+  margin-left: 10px; 
+}
+
+.button-link {
+  background-color: black; 
+  color: white; 
+  padding: 10px 20px; 
+  border-radius: 5px; 
+  font-weight: bold; 
+  text-transform: uppercase; 
+  display: inline-block; 
+}
+.button-link:hover {
+  background-color: #333; 
+  text-decoration: none; 
+} */
+
+
+
+.footer {
+  background-color: #f2c464; 
+  color: black;
+  text-align: center;
+  padding: 20px;
+  width: 100%;
+  position: relative;
+  font-family: "Lexend" !important;
+  margin: 0;
+  display: flex;
+  justify-content: space-between; /* Alinea los elementos a izquierda, centro y derecha */
+  align-items: center; /* Alinea los items verticalmente */
+}
+
+.footer-left, .footer-center, .footer-right {
+  display: flex;
+  align-items: center; /* Asegura que el texto y los iconos estén alineados correctamente */
+}
+
+.footer-left a, .footer-center a, .footer-right a {
+  color: black; /* Color de los enlaces */
+  text-decoration: none; /* Elimina el subrayado */
+  margin: 0 10px; /* Espaciado entre los enlaces */
+}
+
+.footer-left a:hover, .footer-center a:hover, .footer-right a:hover {
+  text-decoration: underline; /* Subrayado al pasar el mouse */
+}
+
+.footer-center p {
+  margin: 0; /* Elimina márgenes adicionales */
+}
+
+.footer-right i {
+  font-size: 24px; /* Tamaño del icono de Instagram */
+  margin-left: 2px; /* Espacio entre el icono y el texto */
+  left: -60px;
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+/* Estilo específico para el enlace "Graphicare" */
+.footer-center .button-link {
+  background-color: black; /* Fondo negro para el botón */
+  color: white !important; /* Texto blanco */
+  padding: 10px 20px; /* Espaciado dentro del "botón" */
+  border-radius: 20px; /* Bordes redondeados */
+  font-weight: bold; /* Texto en negrita */
+  text-transform: uppercase; /* Texto en mayúsculas */
+  display: inline-block; /* Asegura que se comporte como un botón */
+  text-decoration: none !important; /* Elimina el subrayado */
+}
+
+.footer-center .button-link:hover {
+  background-color: #333 !important; /* Color de fondo al pasar el mouse */
+  text-decoration: none !important; /* Elimina el subrayado al pasar el mouse */
+}
+
+
+
 
 /* ---------------------------------------------------------------------------
                             FIN DEL FOOTER
 --------------------------------------------------------------------------- */
+
+/*CHATBOT*/
+df-messenger {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 350px;       /* Ajusta lo que prefieras */
+  height: auto;       /* Deja que se ajuste en modo minimizado */
+  z-index: 9999;      /* Para que aparezca por encima de todo */
+}
+
+df-messenger::part(chat-wrapper) {
+  height: auto !important;
+  max-height: 70vh !important;   /* Por ejemplo, para que no ocupe toda la pantalla */
+  overflow-y: auto !important;
+}
+
+df-messenger::part(messages) {
+  max-height: 70vh !important;
+  overflow-y: auto !important;
+}
+
+
+/* 2) Lista de mensajes */
+df-messenger::part(message-list) {
+  overflow-y: auto !important;
+  max-height: 70vh !important;
+}
+
+
 
 

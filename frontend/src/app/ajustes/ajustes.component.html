@@ -1,0 +1,38 @@
+<app-header></app-header>
+
+<div class="settings-panel">
+  <div class="cuadrofondo">
+    <h2>AJUSTES</h2>
+
+    <div class="setting-item">
+      <label for="username">Nombre Usuario</label>
+      <span *ngIf="!isEditing['username']">{{ userData.username }}</span>
+      <input *ngIf="isEditing['username']" id="username" [(ngModel)]="userData.username" />
+      <button (click)="toggleEdit('username')">{{ isEditing['username'] ? 'Guardar' : 'Editar' }}</button>
+    </div>
+
+    <div class="setting-item">
+      <label for="fullname">Nombre Completo</label>
+      <span *ngIf="!isEditing['fullname']">{{ userData.fullname }}</span>
+      <input *ngIf="isEditing['fullname']" id="fullname" [(ngModel)]="userData.fullname" />
+      <button (click)="toggleEdit('fullname')">{{ isEditing['fullname'] ? 'Guardar' : 'Editar' }}</button>
+    </div>
+
+    <div class="setting-item">
+      <label for="email">Correo Electrónico</label>
+      <span *ngIf="!isEditing['email']">{{ userData.email }}</span>
+      <input *ngIf="isEditing['email']" id="email" [(ngModel)]="userData.email" />
+      <button (click)="toggleEdit('email')">{{ isEditing['email'] ? 'Guardar' : 'Editar' }}</button>
+    </div>
+
+    <div class="setting-item">
+      <label for="password">Contraseña</label>
+      <span *ngIf="!isEditing['password']">********</span>
+      <input *ngIf="isEditing['password']" id="password" type="password" [(ngModel)]="userData.password" />
+      <button (click)="toggleEdit('password')">{{ isEditing['password'] ? 'Guardar' : 'Editar' }}</button>
+    </div>
+    <button class="close-btn" aria-label="Cerrar" (click)="closePanel()">&times;</button>
+  </div>
+</div>
+
+<app-footer></app-footer>

@@ -1,8 +1,23 @@
 <div class="upload-container">
-    <h2>Subir Archivo GLTF</h2>
-    <form (submit)="uploadFile($event)">
-      <input type="file" name="file" (change)="onFileSelected($event)" accept=".gltf" />
-      <button type="submit">Subir Archivo</button>
-    </form>
+  <h2>Subir Archivo GLTF</h2>
+  <form (submit)="uploadFiles($event)">
+    <input 
+      type="file" 
+      name="files" 
+      (change)="onFilesSelected($event)" 
+      accept=".gltf" 
+      multiple
+    />
+    <button type="submit">Subir Archivos</button>
+  </form>
+
+  <div *ngIf="selectedFiles.length > 0" class="files-list">
+    <h3>Archivos seleccionados:</h3>
+    <ul>
+      <li *ngFor="let file of selectedFiles">
+        {{ file.name }} 
+        <span *ngIf="uploadedFiles.includes(file.name)" style="color: green;">(Subido)</span>
+      </li>
+    </ul>
   </div>
-  
+</div>

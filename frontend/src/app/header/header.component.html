@@ -5,9 +5,36 @@
     </div>
   
     <div class="menu-buttons" *ngIf="!isMobile">
-      <button [class.active]="selectedMode === 'modo1'" (click)="selectMode('modo1')">MODO 1</button>
-      <button [class.active]="selectedMode === 'modo2'" (click)="selectMode('modo2')">MODO 2</button>
-      <button [class.active]="selectedMode === 'modo3'" (click)="selectMode('modo3')">MODO 3</button>
+      <button [class.active]="selectedMode === 'modo1'" (click)="selectMode('modo1')">
+        <!-- Si está seleccionado (modo2), muestra sin <br> -->
+        <ng-container *ngIf="selectedMode === 'modo1'; else notSelectedModo1">
+          MODO GUIADO
+        </ng-container>
+        <!-- Si NO está seleccionado, muestra con <br> -->
+        <ng-template #notSelectedModo1>
+          MODO <br> GUIADO
+        </ng-template>
+      </button>
+
+      <button [class.active]="selectedMode === 'modo2'" (click)="selectMode('modo2')">
+        <!-- Si está seleccionado (modo2), muestra sin <br> -->
+        <ng-container *ngIf="selectedMode === 'modo2'; else notSelectedModo2">
+          MODO LIBRE
+        </ng-container>
+        <!-- Si NO está seleccionado, muestra con <br> -->
+        <ng-template #notSelectedModo2>
+          MODO <br> LIBRE
+        </ng-template>
+      </button>
+      
+      <button [class.active]="selectedMode === 'modo3'" (click)="selectMode('modo3')">
+        <ng-container *ngIf="selectedMode === 'modo3'; else notSelectedModo3">
+          MODO EXAMEN
+        </ng-container>
+        <ng-template #notSelectedModo3>
+          MODO <br> EXAMEN
+        </ng-template>
+      </button>
     </div>
 
     <div class="user-info" *ngIf="usuario">
@@ -19,6 +46,7 @@
         <div class="dropdown" *ngIf="dropdownOpen">
           <a (click)="navigateTo('perfil')">Mi Perfil</a>
           <a (click)="navigateTo('ajustes')">Ajustes</a>
+          <a *ngIf="usuario.rol === 'ROL_ADMIN'" (click)="navigateTo('admin')">Admin</a>
           <a (click)="logout()">Cerrar Sesión</a>
         </div>
       </div>

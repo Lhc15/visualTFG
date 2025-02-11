@@ -10,6 +10,9 @@
     flex-direction: column;
     align-items: center;
     min-height: 80vh;
+    background-color: #fff8d4;
+    max-width: 100% !important; 
+    width: 100% !important;
   }
 
   .instructions {
@@ -18,6 +21,9 @@
     margin-bottom: 20px;
     font-family: 'lexend';
     margin: 20px;
+    margin-top: 25px;
+    margin-bottom: 0px;
+    
   }
   
   .layout {

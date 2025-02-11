@@ -1,0 +1,32 @@
+<app-header></app-header>
+
+<div class="settings-panel">
+  <div class="cuadrofondo">
+    
+    <button class="close-btn" aria-label="Cerrar" (click)="closePanel()">&times;</button>
+    <div class="profile-container">
+        <!-- Sección de la imagen del perfil -->
+        <div class="profile-picture">
+          <label for="file-upload" class="upload-label">
+            <img
+                [src]="profileImage || 'assets/default-profile.png'"
+                
+                class="profile-img"
+            />
+
+            <div class="upload-icon">📤</div>
+          </label>
+          <input id="file-upload" type="file" (change)="onFileSelected($event)" hidden />
+        </div>
+  
+        <!-- Sección de la información del usuario -->
+        <div class="profile-info">
+          <h1>{{ userData.username }}</h1>
+          <p>{{ userData.fullname }}</p>
+          <p>{{ userData.email }}</p>
+        </div>
+      </div>
+  </div>
+</div>
+
+<app-footer></app-footer>
