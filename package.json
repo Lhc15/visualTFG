@@ -16,5 +16,9 @@
   },
   "devDependencies": {
     "@types/three": "^0.170.0"
-  }
+  },
+  "scripts": {
+  "start": "ts-node src/main.ts",
+  "dev": "nodemon --exec ts-node src/main.ts"
+}
 }

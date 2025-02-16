@@ -7,6 +7,9 @@ import { AnimacionService } from '../services/animacion.service';
 import { GltfService } from '../services/gltf.service';
 import { Subscription } from 'rxjs';
 
+import { iniciarEscena } from "../../../../engine/main";
+
+
 @Component({
   selector: 'app-canvas',
   standalone: true,
@@ -87,6 +90,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private initRenderer(): void {
+    this.cargarEscenaDesdeMotor();
     if (!this.canvasRef) {
       console.error('Canvas element not found.');
       return;
@@ -251,5 +255,58 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.poses = []; // Reinicia las poses
     console.log('Canvas limpiado.');
   }
+
+  private cargarEscenaDesdeMotor(): void {
+    console.log("Cargando escena desde motor...");
+    const nodoRaiz = iniciarEscena(); // Llamamos a iniciarEscena()
+
+    const procesarNodo = (nodo: any, parent: THREE.Object3D | null = null) => {
+        if (!nodo) return;
+
+        let objeto3D: THREE.Object3D | null = null;
+
+        if (nodo.entidad) {
+            switch (nodo.entidad.constructor.name) {
+                case "TLuz":
+                    objeto3D = new THREE.PointLight(0xffffff, 1);
+                    const posicionLuz = nodo.transformacion?.posicion || [0, 0, 0];
+                    objeto3D.position.set(posicionLuz[0], posicionLuz[1], posicionLuz[2]);
+
+                    break;
+                case "TCamara":
+                    objeto3D = new THREE.PerspectiveCamera(
+                        45, window.innerWidth / window.innerHeight, 0.1, 100
+                    );
+                    const posicionCamara = nodo.transformacion?.posicion || [0, 0, 0];
+                    objeto3D.position.set(posicionCamara[0], posicionCamara[1], posicionCamara[2]);
+
+                    break;
+                case "TMalla":
+                    objeto3D = new THREE.Mesh(
+                        new THREE.BoxGeometry(1, 1, 1),
+                        new THREE.MeshStandardMaterial({ color: 0x00ff00 })
+                    );
+                    const posicionMalla= nodo.transformacion?.posicion || [0, 0, 0];
+                    objeto3D.position.set(posicionMalla[0], posicionMalla[1], posicionMalla[2]);
+
+                    break;
+            }
+        }
+
+        if (objeto3D) {
+            if (parent) {
+                parent.add(objeto3D);
+            } else {
+                this.scene.add(objeto3D);
+            }
+        }
+
+        // Procesar hijos
+        nodo.hijos.forEach((hijo: any) => procesarNodo(hijo, objeto3D));
+    };
+
+    procesarNodo(nodoRaiz);
+}
+
   
 }
