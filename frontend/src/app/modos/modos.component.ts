@@ -21,7 +21,7 @@ const MODES = [
     id: 'libre',
     icon: 'assets/explora.png',
     name: 'EXPLORA',
-    description: 'y practica a tu ritmo según tu interés',
+    description: 'y practica a tu propio ritmo',
     route: '/libre',
   },
   {

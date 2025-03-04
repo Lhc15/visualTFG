@@ -27,6 +27,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center; /* Centra los modos */
   gap: 25px;
   width: 50%;
   height: 85vh;
@@ -34,17 +35,23 @@
   margin-right: 80px;
 }
 
+
 .mode-card {
-  position: relative;
   background-color: #8fd4e3;
-  padding: 30px 30px;
+  padding: 20px;
   width: 100%;
-  cursor: pointer;
-  font-family: "ChauPhilomene", sans-serif;
+  max-width: 600px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start; /* Alinea solo el título y descripción a la izquierda */
   text-align: left;
-  border-radius: 5px;
-  transition: background-color 0.3s ease-in-out, transform 0.4s cubic-bezier(0.25, 0.1, 0.25, 1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: background-color 0.3s, transform 0.4s;
 }
+
 
 .mode-card:hover {
   background-color: #41b8d5;
@@ -83,56 +90,70 @@
 
 .mode-title {
   display: flex;
-  align-items: baseline;
-  gap: 20px;
-  justify-content: start;
+  align-items: center; /* Alinear elementos en la misma línea */
+  gap: 15px; /* Espacio entre título y descripción */
+  width: 100%;
+  flex-wrap: wrap; /* Para que la descripción baje si es necesario */
 }
 
 .mode-title h2 {
   font-size: 32px;
   font-weight: bold;
+  font-family: "ChauPhilomene", sans-serif;
   margin: 0;
-  white-space: nowrap;
+  display: flex;
+  align-items: center; /* Para alinear el icono con el texto */
 }
 
 .mode-title h2 img {
   width: 40px;
   height: auto;
   vertical-align: middle;
-  margin-right: 15px;
-  top: -3px;
-  position: relative;
+  margin-right: 10px;
 }
 
 .mode-title p {
-  font-size: 25px;
+  font-size: 22px;
   font-family: "ChauPhilomene", sans-serif;
   margin: 0;
-  flex: 1;
+  color: black;
+  flex: 1; /* Hace que la descripción use el espacio disponible */
+  white-space: nowrap; /* Evita que se rompa la línea */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Si es muy larga, agrega "..." */
 }
+
 
 .mode-stats {
   display: flex;
-  justify-content: space-between;
+  justify-content: center; /* Centra las estadísticas */
+  width: 100%;
   gap: 10px;
-  margin-top: 15px;
-  align-items: center;
-}
-
-.stat-box {
-  flex: 1;
-  background-color: none;
-  color: black;
+  flex-wrap: wrap;
   text-align: center;
-  padding: 10px;
-  font-size: 20px;
-  font-family: "ChauPhilomene", sans-serif;
-  border-radius: 8px;
 }
-
 .stat-box p {
   font-family: "ChauPhilomene", sans-serif;
 }
+
+
+.stat-box {
+  flex: 1;
+  min-width: 120px;
+  max-width: 140px;
+  height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+
+
+
 
 .empty-guide {
   text-align: center;
@@ -179,6 +200,9 @@
   font-size: 16px;
   font-weight: bold;
   text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
+  font-family: "ChauPhilomene", sans-serif;
+
+
 }
 
 .progress-fill {
