@@ -1,16 +1,17 @@
 <app-header></app-header>
 
-
-
-
 <div class="container">
   <div class="content">
     <div class="layout">
       <!-- Contenedor del avatar a la izquierda -->
-      <div class="image-container" id="avatar-element" [ngClass]="{'libre-half-width': showWebcam}">
+      <div
+        class="image-container"
+        id="avatar-element"
+        [ngClass]="{ 'libre-half-width': showWebcam }"
+      >
         <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
       </div>
-      
+
       <!-- Contenedor de la cámara, se muestra solo cuando showWebcam es true -->
       <div class="camera-container libre-full-right" *ngIf="showWebcam">
         <video #videoElement class="mirror-video" autoplay></video>
@@ -24,18 +25,22 @@
         <!-- Aquí va tu contenido habitual del panel derecho -->
         <div class="icon-menu-fixed">
           <!-- <button (click)="iniciarTutorial()" class="tutorial-btn">Mostrar Tutorial</button> -->
-          <button (click)="toggleWebcam()" class="small-webcam-btn">Pruébate</button>
-          
-            <button (click)="volverAModos()" class="back-to-modes-button">
-              Volver a Modos
-            </button>
-          
+          <button (click)="toggleWebcam()" class="small-webcam-btn">
+            Pruébate
+          </button>
+
+          <!-- <button (click)="volverAModos()" class="back-to-modes-button">
+            Volver a Modos
+          </button> -->
+
+          <a (click)="volverAModos()" title="Modos">
+            <i class="fa-solid fa-home"></i>
+          </a>
+
           <a (click)="navigateTo('perfil')" title="Mi Perfil" class="user-icon">
             <i class="fa-solid fa-user"></i>
           </a>
-          <a (click)="navigateTo('ajustes')" title="Ajustes" class="ajustes-icon">
-            <i class="fa-solid fa-gear"></i>
-          </a>
+
           <a (click)="logout()" title="Cerrar Sesión" class="logout-icon">
             <i class="fa-solid fa-right-from-bracket"></i>
           </a>
@@ -43,14 +48,23 @@
 
         <!-- Resto del contenido del panel derecho (barra de búsqueda, dropdown, categorías, etc.) -->
         <div class="search-bar" id="search-container">
-          <input type="text" placeholder="Busca cualquier palabra o categoría" id="search-input" />
+          <input
+            type="text"
+            placeholder="Busca cualquier palabra o categoría"
+            id="search-input"
+          />
           <button id="search-btn" title="Buscar">
             <span class="lupa"></span>
           </button>
         </div>
 
         <!-- Dropdown multiselección -->
-        <div class="multi-select-dropdown" *ngIf="!selectedCategory" [class.open]="isOpen" (click)="toggleDropdown($event)">
+        <div
+          class="multi-select-dropdown"
+          *ngIf="!selectedCategory"
+          [class.open]="isOpen"
+          (click)="toggleDropdown($event)"
+        >
           <!-- Botón de apertura -->
           <button type="button" class="dropdown-button">
             Filtrar Categorías
@@ -61,10 +75,10 @@
           <div class="dropdown-content" (click)="$event.stopPropagation()">
             <!-- Para cada categoría, un checkbox -->
             <label class="dropdown-item" *ngFor="let cat of categorias">
-              <input 
-                type="checkbox" 
-                [value]="cat._id" 
-                (change)="onCheckboxChange($event, cat)" 
+              <input
+                type="checkbox"
+                [value]="cat._id"
+                (change)="onCheckboxChange($event, cat)"
                 [checked]="selectedCategoryIds.includes(cat._id)"
               />
               {{ cat.nombre }}
@@ -73,26 +87,28 @@
         </div>
 
         <!-- LISTA DE CATEGORÍAS (vista 1) con estilo de Cards -->
-<div class="category-grid" *ngIf="!selectedCategory">
-  <div class="card" *ngFor="let cat of filteredCategories" (click)="onCategoryClick(cat)">
-    <div class="card-details">
-      <!-- Título de la categoría -->
-      <p class="text-title">{{ cat.nombre }}</p>
-      <!-- Pequeño texto de ejemplo: primeras palabras -->
-      <p class="text-body">{{ getPrimerasPalabras(cat) }}</p>
-    </div>
-    <!-- Botón dentro de la card -->
-    <button class="card-button">
-      Más info
-    </button>
-  </div>
-</div>
+        <div class="category-grid" *ngIf="!selectedCategory">
+          <div
+            class="card"
+            *ngFor="let cat of filteredCategories"
+            (click)="onCategoryClick(cat)"
+          >
+            <div class="card-details">
+              <!-- Título de la categoría -->
+              <p class="text-title">{{ cat.nombre }}</p>
+              <!-- Pequeño texto de ejemplo: primeras palabras -->
+              <p class="text-body">{{ getPrimerasPalabras(cat) }}</p>
+            </div>
+            <!-- Botón dentro de la card -->
+            <button class="card-button">Más info</button>
+          </div>
+        </div>
 
         <!-- LISTA DE PALABRAS (vista 2) -->
         <div class="word-list" *ngIf="selectedCategory">
           <!-- Botón para volver a la lista de categorías -->
           <div class="back-button" (click)="volverAListaCategorias()">
-            <i class="fa-solid fa-arrow-left"></i> 
+            <i class="fa-solid fa-arrow-left"></i>
             <span>Volver</span>
           </div>
 
@@ -107,9 +123,11 @@
             <div class="word-title">{{ palabra.palabra }}</div>
           </div>
         </div>
-
-      </div><!-- fin right-panel -->
-
-    </div><!-- fin layout -->
-  </div><!-- fin content -->
-</div><!-- fin container -->
+      </div>
+      <!-- fin right-panel -->
+    </div>
+    <!-- fin layout -->
+  </div>
+  <!-- fin content -->
+</div>
+<!-- fin container -->
