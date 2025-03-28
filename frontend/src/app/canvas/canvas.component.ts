@@ -252,4 +252,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     console.log('Canvas limpiado.');
   }
   
+  cambiarMotor(): void {
+    console.log('cambiando de motor');
+  }
 }
