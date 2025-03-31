@@ -9,7 +9,7 @@
     <div class="canvas-container">
         <canvas #webglCanvas class="webgl"></canvas>
         <button class="motor-button" (click)="cambiarMotor()">
-            {{ usandoMotorPersonalizado ? 'Volver a Three.js' : 'Usar Motor Personalizado' }}
+            {{ motorTAG ? 'Motor Three.js' : 'Motor TAG' }}
         </button>
     </div>
 </body>

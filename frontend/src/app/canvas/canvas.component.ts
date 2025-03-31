@@ -27,8 +27,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private poses: THREE.Group[] = [];
   private avatar!: THREE.Group | undefined;
   private animacionSubscription: Subscription;
-  private usandoMotorPersonalizado: boolean = false;
-  private scriptElement: HTMLScriptElement | null = null;
+  public motorTAG: boolean = false;
 
   constructor(
     private animacionService: AnimacionService,
@@ -184,6 +183,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   
 
   private animate(): void {
+    //Esto es para probar cosas
+    // Crear un cuadrado negro
+    const geometry = new THREE.PlaneGeometry(50, 50);
+    const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const square = new THREE.Mesh(geometry, material);
+    
+    // Centrar el cuadrado en el canvas
+    square.position.set(0, 0, 0);
+    
+    // Añadir el cuadrado a la escena
+    this.scene.add(square);
+    //Borrar lo de arriba
     const loop = () => {
       this.controls.update();
       this.renderer.render(this.scene, this.camera);
@@ -245,17 +256,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   
 
   limpiarCanvas(): void {
-    // Detener el bucle de renderizado si existe
-    if (this.renderer) {
-      this.renderer.dispose();
-      this.renderer.forceContextLoss();
-    }
-
-    // Limpiar controles si existen
-    if (this.controls) {
-      this.controls.dispose();
-    }
-
     // Limpiar el avatar y poses
     if (this.avatar) {
       this.scene.remove(this.avatar);
@@ -264,61 +264,48 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.avatar = undefined;
     this.poses = [];
 
-    // Limpiar el script del motor personalizado si existe
-    if (this.scriptElement) {
-      document.body.removeChild(this.scriptElement);
-      this.scriptElement = null;
+    // Limpiar la escena pero mantener el canvas
+    if (this.scene) {
+      this.scene.clear();
     }
 
-    // Limpiar el contexto WebGL
-    const canvas = this.canvasRef.nativeElement;
-    const gl = canvas.getContext('webgl');
-    if (gl) {
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    // Limpiar el buffer del renderer
+    if (this.renderer) {
+      this.renderer.clear();
     }
 
     console.log('Canvas limpiado completamente.');
   }
-  
-  cambiarMotor(): void {
-    if (this.usandoMotorPersonalizado) {
-      // Volver a Three.js
-      this.limpiarCanvas();
-      this.ngAfterViewInit(); // Reinicializar Three.js
-      this.usandoMotorPersonalizado = false;
-      console.log('Volviendo a Three.js');
-    } else {
-      // Cambiar al motor personalizado
-      this.limpiarCanvas();
-      
-      // Obtener el canvas
-      const canvas = this.canvasRef.nativeElement;
-      
-      // Obtener el contexto WebGL
-      const gl = canvas.getContext('webgl');
-      if (!gl) {
-        console.error('No se pudo obtener el contexto WebGL');
-        return;
-      }
 
-      // Cargar el código del motor personalizado
-      this.scriptElement = document.createElement('script');
-      this.scriptElement.src = '../engine/index.js';
-      this.scriptElement.onload = () => {
-        console.log('Motor personalizado cargado exitosamente');
-        if (typeof (window as any).main === 'function') {
-          (window as any).main();
-        } else {
-          console.error('La función main no está disponible');
-        }
-      };
-      this.scriptElement.onerror = (error) => {
-        console.error('Error al cargar el motor personalizado:', error);
-      };
-      document.body.appendChild(this.scriptElement);
+  cambiarMotor(): void {
+    if (this.motorTAG) {
+      this.loadDefaultPose();
+      this.animate();
+      this.handleResize();
+      console.log('Motor cambiado a false');
+    } else {
+      // Si motorTAG es false, pintar un cuadrado azul
+      const geometry = new THREE.PlaneGeometry(50, 50);
+      const material = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // Color azul
+      const square = new THREE.Mesh(geometry, material);
       
-      this.usandoMotorPersonalizado = true;
-      console.log('Cambiando al motor personalizado');
+      // Centrar el cuadrado en el canvas
+      square.position.set(0, 0, 0);
+      
+      // Añadir el cuadrado a la escena
+      this.scene.add(square);
+      
+      // Iniciar el bucle de renderizado
+      const loop = () => {
+        this.renderer.render(this.scene, this.camera);
+        requestAnimationFrame(loop);
+      };
+      loop();
+      
+      console.log('Motor cambiado a true');
     }
+    
+    // Cambiar el valor de motorTAG
+    this.motorTAG = !this.motorTAG;
   }
 }
