@@ -2,6 +2,7 @@
 
 
 async function main() {
+  console.log("PEPE");
   // Get A WebGL context
   /** @type {HTMLCanvasElement} */
   const canvas = document.querySelector("#canvas");
