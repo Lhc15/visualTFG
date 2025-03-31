@@ -27,6 +27,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private poses: THREE.Group[] = [];
   private avatar!: THREE.Group | undefined;
   private animacionSubscription: Subscription;
+  private usandoMotorPersonalizado: boolean = false;
+  private scriptElement: HTMLScriptElement | null = null;
 
   constructor(
     private animacionService: AnimacionService,
@@ -243,16 +245,80 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   
 
   limpiarCanvas(): void {
-    if (this.avatar) {
-      this.scene.remove(this.avatar); // Elimina el avatar de la escena
-      this.avatar.clear(); // Limpia sus hijos
+    // Detener el bucle de renderizado si existe
+    if (this.renderer) {
+      this.renderer.dispose();
+      this.renderer.forceContextLoss();
     }
-    this.avatar = undefined; // Resetea el avatar
-    this.poses = []; // Reinicia las poses
-    console.log('Canvas limpiado.');
+
+    // Limpiar controles si existen
+    if (this.controls) {
+      this.controls.dispose();
+    }
+
+    // Limpiar el avatar y poses
+    if (this.avatar) {
+      this.scene.remove(this.avatar);
+      this.avatar.clear();
+    }
+    this.avatar = undefined;
+    this.poses = [];
+
+    // Limpiar el script del motor personalizado si existe
+    if (this.scriptElement) {
+      document.body.removeChild(this.scriptElement);
+      this.scriptElement = null;
+    }
+
+    // Limpiar el contexto WebGL
+    const canvas = this.canvasRef.nativeElement;
+    const gl = canvas.getContext('webgl');
+    if (gl) {
+      gl.getExtension('WEBGL_lose_context')?.loseContext();
+    }
+
+    console.log('Canvas limpiado completamente.');
   }
   
   cambiarMotor(): void {
-    console.log('cambiando de motor');
+    if (this.usandoMotorPersonalizado) {
+      // Volver a Three.js
+      this.limpiarCanvas();
+      this.ngAfterViewInit(); // Reinicializar Three.js
+      this.usandoMotorPersonalizado = false;
+      console.log('Volviendo a Three.js');
+    } else {
+      // Cambiar al motor personalizado
+      this.limpiarCanvas();
+      
+      // Obtener el canvas
+      const canvas = this.canvasRef.nativeElement;
+      
+      // Obtener el contexto WebGL
+      const gl = canvas.getContext('webgl');
+      if (!gl) {
+        console.error('No se pudo obtener el contexto WebGL');
+        return;
+      }
+
+      // Cargar el código del motor personalizado
+      this.scriptElement = document.createElement('script');
+      this.scriptElement.src = '../engine/index.js';
+      this.scriptElement.onload = () => {
+        console.log('Motor personalizado cargado exitosamente');
+        if (typeof (window as any).main === 'function') {
+          (window as any).main();
+        } else {
+          console.error('La función main no está disponible');
+        }
+      };
+      this.scriptElement.onerror = (error) => {
+        console.error('Error al cargar el motor personalizado:', error);
+      };
+      document.body.appendChild(this.scriptElement);
+      
+      this.usandoMotorPersonalizado = true;
+      console.log('Cambiando al motor personalizado');
+    }
   }
 }
