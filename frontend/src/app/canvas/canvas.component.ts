@@ -251,6 +251,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   
 
   limpiarCanvas(): void {
+    console.log('Limpiando canvas...');
     // Limpiar el avatar y poses
     if (this.avatar) {
       this.scene.remove(this.avatar);
@@ -273,71 +274,60 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   // Método para cargar el script de engine/index.js
-  private cargarScript(): Promise<void> {
+  cargarScript(): Promise<void> {
     return new Promise((resolve, reject) => {
       if (this.engineScriptLoaded) {
         resolve();
         return;
       }
 
+      // Intentar diferentes rutas para el archivo
+      const posiblesPaths = [
+        'engine/index.js',
+        './engine/index.js',
+        '../engine/index.js',
+        '../../engine/index.js',
+        '/engine/index.js',
+        window.location.origin + '/engine/index.js'
+      ];
+
       const script = document.createElement('script');
-      script.src = '/engine/index.js';
       script.type = 'text/javascript';
       
-      script.onload = () => {
-        console.log('Script engine/index.js cargado correctamente');
-        this.engineScriptLoaded = true;
-        resolve();
+      let pathIndex = 0;
+      
+      // Función para intentar cargar el script con diferentes rutas
+      const intentarCargar = () => {
+        if (pathIndex >= posiblesPaths.length) {
+          reject(new Error('No se pudo cargar el script después de intentar con todas las rutas posibles'));
+          return;
+        }
+        
+        const currentPath = posiblesPaths[pathIndex];
+        console.log(`Intentando cargar el script desde: ${currentPath}`);
+        
+        script.src = currentPath;
+        
+        script.onload = () => {
+          console.log(`Script cargado correctamente desde: ${currentPath}`);
+          this.engineScriptLoaded = true;
+          resolve();
+        };
+        
+        script.onerror = () => {
+          console.log(`Error al cargar desde: ${currentPath}, probando siguiente ruta...`);
+          pathIndex++;
+          intentarCargar();
+        };
       };
       
-      script.onerror = (error) => {
-        console.error('Error al cargar engine/index.js:', error);
-        reject(error);
-      };
-
+      // Iniciar el proceso de carga
+      intentarCargar();
       document.head.appendChild(script);
     });
   }
 
-  // Método para ejecutar main() de index.js cuando se hace clic en el botón TAG
-  ejecutarMain(): void {
-    console.log('Botón TAG - Ejecutando main() de index.js');
-    
-    // Detener el bucle de renderizado de Three.js
-    if (this.renderer) {
-      this.renderer.setAnimationLoop(null);
-    }
-    
-    // Limpiar el canvas de Three.js
-    this.limpiarCanvas();
-    
-    // Mostrar el canvas del engine
-    const canvasEngine = document.getElementById('canvas');
-    if (canvasEngine) {
-      canvasEngine.style.display = 'block';
-    }
-    
-    // Ocultar el canvas de Three.js
-    if (this.canvasRef && this.canvasRef.nativeElement) {
-      this.canvasRef.nativeElement.style.display = 'none';
-    }
-    
-    // Cargar el script si no está cargado
-    this.cargarScript().then(() => {
-      // Verificar que window.main esté disponible
-      if (typeof window.main === 'function') {
-        console.log('Ejecutando main() desde index.js');
-        // Ejecutar main() de index.js
-        window.main();
-      } else {
-        console.error('La función main() no está disponible en window');
-      }
-    }).catch(error => {
-      console.error('Error al cargar el script de engine/index.js:', error);
-    });
-  }
-
-  // Método para mostrar Three.js cuando se hace clic en el botón Three
+  // Método para mostrarThree cuando se hace clic en el botón Three
   mostrarThree(): void {
     console.log('Botón Three - Mostrando Three.js');
     
@@ -352,14 +342,31 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.canvasRef.nativeElement.style.display = 'block';
     }
     
-    // Reiniciar Three.js
-    this.initScene();
-    this.initCamera();
-    this.initRenderer();
-    this.addLights();
-    this.addControls();
-    this.loadDefaultPose();
-    this.animate();
-    this.handleResize();
+    // Primero, limpiar el canvas actual
+    this.limpiarCanvas();
+    
+    // Esperar 1 segundo antes de reiniciar Three.js
+    console.log('Esperando 1 segundo antes de recargar la escena...');
+    setTimeout(() => {
+      console.log('Recargando escena Three.js...');
+      
+      // Reiniciar Three.js
+      this.initScene();
+      this.initCamera();
+      this.initRenderer();
+      this.addLights();
+      this.addControls();
+      this.loadDefaultPose();
+      this.animate();
+      this.handleResize();
+      
+      console.log('Escena Three.js recargada correctamente');
+    }, 1000); // Esperar 1000ms (1 segundo)
+  }
+
+  // Método para ejecutar la función main de TAG cuando se hace clic en el botón TAG
+  ejecutarMain(): void {
+    console.log('Botón TAG - Sin funcionalidad');
+    // La funcionalidad ha sido eliminada
   }
 }

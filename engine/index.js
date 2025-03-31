@@ -1,5 +1,9 @@
 "use strict";
 
+// Función que escribe "hola caracola" en la consola
+window.holaCaracola = function() {
+  console.log("hola caracola");
+};
 
 async function main() {
   console.log("PEPE");
@@ -1149,7 +1153,7 @@ function extractAndApplyInternalTextures(gl, gltf) {
       } 
       // Si la imagen está en un buffer, usar los datos binarios
       else if (gltfImage.bufferView !== undefined) {
-        console.log(`📊 Cargando textura desde bufferView ${gltfImage.bufferView}`);
+        console.log(`📊 Cargando textura #${index} desde bufferView ${gltfImage.bufferView}`);
         
         const bufferView = gltf.bufferViews[gltfImage.bufferView];
         const arrayBuffer = gltf.buffers[bufferView.buffer];
@@ -1163,6 +1167,7 @@ function extractAndApplyInternalTextures(gl, gltf) {
         const image = new Image();
         image.onload = () => {
           console.log(`✅ Textura #${index} cargada desde buffer: ${image.width}x${image.height}`);
+          
           gl.bindTexture(gl.TEXTURE_2D, texture);
           gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
           gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);

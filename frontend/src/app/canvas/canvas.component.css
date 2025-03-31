@@ -1,69 +1,61 @@
+/* Contenedor principal de canvas */
 .canvas-container {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     position: relative;
-    z-index: 0;
-    max-width: 800px;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.webgl {
+/* Estilo para ambos canvas */
+canvas {
     width: 100%;
     height: 100%;
     display: block;
-    position: relative;
-    z-index: 0;
-    max-width: 800px;
-    max-height: 600px;
 }
 
-/* Estilos para canvas del engine */
-#canvas {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 0;
-    max-width: 800px;
-    max-height: 600px;
-}
-
-/* Estilos para los botones */
+/* Contenedor de botones */
 .botones-container {
     position: absolute;
     bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: center;
     gap: 20px;
-    width: 100%;
     z-index: 10;
 }
 
+/* Estilo base para los botones */
 .boton {
     padding: 10px 20px;
     font-size: 16px;
+    font-weight: bold;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    color: white;
-    transition: background-color 0.3s;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+/* Estilo específico para el botón Three */
 .three-button {
-    background-color: rgba(76, 175, 80, 0.8); /* Verde */
+    background-color: #4CAF50;
+    color: white;
 }
 
 .three-button:hover {
-    background-color: rgba(76, 175, 80, 1);
+    background-color: #3e8e41;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Estilo específico para el botón TAG */
 .tag-button {
-    background-color: rgba(33, 150, 243, 0.8); /* Azul */
+    background-color: #2196F3;
+    color: white;
 }
 
 .tag-button:hover {
-    background-color: rgba(33, 150, 243, 1);
+    background-color: #0b7dda;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
