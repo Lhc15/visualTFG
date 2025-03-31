@@ -7,10 +7,17 @@
 </head>
 <body>
     <div class="canvas-container">
+        <!-- Canvas para Three.js -->
         <canvas #webglCanvas class="webgl"></canvas>
-        <button class="motor-button" (click)="cambiarMotor()">
-            {{ motorTAG ? 'Motor Three.js' : 'Motor TAG' }}
-        </button>
+        
+        <!-- Canvas para engine/index.js -->
+        <canvas id="canvas" style="display: none;"></canvas>
+        
+        <!-- Botones para cambiar entre motores -->
+        <div class="botones-container">
+            <button class="boton three-button">Three</button>
+            <button class="boton tag-button">TAG</button>
+        </div>
     </div>
 </body>
 </html>

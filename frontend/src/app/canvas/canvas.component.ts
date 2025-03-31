@@ -7,6 +7,13 @@ import { AnimacionService } from '../services/animacion.service';
 import { GltfService } from '../services/gltf.service';
 import { Subscription } from 'rxjs';
 
+// Declaración para acceder a main() desde window
+declare global {
+  interface Window {
+    main: Function;
+  }
+}
+
 @Component({
   selector: 'app-canvas',
   standalone: true,
@@ -27,7 +34,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private poses: THREE.Group[] = [];
   private avatar!: THREE.Group | undefined;
   private animacionSubscription: Subscription;
-  public motorTAG: boolean = false;
+  private engineScriptLoaded: boolean = false;
 
   constructor(
     private animacionService: AnimacionService,
@@ -183,18 +190,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   
 
   private animate(): void {
-    //Esto es para probar cosas
-    // Crear un cuadrado negro
-    const geometry = new THREE.PlaneGeometry(50, 50);
-    const material = new THREE.MeshBasicMaterial({ color: 0x000000 });
-    const square = new THREE.Mesh(geometry, material);
-    
-    // Centrar el cuadrado en el canvas
-    square.position.set(0, 0, 0);
-    
-    // Añadir el cuadrado a la escena
-    this.scene.add(square);
-    //Borrar lo de arriba
     const loop = () => {
       this.controls.update();
       this.renderer.render(this.scene, this.camera);
@@ -277,35 +272,94 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     console.log('Canvas limpiado completamente.');
   }
 
-  cambiarMotor(): void {
-    if (this.motorTAG) {
-      this.loadDefaultPose();
-      this.animate();
-      this.handleResize();
-      console.log('Motor cambiado a false');
-    } else {
-      // Si motorTAG es false, pintar un cuadrado azul
-      const geometry = new THREE.PlaneGeometry(50, 50);
-      const material = new THREE.MeshBasicMaterial({ color: 0x0000ff }); // Color azul
-      const square = new THREE.Mesh(geometry, material);
+  // Método para cargar el script de engine/index.js
+  private cargarScript(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.engineScriptLoaded) {
+        resolve();
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = '/engine/index.js';
+      script.type = 'text/javascript';
       
-      // Centrar el cuadrado en el canvas
-      square.position.set(0, 0, 0);
-      
-      // Añadir el cuadrado a la escena
-      this.scene.add(square);
-      
-      // Iniciar el bucle de renderizado
-      const loop = () => {
-        this.renderer.render(this.scene, this.camera);
-        requestAnimationFrame(loop);
+      script.onload = () => {
+        console.log('Script engine/index.js cargado correctamente');
+        this.engineScriptLoaded = true;
+        resolve();
       };
-      loop();
       
-      console.log('Motor cambiado a true');
+      script.onerror = (error) => {
+        console.error('Error al cargar engine/index.js:', error);
+        reject(error);
+      };
+
+      document.head.appendChild(script);
+    });
+  }
+
+  // Método para ejecutar main() de index.js cuando se hace clic en el botón TAG
+  ejecutarMain(): void {
+    console.log('Botón TAG - Ejecutando main() de index.js');
+    
+    // Detener el bucle de renderizado de Three.js
+    if (this.renderer) {
+      this.renderer.setAnimationLoop(null);
     }
     
-    // Cambiar el valor de motorTAG
-    this.motorTAG = !this.motorTAG;
+    // Limpiar el canvas de Three.js
+    this.limpiarCanvas();
+    
+    // Mostrar el canvas del engine
+    const canvasEngine = document.getElementById('canvas');
+    if (canvasEngine) {
+      canvasEngine.style.display = 'block';
+    }
+    
+    // Ocultar el canvas de Three.js
+    if (this.canvasRef && this.canvasRef.nativeElement) {
+      this.canvasRef.nativeElement.style.display = 'none';
+    }
+    
+    // Cargar el script si no está cargado
+    this.cargarScript().then(() => {
+      // Verificar que window.main esté disponible
+      if (typeof window.main === 'function') {
+        console.log('Ejecutando main() desde index.js');
+        // Ejecutar main() de index.js
+        window.main();
+      } else {
+        console.error('La función main() no está disponible en window');
+      }
+    }).catch(error => {
+      console.error('Error al cargar el script de engine/index.js:', error);
+    });
+  }
+
+  // Método para mostrar Three.js cuando se hace clic en el botón Three
+  mostrarThree(): void {
+    console.log('Botón Three - Mostrando Three.js');
+    
+    // Ocultar el canvas del engine
+    const canvasEngine = document.getElementById('canvas');
+    if (canvasEngine) {
+      canvasEngine.style.display = 'none';
+    }
+    
+    // Mostrar el canvas de Three.js
+    if (this.canvasRef && this.canvasRef.nativeElement) {
+      this.canvasRef.nativeElement.style.display = 'block';
+    }
+    
+    // Reiniciar Three.js
+    this.initScene();
+    this.initCamera();
+    this.initRenderer();
+    this.addLights();
+    this.addControls();
+    this.loadDefaultPose();
+    this.animate();
+    this.handleResize();
   }
 }
