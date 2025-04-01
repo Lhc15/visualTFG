@@ -101,7 +101,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       return;
     }
     const canvas = this.canvasRef.nativeElement;
-    this.renderer = new THREE.WebGLRenderer({ canvas });
+    this.renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setClearColor(0xfff8d4);
@@ -282,49 +282,66 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         return;
       }
 
-      // Intentar diferentes rutas para el archivo
-      const posiblesPaths = [
-        'engine/index.js',
-        './engine/index.js',
-        '../engine/index.js',
-        '../../engine/index.js',
-        '/engine/index.js',
-        window.location.origin + '/engine/index.js'
-      ];
-
-      const script = document.createElement('script');
-      script.type = 'text/javascript';
+      // Cargar webglUtils primero
+      const webglUtilsScript = document.createElement('script');
+      webglUtilsScript.src = 'https://webglfundamentals.org/webgl/resources/webgl-utils.js';
       
-      let pathIndex = 0;
-      
-      // Función para intentar cargar el script con diferentes rutas
-      const intentarCargar = () => {
-        if (pathIndex >= posiblesPaths.length) {
-          reject(new Error('No se pudo cargar el script después de intentar con todas las rutas posibles'));
-          return;
-        }
+      webglUtilsScript.onload = () => {
+        // Cargar m4 después
+        const m4Script = document.createElement('script');
+        m4Script.src = 'https://webglfundamentals.org/webgl/resources/m4.js';
         
-        const currentPath = posiblesPaths[pathIndex];
-        console.log(`Intentando cargar el script desde: ${currentPath}`);
-        
-        script.src = currentPath;
-        
-        script.onload = () => {
-          console.log(`Script cargado correctamente desde: ${currentPath}`);
-          this.engineScriptLoaded = true;
-          resolve();
-        };
-        
-        script.onerror = () => {
-          console.log(`Error al cargar desde: ${currentPath}, probando siguiente ruta...`);
-          pathIndex++;
+        m4Script.onload = () => {
+          // Finalmente cargar el script principal
+          const script = document.createElement('script');
+          script.type = 'text/javascript';
+          
+          // Intentar diferentes rutas para el archivo
+          const posiblesPaths = [
+            'engine/index.js',
+            './engine/index.js',
+            '../engine/index.js',
+            '../../engine/index.js',
+            '/engine/index.js',
+            window.location.origin + '/engine/index.js'
+          ];
+          
+          let pathIndex = 0;
+          
+          // Función para intentar cargar el script con diferentes rutas
+          const intentarCargar = () => {
+            if (pathIndex >= posiblesPaths.length) {
+              reject(new Error('No se pudo cargar el script después de intentar con todas las rutas posibles'));
+              return;
+            }
+            
+            const currentPath = posiblesPaths[pathIndex];
+            console.log(`Intentando cargar el script desde: ${currentPath}`);
+            
+            script.src = currentPath;
+            
+            script.onload = () => {
+              console.log(`Script cargado correctamente desde: ${currentPath}`);
+              this.engineScriptLoaded = true;
+              resolve();
+            };
+            
+            script.onerror = () => {
+              console.log(`Error al cargar desde: ${currentPath}, probando siguiente ruta...`);
+              pathIndex++;
+              intentarCargar();
+            };
+          };
+          
+          // Iniciar el proceso de carga
           intentarCargar();
+          document.head.appendChild(script);
         };
+        
+        document.head.appendChild(m4Script);
       };
       
-      // Iniciar el proceso de carga
-      intentarCargar();
-      document.head.appendChild(script);
+      document.head.appendChild(webglUtilsScript);
     });
   }
 
@@ -342,50 +359,135 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (this.canvasRef && this.canvasRef.nativeElement) {
       this.canvasRef.nativeElement.style.display = 'block';
     }
-    
-    // Primero, limpiar el canvas actual
-    this.limpiarCanvas();
-    
-    // Esperar 1 segundo antes de reiniciar Three.js
-    console.log('Esperando 1 segundo antes de recargar la escena...');
-    setTimeout(() => {
-      console.log('Recargando escena Three.js...');
-      
-      // Reiniciar Three.js
-      this.initScene();
-      this.initCamera();
-      this.initRenderer();
-      this.addLights();
-      this.addControls();
-      this.loadDefaultPose();
-      this.animate();
-      this.handleResize();
-      
-      console.log('Escena Three.js recargada correctamente');
-    }, 1000); // Esperar 1000ms (1 segundo)
   }
 
   // Método para ejecutar la función main de TAG cuando se hace clic en el botón TAG
   ejecutarMain(): void {
-    console.log('Botón TAG - Iniciando TAG');
+    console.log('Botón TAG - Ejecutando main');
     
-    // Cargar dependencias necesarias y luego ejecutar main
-    this.cargarScript()
-      .then(() => {
-        // Cargar webglUtils antes de ejecutar main
-        const webglUtilsScript = document.createElement('script');
-        webglUtilsScript.src = 'https://webglfundamentals.org/webgl/resources/webgl-utils.js';
-        webglUtilsScript.onload = () => {
-          if (window.main) {
-            window.main();
-          } else {
-            console.error('No se encontró la función main() en window');
+    // Ocultar el canvas de Three.js
+    if (this.canvasRef && this.canvasRef.nativeElement) {
+      this.canvasRef.nativeElement.style.display = 'none';
+    }
+    
+    // Mostrar el canvas del engine
+    const canvasEngine = document.getElementById('canvas');
+    if (canvasEngine) {
+      canvasEngine.style.display = 'block';
+      
+      // Inyectar los shaders en el documento
+      this.injectShaders();
+      
+      // Ejecutar main sin limpiar el canvas
+      setTimeout(() => {
+        main();
+      }, 100);
+    } else {
+      console.error('No se encontró el elemento canvas');
+    }
+  }
+
+  // Método para inyectar los shaders en el documento
+  private injectShaders(): void {
+    const shaderIds = ['skinVS', 'meshVS', 'fs', 'vertex-shader-3d', 'fragment-shader-3d'];
+    
+    // Eliminar shaders existentes si los hay
+    shaderIds.forEach(id => {
+      const existingShader = document.getElementById(id);
+      if (existingShader) {
+        existingShader.remove();
+      }
+    });
+
+    // Obtener el contenido del template
+    const template = document.createElement('template');
+    template.innerHTML = `
+      <script id="skinVS" type="notjs">
+        attribute vec4 a_position;
+        attribute vec3 a_normal;
+        attribute vec4 a_weights;
+        attribute vec4 a_joints;
+        attribute vec2 a_texcoord;
+
+        uniform mat4 u_projection;
+        uniform mat4 u_view;
+        uniform mat4 u_world;
+        uniform sampler2D u_jointTexture;
+        uniform float u_numJoints;
+
+        varying vec3 v_normal;
+        varying vec2 v_texcoord;
+
+        mat4 getBoneMatrix(float jointNdx) {
+          float v = (jointNdx + 0.5) / u_numJoints;
+          float y = v;
+          
+          vec4 v0 = texture2D(u_jointTexture, vec2(0.125, y));
+          vec4 v1 = texture2D(u_jointTexture, vec2(0.375, y));
+          vec4 v2 = texture2D(u_jointTexture, vec2(0.625, y));
+          vec4 v3 = texture2D(u_jointTexture, vec2(0.875, y));
+          
+          return mat4(v0, v1, v2, v3);
+        }
+
+        void main() {
+          mat4 skinMatrix = getBoneMatrix(a_joints[0]) * a_weights[0] +
+                            getBoneMatrix(a_joints[1]) * a_weights[1] +
+                            getBoneMatrix(a_joints[2]) * a_weights[2] +
+                            getBoneMatrix(a_joints[3]) * a_weights[3];
+          
+          vec4 worldPosition = u_world * skinMatrix * a_position;
+          gl_Position = u_projection * u_view * worldPosition;
+          v_normal = mat3(u_world) * mat3(skinMatrix) * a_normal;
+          v_texcoord = a_texcoord;
+        }
+      </script>
+
+      <script id="meshVS" type="notjs">
+        attribute vec4 a_position;
+        attribute vec3 a_normal;
+        attribute vec2 a_texcoord;
+
+        uniform mat4 u_projection;
+        uniform mat4 u_view;
+        uniform mat4 u_world;
+
+        varying vec3 v_normal;
+        varying vec2 v_texcoord;
+
+        void main() {
+          gl_Position = u_projection * u_view * u_world * a_position;
+          v_normal = mat3(u_world) * a_normal;
+          v_texcoord = a_texcoord;
+        }
+      </script>
+
+      <script id="fs" type="notjs">
+        precision mediump float;
+
+        varying vec3 v_normal;
+        varying vec2 v_texcoord;
+
+        uniform vec4 u_diffuse;
+        uniform vec3 u_lightDirection;
+        uniform float u_useTexture;
+        uniform sampler2D u_texture;
+
+        void main() {
+          vec3 normal = normalize(v_normal);
+          float light = max(dot(u_lightDirection, normal), 0.0);
+          vec4 color = u_diffuse;
+          
+          if (u_useTexture > 0.5) {
+            color = texture2D(u_texture, v_texcoord);
           }
-        };
-        document.head.appendChild(webglUtilsScript);
-      })
-      .catch(error => {
-        console.error('Error al cargar script:', error);
-      });
+          
+          gl_FragColor = vec4(color.rgb * light, color.a);
+        }
+      </script>
+    `;
+
+    // Añadir los shaders al documento
+    document.body.appendChild(template.content);
   }
 }
