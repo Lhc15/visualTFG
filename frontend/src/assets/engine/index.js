@@ -3,8 +3,8 @@
 
 "use strict";
 
-async function main() {
-  console.log("Iniciando el motor de animación...");
+export async function main() {
+  console.log("Pepe");
   // Get A WebGL context
   /** @type {HTMLCanvasElement} */
   const canvas = document.querySelector("#canvas");

@@ -8,9 +8,15 @@
 
 /* Estilo para ambos canvas */
 canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    display: block;
+}
+
+#canvas {
+    display: none; /* El canvas de TAG inicialmente está oculto */
 }
 
 /* Contenedor de botones */
@@ -19,43 +25,34 @@ canvas {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 100;
     display: flex;
     gap: 20px;
-    z-index: 10;
 }
 
 /* Estilo base para los botones */
 .boton {
     padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
     border-radius: 5px;
+    border: none;
+    font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Estilo específico para el botón Three */
 .three-button {
-    background-color: #4CAF50;
+    background-color: #4285f4;
     color: white;
-}
-
-.three-button:hover {
-    background-color: #3e8e41;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* Estilo específico para el botón TAG */
 .tag-button {
-    background-color: #2196F3;
+    background-color: #34a853;
     color: white;
 }
 
-.tag-button:hover {
-    background-color: #0b7dda;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+.boton:hover {
+    opacity: 0.9;
+    transform: scale(1.05);
 }

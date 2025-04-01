@@ -6,6 +6,7 @@ import { GLTFLoader } from 'three-stdlib';
 import { AnimacionService } from '../services/animacion.service';
 import { GltfService } from '../services/gltf.service';
 import { Subscription } from 'rxjs';
+import { main } from '../../assets/engine/index.js';
 
 // Declaración para acceder a main() desde window
 declare global {
@@ -366,7 +367,25 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   // Método para ejecutar la función main de TAG cuando se hace clic en el botón TAG
   ejecutarMain(): void {
-    console.log('Botón TAG - Sin funcionalidad');
-    // La funcionalidad ha sido eliminada
+    console.log('Botón TAG - Iniciando TAG');
+    
+    // Cargar dependencias necesarias y luego ejecutar main
+    this.cargarScript()
+      .then(() => {
+        // Cargar webglUtils antes de ejecutar main
+        const webglUtilsScript = document.createElement('script');
+        webglUtilsScript.src = 'https://webglfundamentals.org/webgl/resources/webgl-utils.js';
+        webglUtilsScript.onload = () => {
+          if (window.main) {
+            window.main();
+          } else {
+            console.error('No se encontró la función main() en window');
+          }
+        };
+        document.head.appendChild(webglUtilsScript);
+      })
+      .catch(error => {
+        console.error('Error al cargar script:', error);
+      });
   }
 }
