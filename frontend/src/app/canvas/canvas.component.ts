@@ -6,7 +6,8 @@ import { GLTFLoader } from 'three-stdlib';
 import { AnimacionService } from '../services/animacion.service';
 import { GltfService } from '../services/gltf.service';
 import { Subscription } from 'rxjs';
-import { main } from '../../assets/engine/index.js';
+//import { main } from '../../assets/engine/index.js';
+import { main } from '../../../../engine/main.js'
 
 // Declaración para acceder a main() desde window
 declare global {
@@ -379,9 +380,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.injectShaders();
       
       // Ejecutar main sin limpiar el canvas
-      setTimeout(() => {
-        main();
-      }, 100);
+      setTimeout(() => {main();}, 100);
     } else {
       console.error('No se encontró el elemento canvas');
     }

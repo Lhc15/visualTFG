@@ -138,7 +138,7 @@ class Node {
 
 // Función principal
 export async function main() {
-  console.log('Iniciando main');
+  console.log('Iniciando main desde assets');
   
   try {
     // Esperar a que el DOM esté listo
@@ -235,7 +235,9 @@ export async function main() {
     const view = m4.inverse(camera);
 
     // Intentar cargar el modelo con una ruta relativa
-    const modelPath = './assets/malanimation.gltf';
+    const modelPath = './assets/engine/cubo.gltf';
+    console.log(__dirname);
+    //const modelPath = './assets/malanimation.gltf';
     console.log('Intentando cargar el modelo desde:', modelPath);
     
     let gltf;
@@ -249,9 +251,9 @@ export async function main() {
       console.error("Error cargando el modelo desde la primera ruta:", error);
       
       // Intentar con una ruta alternativa
-      const altPath = '../assets/malanimation.gltf';
-      console.log('Intentando cargar el modelo desde ruta alternativa:', altPath);
-      gltf = await loadGLTF(altPath, gl);
+      //const altPath = '../assets/malanimation.gltf';
+      //console.log('Intentando cargar el modelo desde ruta alternativa:', altPath);
+      //gltf = await loadGLTF(altPath, gl);
     }
     
     if (!gltf || !gltf.scenes || gltf.scenes.length === 0) {
@@ -284,7 +286,7 @@ export async function main() {
         
         // Renderizar cada nodo
         scene.root.traverse((node) => {
-          console.log("Renderizando nodo:", node.name, "con", node.drawables.length, "drawables");
+          //console.log("Renderizando nodo:", node.name, "con", node.drawables.length, "drawables");
           for (const drawable of node.drawables) {
             drawable.render(node, projection, view, sharedUniforms);
           }
@@ -432,11 +434,16 @@ async function loadGLTF(url, gl) {
   console.log("Buffers cargados:", gltf.buffers.length);
 
   // Configurar meshes
-  gltf.meshes.forEach((mesh) => {
-    mesh.primitives.forEach((primitive) => {
+  gltf.meshes.forEach((mesh, index) => {
+    console.log(`Procesando mesh ${index}:`, mesh);
+    mesh.primitives.forEach((primitive, primIndex) => {
+      console.log(`Procesando primitiva ${primIndex} del mesh ${index}`);
       const attribs = {};
       let numElements;
+      
+      // Procesar atributos
       for (const [attribName, index] of Object.entries(primitive.attributes)) {
+        console.log(`Procesando atributo ${attribName}`);
         const {accessor, buffer, stride} = getAccessorAndWebGLBuffer(gl, gltf, index);
         numElements = accessor.count;
         attribs[`a_${attribName}`] = {
@@ -454,6 +461,7 @@ async function loadGLTF(url, gl) {
       };
 
       if (primitive.indices !== undefined) {
+        console.log("Procesando índices");
         const {accessor, buffer} = getAccessorAndWebGLBuffer(gl, gltf, primitive.indices);
         bufferInfo.numElements = accessor.count;
         bufferInfo.indices = buffer;
@@ -462,32 +470,38 @@ async function loadGLTF(url, gl) {
 
       primitive.bufferInfo = bufferInfo;
       primitive.material = gltf.materials && gltf.materials[primitive.material] || defaultMaterial;
+      console.log("BufferInfo creado:", bufferInfo);
     });
   });
 
   // Configurar nodos
   const skinNodes = [];
   const origNodes = gltf.nodes;
-  gltf.nodes = gltf.nodes.map((n) => {
+  gltf.nodes = gltf.nodes.map((n, index) => {
     const {name, skin, mesh, translation, rotation, scale} = n;
     const trs = new TRS(translation, rotation, scale);
     const node = new Node(trs, name);
-    const realMesh = gltf.meshes[mesh];
     
-    console.log("Procesando nodo:", name);
-    console.log("Tiene mesh:", mesh !== undefined);
-    console.log("Tiene skin:", skin !== undefined);
+    console.log(`Procesando nodo ${index}:`, name);
+    console.log("Mesh index:", mesh);
+    console.log("Skin index:", skin);
     
-    if (skin !== undefined) {
-      console.log("Añadiendo nodo con skin:", name);
-      skinNodes.push({node, mesh: realMesh, skinNdx: skin});
-      if (realMesh) {
+    if (mesh !== undefined) {
+      const realMesh = gltf.meshes[mesh];
+      console.log("Mesh encontrado:", realMesh);
+      
+      if (skin !== undefined) {
+        console.log("Creando MeshRenderer con skin para:", name);
+        skinNodes.push({node, mesh: realMesh, skinNdx: skin});
         node.drawables.push(new MeshRenderer(realMesh, skinProgramInfo));
+      } else {
+        console.log("Creando MeshRenderer sin skin para:", name);
+        node.drawables.push(new MeshRenderer(realMesh, meshProgramInfo));
       }
-    } else if (realMesh) {
-      console.log("Añadiendo nodo con mesh:", name);
-      node.drawables.push(new MeshRenderer(realMesh, meshProgramInfo));
+      
+      console.log("Drawables creados para el nodo:", node.drawables.length);
     }
+    
     return node;
   });
 

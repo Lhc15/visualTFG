@@ -3,7 +3,8 @@
 
 "use strict";
 
-async function main() {
+export async function main() {
+  console.log('Ejecutando el motor desde engine!!!')
   // Get A WebGL context
   /** @type {HTMLCanvasElement} */
   const canvas = document.querySelector("#canvas");
