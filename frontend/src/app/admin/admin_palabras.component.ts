@@ -137,7 +137,7 @@ import { GltfService } from '../services/gltf.service'; // <-- Importa el servic
       <div class="form-actions mt-3">
         <button 
           class="btn btn-primary"
-          (click)="asignarAnimacionesAPalabra(prefijoSelect.value)"
+          (click)="asignarAnimacionesAPalabra()"
         >
           Guardar animaciones
         </button>
@@ -157,7 +157,9 @@ export class AdminPalabrasComponent implements OnInit {
   //mesajes exito o error
   mensajeExito: string | null = null;
   mensajeError: string | null = null;
-  
+  //animaciones
+  nuevoGltf     = '';   // nombre del archivo .glb/.gltf
+  nuevoClipName = '';   // nombre del clip dentro del modelo
   // Control del modal de palabra
   showModal = false;
   isEditing = false;
@@ -264,7 +266,7 @@ export class AdminPalabrasComponent implements OnInit {
   submitForm() {
     if (this.isEditing) {
         // Editar palabra existente
-        this.palabrasService.editarPalabra(this.palabraId!, this.nuevaPalabra).subscribe({
+            this.palabrasService.editarPalabra(this.palabraId!, this.nuevaPalabra).subscribe({
             next: (data) => {
                 console.log('Palabra actualizada:', data);
                 const index = this.palabras.findIndex(p => p._id === this.palabraId);
@@ -313,10 +315,13 @@ export class AdminPalabrasComponent implements OnInit {
     }
   }
 
-  abrirAnimacionesModal(palabra: any) {
-    this.palabraSeleccionada = palabra;
+  abrirAnimacionesModal(p: any) {            // p === palabra seleccionada
+    this.palabraSeleccionada = p;
+    this.nuevoGltf     = p.gltf     || '';
+    this.nuevoClipName = p.clipName || '';
     this.showAnimacionesModal = true;
   }
+
 
   cerrarAnimacionesModal() {
     this.showAnimacionesModal = false;
@@ -324,44 +329,87 @@ export class AdminPalabrasComponent implements OnInit {
   }
 
   // Cuando el usuario elige un prefijo y confirma:
-  asignarAnimacionesAPalabra(prefijo: string) {
-    if (!this.palabraSeleccionada || !this.agrupaciones[prefijo]) return;
-
-    // Obtenemos los IDs de los GLTF files
-    const animacionesIds = this.agrupaciones[prefijo].map(file => file._id);
-
-    const datosActualizados = {
-      // conservamos la palabra y categoría actual si no quieres sobrescribir
-      palabra: this.palabraSeleccionada.palabra,
-      categoria: this.palabraSeleccionada.categoria?._id || null,
-      // agregamos la propiedad animaciones
-      animaciones: animacionesIds
-    };
-
-    // Llamamos al servicio para actualizar la palabra
-    this.palabrasService.editarPalabra(this.palabraSeleccionada._id, datosActualizados)
-      .subscribe({
-        next: (respuesta) => {
-          console.log('Palabra actualizada con animaciones:', respuesta);
-          // Actualizamos en local
-          const i = this.palabras.findIndex(p => p._id === this.palabraSeleccionada._id);
-          if (i >= 0) {
-            this.palabras[i] = respuesta.palabra; // o la estructura que devuelva
-          }
-          const nombrePalabra = this.palabraSeleccionada?.palabra;
-          this.cerrarAnimacionesModal();
-          
-          this.mensajeExito = `Animaciones asignadas correctamente a "${nombrePalabra}".`;
-          setTimeout(() => this.mensajeExito = null, 3000);
-
-        },
-        error: (err) => {
-          console.error('Error al asignar animaciones:', err);
-          this.mensajeError = 'Ocurrió un error al asignar las animaciones.';
-          setTimeout(() => this.mensajeError = null, 3000);
-        }
-      });
+  // Cuando el usuario elige un prefijo y confirma:
+asignarAnimacionesAPalabra() {
+  if (!this.palabraSeleccionada) { 
+    this.mensajeError = 'No hay palabra seleccionada';
+    setTimeout(() => this.mensajeError = null, 3000);
+    return; 
   }
+
+  // Obtener el prefijo seleccionado usando ViewChild o querySelector
+  const selectElement = document.querySelector('#prefijoSelect') as HTMLSelectElement;
+  if (!selectElement) {
+    console.error('No se encontró el elemento select de prefijos');
+    this.mensajeError = 'Error interno: No se encontró el selector de prefijos';
+    setTimeout(() => this.mensajeError = null, 3000);
+    return;
+  }
+  
+  const prefijoSeleccionado = selectElement.value;
+  console.log('Prefijo seleccionado:', prefijoSeleccionado);
+  
+  // Verificamos que el prefijo exista y tenga animaciones
+  if (!prefijoSeleccionado) {
+    this.mensajeError = 'Por favor selecciona un prefijo';
+    setTimeout(() => this.mensajeError = null, 3000);
+    return;
+  }
+  
+  // Crear el nombre del archivo GLTF basado en el prefijo
+  const nombreArchivo = `${prefijoSeleccionado}.gltf`;
+  
+  // Datos a enviar - IMPORTANTE: solo enviamos los campos que queremos actualizar
+  const datos = {
+    gltf: nombreArchivo,
+    clipName: prefijoSeleccionado
+  };
+  
+  console.log('ID de la palabra a actualizar:', this.palabraSeleccionada._id);
+  console.log('Datos que se enviarán al servidor:', datos);
+
+  // Verificar que el ID sea válido
+  if (!this.palabraSeleccionada._id || this.palabraSeleccionada._id.trim() === '') {
+    this.mensajeError = 'ID de palabra no válido';
+    setTimeout(() => this.mensajeError = null, 3000);
+    return;
+  }
+
+  this.palabrasService.asignarAnimacion(this.palabraSeleccionada._id, datos)
+    .subscribe({
+      next: resp => {
+        console.log('Respuesta del servidor:', JSON.stringify(resp, null, 2));
+        // actualiza la lista local
+        const i = this.palabras.findIndex(p => p._id === this.palabraSeleccionada._id);
+        if (i >= 0) { 
+          this.palabras[i] = resp.palabra; 
+        }
+        this.mensajeExito = 'Animación asignada correctamente';
+        setTimeout(() => this.mensajeExito = null, 3000);
+        this.cerrarAnimacionesModal();
+      },
+      error: err => {
+        console.error('Error al guardar la animación:', err);
+        
+        // Extraer mensaje de error detallado
+        let mensajeError = 'Error desconocido';
+        if (err.error) {
+          if (err.error.msg) {
+            mensajeError = err.error.msg;
+          } else if (err.error.errores) {
+            // Si hay errores de validación específicos
+            const erroresClaves = Object.keys(err.error.errores);
+            if (erroresClaves.length > 0) {
+              mensajeError = `Error en: ${erroresClaves.join(', ')}`;
+            }
+          }
+        }
+        
+        this.mensajeError = `Error al guardar la animación: ${mensajeError}`;
+        setTimeout(() => this.mensajeError = null, 3000);
+      }
+    });
+}
 
 
 }

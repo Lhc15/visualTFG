@@ -5,8 +5,8 @@ import {
   ViewChild,
   Input,
   OnDestroy,
-  Output,            // <--- AÑADIDO
-  EventEmitter       // <--- AÑADIDO
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import * as THREE from 'three';
@@ -16,6 +16,13 @@ import { AnimacionService, AnimationData } from '../services/animacion.service';
 import { GltfService } from '../services/gltf.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+
+// Definir la interfaz para el API del motor de skin
+interface SkinEngineApi {
+  play(name: string, loop: boolean): void;
+  stop(): void;
+  clips: string[];
+}
 
 @Component({
   selector: 'app-canvas',
@@ -31,8 +38,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   @Input() animationUrls: string[] = [];
   @Input() showResetButton: boolean = false;
 
-  // NUEVO: emisor para avisar de que la animación ha terminado (una sola vez)
-  @Output() animationEnded = new EventEmitter<void>();  // <--- AÑADIDO
+  // Emisor para avisar de que la animación ha terminado (una sola vez)
+  @Output() animationEnded = new EventEmitter<void>();
 
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
@@ -40,8 +47,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private controls!: OrbitControls;
   private loader: GLTFLoader = new GLTFLoader();
   private isMainActive: boolean = false;
-
-  
 
   /** Array de grupos (poses) para la animación secuencial */
   private poses: THREE.Group[] = [];
@@ -55,6 +60,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   /** Suscripción a los datos de animación (animaciones + loop) */
   private animacionSubscription: Subscription;
 
+  // Definimos correctamente las propiedades relacionadas con el motor de skin
+  private engineApi: SkinEngineApi | null = null;
+  private skinIsRunning: boolean = false;
+
   constructor(
     private animacionService: AnimacionService,
     private gltfService: GltfService
@@ -65,7 +74,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         // data.animaciones => array de URLs
         // data.loop => true (repetir) / false (una sola vez)
         
-        if (data.animaciones.length > 0&&!this.isMainActive) {
+        if (data.animaciones.length > 0) {
           const permitido = this.animacionService.permitirReproduccion();
           console.log('Recibida petición de animación:', data, '¿permitido?', permitido);
 
@@ -88,18 +97,22 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     );
   }
 
-   ngOnDestroy() {
+  ngOnDestroy() {
     this.animacionSubscription.unsubscribe();
-    this.stopSkin?.();
+    // Detenemos el motor de skin si está activo
+    if (this.engineApi) {
+      this.engineApi.stop();
+    }
   }
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
+    await this.initSkinEngine('/assets/hola_0.gltf');
     this.initScene();
     this.initCamera();
     this.initThreeRenderer();
     this.addLights();
     this.addControls();
-    this.loadDefaultPose(); // Pose inicial
+    //this.loadDefaultPose(); // Pose inicial
     this.animate();
     this.handleResize();
   }
@@ -118,7 +131,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.camera.lookAt(0, 0, 0);
   }
 
-   private initThreeRenderer() {
+  private initThreeRenderer() {
     this.renderer = new THREE.WebGLRenderer({ canvas: this.threeCanvas.nativeElement, alpha: true });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -183,8 +196,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private reproducirAnimacionSecuencial(loop: boolean): void {
-    // Detener cualquier animación previa
-    if (this.isMainActive) return;
     // Just in case, paramos algo previo
     this.stopLoop(false);
     
@@ -229,21 +240,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           this.poseInterval = null;
           console.log('Animación completada (una sola vez).');
 
-          // NUEVO: Emitir evento de final de animación
-          this.animationEnded.emit();  // <--- AÑADIDO
+          // Emitir evento de final de animación
+          this.animationEnded.emit();
         }
       }
     }, 120);
   }
   
-  
-
   /**
    * Detener la animación secuencial actual.
    * @param revertToDefault Si es true, limpiamos y recargamos la pose inicial.
    */
   public stopLoop(revertToDefault: boolean): void {
-    if (this.isMainActive) return;
     // 1) Parar el intervalo
     if (this.poseInterval) {
       clearInterval(this.poseInterval);
@@ -264,42 +272,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   /** Cargar la pose inicial o "modelo por defecto". */
   private loadDefaultPose(force = false): void {
     if (this.isMainActive) return;
-    // Si no forzamos y hay animaciones, no cargamos la pose
-    if (!force && this.animacionService.hayAnimacionesActivas()) {
-      return;
-    }
-    console.log('Cargando pose inicial (modelo por defecto)...');
+    // si no forzamos y hay animaciones, no hacemos nada
+    if (!force && this.animacionService.hayAnimacionesActivas()) return;
 
-    this.gltfService.getDefaultModel().subscribe({
-      next: (blob: Blob) => {
-        const url = URL.createObjectURL(blob);
-        this.loader.load(
-          url,
-          (gltf) => {
-            this.avatar = gltf.scene;
-            // Centrar
-            const box = new THREE.Box3().setFromObject(this.avatar);
-            const center = box.getCenter(new THREE.Vector3());
-            this.avatar.position.sub(center);
-
-            this.avatar.scale.set(1.5, 1.5, 1.5);
-            this.avatar.position.y -= 1.2;
-            this.scene.add(this.avatar);
-
-            URL.revokeObjectURL(url);
-            console.log('Pose inicial lista');
-          },
-          undefined,
-          (err) => {
-            console.error('Error cargando pose inicial:', err);
-            URL.revokeObjectURL(url);
-          }
-        );
-      },
-      error: (err) => {
-        console.error('Error obteniendo modelo por defecto:', err);
-      },
-    });
+    console.log('Cargando pose inicial (hola_0.gltf)…');
+    // simplemente recargamos el mismo GLTF
+    this.loadSkinModel('/assets/hola_0.gltf');
   }
 
   // --------------------------------------------------
@@ -319,7 +297,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private animate() {
     const loop = () => {
       // sólo render Three.js si el skinEngine NO está activo
-      if (!this.skinRunning) {
+      if (!this.skinIsRunning) {
         this.controls.update();
         this.renderer.render(this.scene, this.camera);
       }
@@ -351,30 +329,105 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.controls.update();
   }
 
-  private stopSkin?: () => void;
+  /**
+   * Obtiene si el motor de skin está corriendo actualmente
+   */
   public get skinRunning(): boolean {
-    return !!this.stopSkin;
+    return this.skinIsRunning;
   }
-   async toggleSkin() {
-      if (this.stopSkin) {
-        this.stopSkin();
-        this.stopSkin = undefined;
-        this.skinCanvas.nativeElement.style.display = 'none';
-        return;
-      }
-      // arrancamos el skin engine
-      const { startSkinEngine } = await import('engine/skinEngine.js');
-      this.stopSkin = await startSkinEngine(
-      this.skinCanvas.nativeElement,
-        'assets/malanimation.gltf',
-        () => ({
-          // envolvemos el array de números en un Float32Array
-          projectionMatrix: new Float32Array(this.camera.projectionMatrix.elements),
-          viewMatrix:       new Float32Array(this.camera.matrixWorldInverse.elements)
-        })
-      );
-      this.skinCanvas.nativeElement.style.display = 'block';
-    }
 
+  /**
+   * Inicializa el motor de skin
+   */
+  private async initSkinEngine(url = '/assets/hola_0.gltf') {
+    try {
+      const { startSkinEngine } = await import('engine/skinEngine.js');
+      
+      console.log('Iniciando skin engine con URL:', url);
+      
+      this.engineApi = await startSkinEngine(
+        this.skinCanvas.nativeElement,
+        url,
+        () => ({
+          projectionMatrix: new Float32Array(this.camera.projectionMatrix.elements),
+          viewMatrix: new Float32Array(this.camera.matrixWorldInverse.elements),
+        }),
+      ) as unknown as SkinEngineApi;
+
+      // Si hay alguna animación disponible, podríamos reproducirla
+      if (this.engineApi.clips.length > 0) {
+        console.log('Clips disponibles:', this.engineApi.clips);
+        // Si quieres reproducir algún clip específico como idle
+        // this.engineApi.play(this.engineApi.clips[0], true);
+      }
+
+      this.skinIsRunning = true;
+      this.skinCanvas.nativeElement.style.display = 'block';
+      
+      return this.engineApi;
+    } catch (error) {
+      console.error('Error al iniciar el skin engine:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Alterna entre mostrar/ocultar el skin
+   */
+  async toggleSkin() {
+    if (this.skinIsRunning) {
+      // Estaba activo, lo detenemos
+      this.engineApi?.stop();
+      this.skinIsRunning = false;
+      this.skinCanvas.nativeElement.style.display = 'none';
+    } else {
+      // Estaba inactivo, lo iniciamos
+      await this.initSkinEngine();
+    }
+  }
+
+  public currentModel: string | null = null;
+
+  async loadSkinModel(url: string) {
+    console.log(`Intentando cargar modelo: ${url}`);
+    
+    if (this.currentModel === url) { 
+      console.log('El modelo ya está cargado, no es necesario recargar');
+      return; 
+    }
+    
+    try {
+      // Detenemos el motor si está activo
+      if (this.engineApi) {
+        console.log('Deteniendo motor de skin existente');
+        this.engineApi.stop();
+      }
+      
+      // Iniciamos el motor con el nuevo URL
+      console.log(`Iniciando motor de skin con URL: ${url}`);
+      await this.initSkinEngine(url);
+      this.currentModel = url;
+      console.log('Modelo cargado exitosamente');
+    } catch (error) {
+      console.error(`Error al cargar el modelo ${url}:`, error);
+      // Si falla cargar el modelo específico, intentamos con uno predeterminado
+      if (url !== '/assets/hola_0.gltf') {
+        console.log('Intentando cargar el modelo predeterminado como fallback');
+        await this.loadSkinModel('/assets/hola_0.gltf');
+      }
+    }
+  }
+
+  public playClip(clip: string, loop = false) {
+    this.engineApi?.play(clip, loop);
+  }
+
+  public stopClip() {
+    this.engineApi?.stop();
+  }
+
+  public get availableClips(): string[] {
+    return this.engineApi?.clips ?? [];
+  }
 
 }

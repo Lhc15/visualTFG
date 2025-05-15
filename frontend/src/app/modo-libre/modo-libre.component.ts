@@ -30,7 +30,7 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   selectedCategory: any = null;
   palabrasDeCategoriaSeleccionada: any[] = [];
 
-  currentAnimationUrls: string[] = [];
+  //currentAnimationUrls: string[] = [];
   numeroPalabrasResumen = 2;
 
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
@@ -50,6 +50,8 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   // Controla si está en loop
   isLooping = false;
   currentCategorySessionId: string|null = null;
+
+  public isPlaying = false;
 
 
   constructor(
@@ -166,59 +168,59 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
       this.isLooping = true;
       this.reproducirAnimacion(true);
     } else {
-      this.isLooping = false;
-      if (this.canvasRef) {
-        this.canvasRef.stopLoop(true);
+        // desactivas bucle → PARAR SkinEngine
+        this.isLooping = false;
+        //  ↓ En lugar de stopLoop(), llamamos a stopClip()
+        this.canvasRef.stopClip();
+        // opcional: si también ligas isPlaying con ngModel
+        this.isPlaying = false;
       }
-    }
   }
 
-  private reproducirAnimacion(loop: boolean) {
-    if (!this.selectedWord) return;
+  // Modified version of the reproducirAnimacion function in modo-libre.component.ts
+  private async reproducirAnimacion(loop: boolean) {
+    if (!this.selectedWord?.gltf) return;
 
-    this.statsService.recordWordEntry(this.selectedWord._id)
-    .subscribe({
-      next: () => console.log('Palabra registrada en stats'),
-      error: e => console.error('Error al registrar palabra', e)
-    });
+    // Get the URL for the GLTF model
+    const url = `${environment.apiUrl}/gltf/animaciones/${this.selectedWord.gltf}`;
 
+    try {
+      // 1) Clear any previous animations and load the skinned model
+      await this.canvasRef.stopLoop(true); // Stop any existing animations and reset pose
+      await this.canvasRef.loadSkinModel(url);
+      
+      // Allow a short delay for the model to properly initialize
+      await new Promise(r => setTimeout(r, 100));
 
-    if (this.selectedWord.animaciones?.length > 0) {
-      const animacionesUrls = this.selectedWord.animaciones.map((anim: any) =>
-        `${environment.apiUrl}/gltf/animaciones/${anim.filename}`
-      );
-
-      // Llamamos a animacionService con loop
-      this.animacionService.cargarAnimaciones(animacionesUrls, true, loop);
-
-      // ----------------------------------------------------
-      // Si NO es loop, deseleccionamos "play" al terminar
-      // (Asumiendo que tu CanvasComponent o animacionService
-      //  tengan alguna forma de avisar cuando la animación
-      //  acaba, por ejemplo "canvasRef.animationEnded.subscribe"
-      //  o un callback. Ajusta a tu caso real.)
-      // ----------------------------------------------------
-      if (!loop && this.canvasRef && this.canvasRef.animationEnded) {
-        this.canvasRef.animationEnded.subscribe(() => {
-          const playRadio = document.getElementById('play') as HTMLInputElement;
-          if (playRadio) {
-            playRadio.checked = false;
-          }
+      // 2) Find and play the appropriate animation clip
+      const clips = this.canvasRef.availableClips;
+      
+      if (clips && clips.length > 0) {
+        // Use specified clip name or default to first available clip
+        const clipName = this.selectedWord.clipName && clips.includes(this.selectedWord.clipName)
+                      ? this.selectedWord.clipName
+                      : clips[0];
+        
+        console.log(`Playing animation clip: ${clipName}, loop: ${loop}`);
+        this.isPlaying = true;
+        this.canvasRef.playClip(clipName, loop);
+        
+        // Register that the word was explored
+        this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id).subscribe({
+          next: (resp) => {
+            console.log('Palabra explorada. totalExploradas:', resp.totalExploradas);
+            this.exploredWordsService.setExploredCount(resp.totalExploradas);
+          },
+          error: (err) => console.error('Error al marcar explorada:', err)
         });
+      } else {
+        console.error('No animation clips available in the loaded model');
       }
-
-      // Registrar exploración
-      this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id).subscribe({
-        next: (resp) => {
-          console.log('Palabra explorada. totalExploradas:', resp.totalExploradas);
-          this.exploredWordsService.setExploredCount(resp.totalExploradas);
-        },
-        error: (err) => console.error('Error al marcar explorada:', err)
-      });
-    } else {
-      console.warn('No hay animaciones en la palabra seleccionada');
+    } catch (error) {
+      console.error('Error playing animation:', error);
     }
-  }
+    this.isPlaying = false;
+  } 
 
   private cambiarVelocidad() {
     console.log('Cambiar velocidad (demo)');

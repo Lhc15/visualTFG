@@ -38,7 +38,7 @@ const subirArchivosGltf = async (req, res) => {
 
             // Crear un flujo de subida a GridFS con el nombre original del archivo
             const uploadStream = bucket.openUploadStream(file.originalname, {
-                contentType: 'model/gltf+json',
+                contentType: 'model/gltf-binary',
             });
 
             // Conectar el archivo del sistema al uploadStream de GridFS
@@ -87,7 +87,9 @@ const descargarArchivoGltf = async (req, res) => {
         }
 
         // Configurar encabezados de respuesta para indicar que se trata de un GLTF
-        res.set('Content-Type', 'model/gltf+json');
+        //res.set('Content-Type', 'model/gltf+json');
+        res.set('Content-Type', 'model/gltf-binary');
+
         res.set('Cache-Control', 'public, max-age=31536000');
 
         // Iniciar la descarga

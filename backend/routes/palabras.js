@@ -12,7 +12,8 @@ const {
     borrarPalabra,
     asociarCategoria,
     obtenerPalabrasPorCategoria,
-    obtenerPalabrasPorNivel
+    obtenerPalabrasPorNivel,
+    editarAnimacion
 } = require('../controllers/palabras');
 const { check } = require('express-validator');
 const { validarCampos } = require('../middleware/validar-campos');
@@ -53,6 +54,14 @@ router.patch('/:id/categoria', [
     check('categoria', 'La categoría no puede estar vacía').optional().isString(),
     validarCampos,
 ], asociarCategoria);
+
+router.patch('/:id/animacion', [
+   validarJWT,
+   tieneRol('ROL_ADMIN'),
+    check('gltf').optional().isString(),
+    check('clipName').optional().isString(),
+  validarCampos
+], editarPalabra);
 
 module.exports = router;
 

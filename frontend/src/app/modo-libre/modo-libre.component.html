@@ -13,7 +13,7 @@
         <div class="selected-word-container" *ngIf="showWebcam && selectedWord">
           {{ selectedWord.palabra }}
         </div>
-        <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
+        <app-canvas></app-canvas>
         <!-- Menú de herramientas (ahora en el lado izquierdo) -->
         <!-- tools-menu -->
 
@@ -25,7 +25,13 @@
         >
           <!-- Play -->
           <label class="label label-play">
-            <input type="radio" id="play" name="value-radio" value="play" />
+            <input
+              type="radio"
+              id="play"
+              name="value-radio"
+              value="play"
+              [(ngModel)]="isPlaying"
+            />
             <svg
               class="icon"
               xmlns="http://www.w3.org/2000/svg"
