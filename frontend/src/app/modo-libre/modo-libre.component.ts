@@ -147,31 +147,7 @@ onRadioChange(event: Event) {
     return;
   }
 
-  // 👉 Si clican en "veloc" y ya era el seleccionado => toggle OFF
-  if (value === 'veloc' && this.lastSelectedRadio === 'veloc') {
-    this.velocSliderVisible = false;
-    this.selectedTool = null;
-    input.checked = false; // desmarca el botón
-    this.lastSelectedRadio = null;
-    return;
-  }
-
-  // 👉 Si clican en "webcam" => cerrar barra
-  if (value === 'webcam') {
-    this.selectedTool = 'webcam';
-    this.velocSliderVisible = false;
-    this.lastSelectedRadio = 'webcam';
-    return;
-  }
-
-  // 👉 Si clican en "veloc" por primera vez => abrir
-  if (value === 'veloc') {
-    this.velocSliderVisible = true;
-    this.selectedTool = 'veloc';
-    this.lastSelectedRadio = 'veloc';
-    return;
-  }
-
+ 
   // 👉 Otros botones
   this.selectedTool = value;
   this.lastSelectedRadio = value;
@@ -181,6 +157,23 @@ onRadioChange(event: Event) {
   }
 }
 
+onToggleVeloc(event: Event) {
+  const checked = (event.target as HTMLInputElement).checked;
+
+  if (!this.selectedWord) {
+    alert('Primero selecciona una palabra.');
+    (event.target as HTMLInputElement).checked = false;
+    return;
+  }
+
+  this.velocSliderVisible = checked;
+
+  if (checked) {
+    this.selectedTool = 'veloc';
+  } else {
+    this.selectedTool = null;
+  }
+}
 
 
 
