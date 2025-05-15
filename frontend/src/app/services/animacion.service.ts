@@ -75,6 +75,7 @@ export class AnimacionService {
       console.log('Ignorando carga de animaciones - no es manual');
     }
   }
+  
 
   /**
    * Limpiar las animaciones y marcar que cambiamos de página
@@ -122,4 +123,5 @@ export class AnimacionService {
     });
     return permitir;
   }
+  
 }

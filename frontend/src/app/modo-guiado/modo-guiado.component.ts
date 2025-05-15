@@ -272,6 +272,27 @@ if (loopCheckbox) loopCheckbox.checked = false;
         });
     }
   }
+//velocidad
+  velocSliderVisible: boolean = false;
+currentPlaybackRate: number = 1;
+onToggleVeloc(event: Event) {
+  const checked = (event.target as HTMLInputElement).checked;
+
+  if (!this.words[this.currentIndex]) {
+    alert('Primero asegúrate de tener una palabra cargada.');
+    (event.target as HTMLInputElement).checked = false;
+    return;
+  }
+
+  this.velocSliderVisible = checked;
+}
+
+setPlaybackRate(rate: number) {
+  this.currentPlaybackRate = rate;
+  if (this.canvasRef) {
+    this.canvasRef.setPlaybackRate(rate);
+  }
+}
 
   // 8. Navegar a la siguiente palabra
   nextWord() {
