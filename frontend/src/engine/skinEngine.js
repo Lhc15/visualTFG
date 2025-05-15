@@ -249,25 +249,23 @@ export async function startSkinEngine(
     }
 
     play(name, loop = false) {
-      // Find the requested clip by name, or use the first one if not found
-      this.current = this.clips.find(c => c.name === name);
-      
-      if (!this.current && this.clips.length > 0) {
-        console.warn(`Clip "${name}" not found, using first available clip instead.`);
-        this.current = this.clips[0];
-      }
-      
-      if (!this.current) {
-        console.error("No animation clips available to play");
-        return;
-      }
-      
-      console.log(`Playing clip: ${this.current.name}, duration: ${this.current.duration}s, loop: ${loop}`);
-      
-      this.time = 0;
-      this.loop = loop;
-      this.playing = true;
-      this.lastUpdateTime = performance.now() * 0.001; // Convert to seconds
+      // 1) Elegir clip
+      this.current = this.clips.find(c => c.name === name) || this.clips[0];
+      if (!this.current) { console.error('No hay clips'); return; }
+
+      // 2) Parámetros básicos
+      this.loop     = loop;
+      this.playing  = true;
+
+      /*-------------------------------------------------------------
+      * 3)   << El cambio importante >>
+      *     – arrancamos justo DESPUÉS del frame-0 (T-pose)
+      *     – aplicamos un update(0) para que la pose se fijé ya
+      *------------------------------------------------------------*/
+      this.time            = 0.0001;            // ó directamente 0.04 si sabes que
+                                                // tu primer keyframe útil está a 0.04 s
+      this.lastUpdateTime  = performance.now() * 0.001;
+      this.update(0);                           // fuerza la pose del instante actual
     }
 
     stop() {

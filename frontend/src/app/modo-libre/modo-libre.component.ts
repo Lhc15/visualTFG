@@ -181,46 +181,31 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   private async reproducirAnimacion(loop: boolean) {
     if (!this.selectedWord?.gltf) return;
 
-    // Get the URL for the GLTF model
     const url = `${environment.apiUrl}/gltf/animaciones/${this.selectedWord.gltf}`;
 
-    try {
-      // 1) Clear any previous animations and load the skinned model
-      await this.canvasRef.stopLoop(true); // Stop any existing animations and reset pose
-      await this.canvasRef.loadSkinModel(url);
-      
-      // Allow a short delay for the model to properly initialize
-      await new Promise(r => setTimeout(r, 100));
+    /* 1 ▸ Detenemos solo el clip que estuviera sonando */
+    this.canvasRef.stopClip();
 
-      // 2) Find and play the appropriate animation clip
-      const clips = this.canvasRef.availableClips;
-      
-      if (clips && clips.length > 0) {
-        // Use specified clip name or default to first available clip
-        const clipName = this.selectedWord.clipName && clips.includes(this.selectedWord.clipName)
-                      ? this.selectedWord.clipName
-                      : clips[0];
-        
-        console.log(`Playing animation clip: ${clipName}, loop: ${loop}`);
-        this.isPlaying = true;
-        this.canvasRef.playClip(clipName, loop);
-        
-        // Register that the word was explored
-        this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id).subscribe({
-          next: (resp) => {
-            console.log('Palabra explorada. totalExploradas:', resp.totalExploradas);
-            this.exploredWordsService.setExploredCount(resp.totalExploradas);
-          },
-          error: (err) => console.error('Error al marcar explorada:', err)
-        });
-      } else {
-        console.error('No animation clips available in the loaded model');
-      }
-    } catch (error) {
-      console.error('Error playing animation:', error);
+    /* 2 ▸ Si el modelo cambia, lo cargamos; si es el mismo, lo dejamos */
+    if (this.canvasRef.currentModel !== url) {
+      await this.canvasRef.loadSkinModel(url);
     }
-    this.isPlaying = false;
-  } 
+
+    /* 3 ▸ Elegimos clip y lo lanzamos */
+    const clips = this.canvasRef.availableClips;
+    if (!clips.length) { console.error('Sin clips'); return; }
+
+    const clipName = this.selectedWord.clipName && clips.includes(this.selectedWord.clipName)
+                  ? this.selectedWord.clipName
+                  : clips[0];
+
+    this.canvasRef.playClip(clipName, loop);
+    this.isPlaying = true;
+
+    /* (Opcional) registrar palabra explorada ─ lo que ya tenías */
+    this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id)
+        .subscribe({ next: resp => this.exploredWordsService.setExploredCount(resp.totalExploradas) });
+  }
 
   private cambiarVelocidad() {
     console.log('Cambiar velocidad (demo)');
