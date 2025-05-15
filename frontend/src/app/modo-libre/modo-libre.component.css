@@ -416,6 +416,7 @@ button:active,
   align-items: stretch;
   overflow-y: auto;
   box-sizing: border-box;
+  z-index:1;
 }
 
 /* VISTA 1 DE CATEGORÍAS */
@@ -617,7 +618,7 @@ button:active,
   padding: 10px;
   border-radius: 10px 0px 0px 10px;
   background-color: black;
-  z-index: 9999;
+  z-index: 10001;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -791,7 +792,7 @@ button:active,
 }
 .icon-webcam {
   display: block;
-  width: 40px;
+  width: 40px; 
   height: auto;
   margin: 0 auto;
   transition: filter 0.2s;
@@ -800,3 +801,40 @@ button:active,
   filter: drop-shadow(0 0 5px #cae2fd);
 }
 
+.veloc-slider-fixed {
+  position: fixed;
+  top: calc(100%); /* un poco más abajo del botón VELOC */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  background-color: #222;
+  padding: 8px;
+  border-radius: 10px;
+  z-index: 9999 !important;
+}
+
+
+
+.veloc-slider-fixed button {
+  background-color: #444;
+  color: white;
+  font-family: 'Lexend', sans-serif;
+  border: 2px solid black;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.veloc-slider-fixed button:hover {
+  background-color: #666;
+}
+
+.veloc-slider-fixed button.active {
+  background-color: #41b8d5;
+  color: black;
+  font-weight: bold;
+}

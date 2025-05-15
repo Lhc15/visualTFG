@@ -51,6 +51,12 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   isLooping = false;
   currentCategorySessionId: string|null = null;
 
+  selectedTool: string | null = null;
+velocSliderVisible: boolean = false;
+currentPlaybackRate: number = 1;
+lastSelectedRadio: string | null = null;
+
+
 
   constructor(
     private router: Router,
@@ -131,26 +137,53 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   // **************************************
   // RADIOS: Play / Webcam / Veloc
   // **************************************
-  onRadioChange(event: Event) {
-    const valor = (event.target as HTMLInputElement).value;
+onRadioChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const value = input.value;
 
-    // Si no hay palabra seleccionada, solo permitimos la webcam
-    if (!this.selectedWord && valor !== 'webcam') {
-      alert('Primero selecciona una palabra.');
-      return;
-    }
-
-    switch (valor) {
-      case 'play':
-        // Reproducir 1 sola vez
-        this.reproducirAnimacion(false);
-        break;
-      
-      case 'veloc':
-        this.cambiarVelocidad();
-        break;
-    }
+  if (!this.selectedWord && value !== 'webcam') {
+    alert('Primero selecciona una palabra.');
+    input.checked = false;
+    return;
   }
+
+  // 👉 Si clican en "veloc" y ya era el seleccionado => toggle OFF
+  if (value === 'veloc' && this.lastSelectedRadio === 'veloc') {
+    this.velocSliderVisible = false;
+    this.selectedTool = null;
+    input.checked = false; // desmarca el botón
+    this.lastSelectedRadio = null;
+    return;
+  }
+
+  // 👉 Si clican en "webcam" => cerrar barra
+  if (value === 'webcam') {
+    this.selectedTool = 'webcam';
+    this.velocSliderVisible = false;
+    this.lastSelectedRadio = 'webcam';
+    return;
+  }
+
+  // 👉 Si clican en "veloc" por primera vez => abrir
+  if (value === 'veloc') {
+    this.velocSliderVisible = true;
+    this.selectedTool = 'veloc';
+    this.lastSelectedRadio = 'veloc';
+    return;
+  }
+
+  // 👉 Otros botones
+  this.selectedTool = value;
+  this.lastSelectedRadio = value;
+
+  if (value === 'play') {
+    this.reproducirAnimacion(false);
+  }
+}
+
+
+
+
 
   // **************************************
   // Toggle loop/play-bucle
@@ -223,6 +256,16 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   private cambiarVelocidad() {
     console.log('Cambiar velocidad (demo)');
   }
+
+  //velocidad
+  setPlaybackRate(rate: number) {
+  this.currentPlaybackRate = rate;
+  if (this.canvasRef) {
+    this.canvasRef.setPlaybackRate(rate);
+  }
+}
+
+
 
   // **************************************
   // WEBCAM => se puede usar a la vez

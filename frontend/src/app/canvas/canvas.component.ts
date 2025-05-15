@@ -5,8 +5,8 @@ import {
   ViewChild,
   Input,
   OnDestroy,
-  Output,            // <--- AÑADIDO
-  EventEmitter       // <--- AÑADIDO
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import * as THREE from 'three';
@@ -30,8 +30,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   @Input() animationUrls: string[] = [];
   @Input() showResetButton: boolean = false;
 
-  // NUEVO: emisor para avisar de que la animación ha terminado (una sola vez)
-  @Output() animationEnded = new EventEmitter<void>();  // <--- AÑADIDO
+  @Output() animationEnded = new EventEmitter<void>();
 
   private renderer!: THREE.WebGLRenderer;
   private scene!: THREE.Scene;
@@ -39,23 +38,18 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private controls!: OrbitControls;
   private loader: GLTFLoader = new GLTFLoader();
 
-  /** Array de grupos (poses) para la animación secuencial */
   private poses: THREE.Group[] = [];
-
-  /** Avatar actual en la escena */
   private avatar!: THREE.Group | undefined;
-
-  /** Intervalo para reproducir poses secuencialmente */
   private poseInterval: any = null;
-
-  /** Suscripción a los datos de animación (animaciones + loop) */
   private animacionSubscription: Subscription;
+
+  // 👇 NUEVO: Propiedad para controlar la velocidad
+  private playbackRate: number = 1;
 
   constructor(
     private animacionService: AnimacionService,
     private gltfService: GltfService
   ) {
-    // Nos suscribimos al BehaviorSubject que emite { animaciones, loop }
     this.animacionSubscription = this.animacionService.animaciones$.subscribe(
       (data: AnimationData) => {
         if (data.animaciones.length > 0) {
@@ -63,7 +57,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           console.log('Recibida petición de animación:', data, '¿permitido?', permitido);
 
           if (permitido) {
-            // Pequeño retraso opcional
             setTimeout(() => {
               if (this.animacionService.permitirReproduccion()) {
                 this.cargarAnimacionesDinamicas(data.animaciones, data.loop);
@@ -74,7 +67,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
             this.limpiarCanvas();
           }
         } else {
-          // Sin animaciones => limpiar
           this.limpiarCanvas();
         }
       }
@@ -85,7 +77,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     if (this.animacionSubscription) {
       this.animacionSubscription.unsubscribe();
     }
-    // Al destruir el canvas, paramos si hay algo en marcha
     this.stopLoop(false);
   }
 
@@ -95,14 +86,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.initRenderer();
     this.addLights();
     this.addControls();
-    this.loadDefaultPose(); // Pose inicial
+    this.loadDefaultPose();
     this.animate();
     this.handleResize();
   }
 
-  // --------------------------------------------------
-  // INICIALIZAR ESCENA, CÁMARA, LUCES, CONTROLES
-  // --------------------------------------------------
   private initScene(): void {
     this.scene = new THREE.Scene();
   }
@@ -110,7 +98,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private initCamera(): void {
     const aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
-    // Ajusta posición
     this.camera.position.set(0, 0, 5.8);
     this.camera.lookAt(0, 0, 0);
     this.scene.add(this.camera);
@@ -121,7 +108,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.renderer = new THREE.WebGLRenderer({ canvas });
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    // Fondo transparente
     this.renderer.setClearColor(0x000000, 0);
   }
 
@@ -145,11 +131,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.controls.update();
   }
 
-  // --------------------------------------------------
-  // CARGA DE ANIMACIONES (POSIBLES POSES) Y REPRODUCCIÓN
-  // --------------------------------------------------
   private cargarAnimacionesDinamicas(animaciones: string[], loop: boolean): void {
-    // 1) Detenemos animación previa, pero sin recargar la pose
     this.stopLoop(false);
 
     if (!this.animacionService.permitirReproduccion()) {
@@ -158,7 +140,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
 
     this.poses = [];
-    
+
     const promises = animaciones.map((url) => {
       return new Promise<THREE.Group>((resolve, reject) => {
         this.loader.load(
@@ -180,63 +162,45 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   private reproducirAnimacionSecuencial(loop: boolean): void {
-    // Detener cualquier animación previa
     this.stopLoop(false);
-    
+
     let index = 0;
+
+    const intervalMs = 120 / this.playbackRate; // 👈 Aplicar velocidad
+
     this.poseInterval = setInterval(() => {
       const currentPose = this.poses[index];
-    
+
       if (this.avatar) {
         this.avatar!.clear();
         currentPose.children.forEach(child => {
           this.avatar!.add(child.clone());
         });
       } else {
-        // Primera vez: crear el avatar
         this.avatar = currentPose.clone();
-  
-        // Aplicar transformaciones de forma consistente:
-        // 1. Resetear la posición
         this.avatar.position.set(0, 0, 0);
-  
-        // 2. Calcular el centro y restarlo para centrar el avatar
         const box = new THREE.Box3().setFromObject(this.avatar);
         const center = box.getCenter(new THREE.Vector3());
         this.avatar.position.sub(center);
-  
-        // 3. Aplicar una escala fija
         this.avatar.scale.set(1.5, 1.5, 1.5);
-  
-        // 4. Aplicar un offset vertical fijo (por ejemplo, bajar 1.1 unidades)
         this.avatar.position.y -= 1.2;
-  
-        // Agregar a la escena
         this.scene.add(this.avatar);
       }
-    
+
       index++;
       if (index >= this.poses.length) {
         if (loop) {
-          index = 0; // Repetir desde la primera
+          index = 0;
         } else {
           clearInterval(this.poseInterval);
           this.poseInterval = null;
           console.log('Animación completada (una sola vez).');
-
-          // NUEVO: Emitir evento de final de animación
-          this.animationEnded.emit();  // <--- AÑADIDO
+          this.animationEnded.emit();
         }
       }
-    }, 120);
+    }, intervalMs);
   }
-  
-  
 
-  /**
-   * Detener la animación secuencial actual.
-   * @param revertToDefault Si es true, limpiamos y recargamos la pose inicial.
-   */
   public stopLoop(revertToDefault: boolean): void {
     if (this.poseInterval) {
       clearInterval(this.poseInterval);
@@ -245,17 +209,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     console.log('Animación detenida. revertToDefault:', revertToDefault);
 
     if (revertToDefault) {
-      // Limpiar el canvas (quita avatar) y recargar pose inicial
       this.limpiarCanvas();
       this.loadDefaultPose(true);
     }
   }
 
-  // --------------------------------------------------
-  // POSE INICIAL
-  // --------------------------------------------------
   private loadDefaultPose(force = false): void {
-    // Si no forzamos y hay animaciones, no cargamos la pose
     if (!force && this.animacionService.hayAnimacionesActivas()) {
       return;
     }
@@ -268,15 +227,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           url,
           (gltf) => {
             this.avatar = gltf.scene;
-            // Centrar
             const box = new THREE.Box3().setFromObject(this.avatar);
             const center = box.getCenter(new THREE.Vector3());
             this.avatar.position.sub(center);
-
             this.avatar.scale.set(1.5, 1.5, 1.5);
             this.avatar.position.y -= 1.2;
             this.scene.add(this.avatar);
-
             URL.revokeObjectURL(url);
             console.log('Pose inicial lista');
           },
@@ -293,9 +249,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  // --------------------------------------------------
-  // LIMPIAR Y OTRAS UTILIDADES
-  // --------------------------------------------------
   limpiarCanvas(): void {
     if (this.avatar) {
       this.scene.remove(this.avatar);
@@ -328,10 +281,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   public resetView(): void {
-    // Reposicionar la cámara, si lo deseas
     this.camera.position.set(0, 1.5, 8.5);
     this.camera.lookAt(0, 0, 0);
     this.controls.target.set(0, 0, 0);
     this.controls.update();
+  }
+
+  // 👇 NUEVO MÉTODO para actualizar la velocidad desde fuera
+  setPlaybackRate(rate: number) {
+    this.playbackRate = rate;
+    console.log('Velocidad actualizada a:', rate);
   }
 }
