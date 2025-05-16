@@ -1,0 +1,26 @@
+<div class="radio-input" [class.open]="!disabled">
+  <!-- Play ------------------------------------------------------------->
+  <label class="label label-play">
+    <input  type="radio" name="value-radio" [checked]="isPlaying" (click)="onPlay()"/>
+    <svg class="icon" viewBox="0 0 512 512"><path d="M96 52v408l320-204-320-204z"/></svg>
+  </label>
+
+  <!-- Loop / Stop ------------------------------------------------------>
+  <label class="label label-play2">
+    <input type="checkbox" [checked]="isLooping" (change)="onLoop($event)"/>
+    <img  *ngIf="!isLooping" class="icon-play2" src="assets/play-bucle.svg"/>
+    <svg *ngIf="isLooping" class="icon-stop" viewBox="0 0 512 512"><path d="M64 64h384v384H64z"/></svg>
+  </label>
+
+  <!-- Webcam ----------------------------------------------------------->
+  <label class="label label-webcam">
+    <input type="checkbox" [checked]="showWebcam" (change)="onWebcam($event)"/>
+    <img class="icon-webcam" src="assets/webcam.svg"/>
+  </label>
+
+  <!-- Velocidad -------------------------------------------------------->
+  <label class="label">
+    <input type="radio" name="value-radio" (click)="onVelocidad()"/>
+    <span class="text">Veloc</span>
+  </label>
+</div>

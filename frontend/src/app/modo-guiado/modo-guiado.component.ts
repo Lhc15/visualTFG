@@ -15,6 +15,7 @@ import { environment } from '../../environments/environment';
 import { StatsService } from '../services/stats.service';
 import { ExploredWordsService } from '../services/explored_word.service';
 import { Subscription } from 'rxjs';
+import { ToolMenuComponent } from '../tool-menu/tool-menu.component'; // ruta correcta
 
 import introJs from 'intro.js';
 
@@ -27,6 +28,7 @@ import introJs from 'intro.js';
     // FooterComponent,
     CanvasComponent,
     CardComponent,
+    ToolMenuComponent
   ],
   templateUrl: './modo-guiado.component.html',
   styleUrls: ['./modo-guiado.component.css'],
@@ -61,6 +63,8 @@ export class ModoGuiadoComponent implements OnInit {
   modo: string = 'guiado';
 
   isLoading = false; //Para el estado de carga
+  public isPlaying  = false;
+  public isLooping  = false;
 
   // Cámara
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
@@ -103,6 +107,12 @@ export class ModoGuiadoComponent implements OnInit {
         this.currentIndex = 0;
         this.cargarPalabrasPorNivel(1);
       },
+    });
+  }
+
+  ngAfterViewInit() {
+    this.canvasRef!.animationEnded.subscribe(() => {
+      this.isPlaying = false;
     });
   }
 
@@ -553,55 +563,36 @@ if (loopCheckbox) loopCheckbox.checked = false;
      NUEVAS PROPIEDADES Y MÉTODOS PARA LA BARRA DE HERRAMIENTAS
      ======================================================= */
   // Controla si estamos en loop
-  isLooping = false;
 
   // Controla si el menú de herramientas se abre
   toolMenuOpen = false;
 
-  // onRadioChange = se dispara al hacer clic en play/webcam/veloc
-  onRadioChange(event: Event) {
-    const valor = (event.target as HTMLInputElement).value;
-
-    // Si no hay palabra en la posición actual, solo permitimos la webcam
-    if (!this.words[this.currentIndex] && valor !== 'webcam') {
-      alert('Primero asegúrate de tener una palabra en pantalla.');
-      return;
-    }
-
-    switch (valor) {
-      case 'play':
-        // Reproducir 1 sola vez
-        this.reproducirAnimacion(false);
-        break;
-      
-      case 'veloc':
-        this.cambiarVelocidad();
-        break;
-    }
+  private async playCurrentWord(loop: boolean) {
+    const w = this.words[this.currentIndex];
+    if (!w || !w.gltf) return;
+    const url  = `${environment.apiUrl}/gltf/animaciones/${w.gltf}`;
+    await this.canvasRef?.loadSkinModel(url);
+    this.canvasRef?.playClip(w.clipName, loop);
   }
 
-  // Toggle loop (bucle)
-  onToggleLoop(event: Event) {
-    const checked = (event.target as HTMLInputElement).checked;
-    if (!this.words[this.currentIndex]) {
-      alert('No hay palabra para animar. Selecciona una palabra primero.');
-      (event.target as HTMLInputElement).checked = false;
-      return;
-    }
+  onPlayClicked() {
+    this.isLooping = false;
+    this.isPlaying = true;
+    this.playCurrentWord(false);
+  }
 
+  // handler cuando togglean el bucle
+  handleLoop(checked: boolean) {
+    this.isLooping = checked;
     if (checked) {
-      this.isLooping = true;
-      this.reproducirAnimacion(true);
+      this.isPlaying = false;
+      this.playCurrentWord(true);
     } else {
-      this.isLooping = false;
-      if (this.animacionService) {
-        // Parar la animación (y volver a pose inicial)
-        this.canvasRef?.stopLoop(true);
-      }
+      this.isPlaying = false;
+      this.canvasRef?.stopClip();  // para la animación en bucle
     }
-  }
-
-  
+  }  
+ 
   private _playSub?: Subscription;
 
   async handlePlay(loop = false) {
@@ -664,7 +655,7 @@ if (loopCheckbox) loopCheckbox.checked = false;
       }
     }
 
-  private cambiarVelocidad() {
+  cambiarVelocidad() {
     console.log('[DEBUG] cambiarVelocidad en modo guiado (demo).');
   }
 }

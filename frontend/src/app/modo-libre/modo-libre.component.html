@@ -13,84 +13,22 @@
         <div class="selected-word-container" *ngIf="showWebcam && selectedWord">
           {{ selectedWord.palabra }}
         </div>
-        <app-canvas></app-canvas>
+        <app-canvas
+          (animationEnded)="onAnimationEnded()"
+        ></app-canvas>
         <!-- Menú de herramientas (ahora en el lado izquierdo) -->
         <!-- tools-menu -->
-
-        <!-- NUEVA ESTRUCTURA RADIO-BUTTONS -->
-        <div
-          class="radio-input"
-          [class.open]="toolMenuOpen"
-          (change)="onRadioChange($event)"
-        >
-          <!-- Play -->
-          <label class="label label-play">
-            <input
-              type="radio"
-              id="play"
-              name="value-radio"
-              value="play"
-              [(ngModel)]="isPlaying"
-            />
-            <svg
-              class="icon"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-            >
-              <path d="M96 52v408l320-204-320-204z" />
-            </svg>
-          </label>
-
-          <!-- Radio principal PLAY2, con position: relative -->
-          <!-- Sustituyendo el label-play2 antiguo por un toggle de checkbox -->
-          <label class="label label-play2">
-            <!-- Quitar name="value-radio" porque ya no es un radio group -->
-            <input
-              type="checkbox"
-              id="toggleLoop"
-              (change)="onToggleLoop($event)"
-            />
-
-            <!-- Mostrar icono de “bucle” cuando NO estamos en loop -->
-            <img
-              *ngIf="!isLooping"
-              class="icon-play2"
-              src="assets/play-bucle.svg"
-              alt="Play2"
-            />
-
-            <!-- Mostrar icono STOP cuando SÍ estamos en loop -->
-            <svg
-              *ngIf="isLooping"
-              class="icon-stop"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              width="38"
-              height="38"
-            >
-              <path d="M64 64h384v384H64z" />
-            </svg>
-          </label>
-
-          <!-- Webcam, aquí conservamos la funcionalidad de togglear la cámara -->
-          <!-- Radio para la webcam -->
-          <label class="label label-webcam">
-            <input
-              type="checkbox"
-              id="toggleWebcam"
-              [checked]="showWebcam"
-              (change)="toggleWebcam()"
-            />
-            <img class="icon-webcam" src="assets/webcam.svg" alt="Webcam" />
-          </label>
-          
-
-          <!-- Velocidad (Speed) -->
-          <label class="label">
-            <input type="radio" id="veloc" name="value-radio" value="veloc" />
-            <span class="text">Veloc</span>
-          </label>
-        </div>
+        <app-tool-menu
+          [isPlaying]="isPlaying"
+          [isLooping]="isLooping"
+          [showWebcam]="showWebcam"
+          [disabled]="!selectedWord"
+          (playClicked)="onPlayClicked()"
+          (loopToggled)="handleLoop($event)"
+          (webcamToggled)="toggleWebcam()"
+          (velocidadClicked)="cambiarVelocidad()">
+        </app-tool-menu>
+              
       </div>
 
       <!-- Contenedor de la cámara, se muestra solo cuando showWebcam es true -->

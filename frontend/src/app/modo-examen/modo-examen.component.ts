@@ -12,6 +12,7 @@ import { CanvasComponent } from '../canvas/canvas.component';
 import { FormsModule } from '@angular/forms';
 
 import { environment } from '../../environments/environment';
+import { ToolMenuComponent } from '../tool-menu/tool-menu.component';   // ← import
 
 @Component({
   selector: 'app-modo-examen',
@@ -21,6 +22,7 @@ import { environment } from '../../environments/environment';
     HeaderComponent,
     CanvasComponent,
     FormsModule,
+    ToolMenuComponent
   ],
   templateUrl: './modo-examen.component.html',
   styleUrls: ['./modo-examen.component.css']
@@ -52,7 +54,9 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
 
   selectedTool: string = '';
 
-  isLooping = false;
+  
+  isPlaying = false;       // para reflejar “una sola reproducción”
+  isLooping = false;       // igual que antes
 
   showWebcam: boolean = false;
   // Eliminamos selectedOptionId y usamos optionStatus para almacenar el estado de cada opción:
@@ -84,6 +88,10 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
     this.correctCount = 0;
     this.incorrectCount = 0;
     this.examFinished = false;
+    this.answeredThisQuestion = false;
+    this.readyToShowResults    = false;
+    this.resultsHistory         = [];
+    this.optionStatus           = {};
   }
 
   ngOnDestroy(): void {
@@ -96,48 +104,46 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
   cargarNuevaPregunta(): void {
     this.cargandoPregunta = true;
     this.resultado = '';
-    this.optionStatus = {}; // Reiniciamos el estado de las opciones
-    this.respuestaCorrectaId = null; // Resetear la respuesta correcta
-    this.answeredThisQuestion = false;   
+    this.optionStatus = {};
+    this.respuestaCorrectaId = null;
+    this.answeredThisQuestion = false;
+    this.readyToShowResults = false;
 
-    // Deseleccionar todos los radio buttons
+    // deselecciona radios, resetea bucle...
     const radios = document.querySelectorAll('input[name="value-radio"]') as NodeListOf<HTMLInputElement>;
     radios.forEach(r => r.checked = false);
-    this.isLooping = false; // Asegura que se detiene cualquier loop anterior
+    this.isLooping = false;
+    this.isPlaying = false;
 
+    this.examenService.generarPregunta()
+      .subscribe({
+        next: async (resp) => {
+          this.questionId  = resp.questionId;
+          this.animaciones = resp.animaciones;
+          this.opciones    = resp.opciones;
+          this.cargandoPregunta = false;
 
-    this.examenService.generarPregunta().subscribe({
-      next: (resp) => {
-        // Resp => { questionId, animaciones, opciones }
-        this.questionId = resp.questionId;
-        this.animaciones = resp.animaciones;
-        this.opciones = resp.opciones;
-        this.cargandoPregunta = false;
+          // ─── AUTO-PLAY DE LA ANIMACIÓN ───────────────────────────
+          if (this.animaciones.length > 0 && this.canvasRef) {
+            const { filename, clipName } = this.animaciones[0];
+            const url = `${environment.apiUrl}/gltf/animaciones/${filename}`;
 
-        if (this.canvasRef) {
-          this.canvasRef.stopLoop(false);
-          const animacionesUrls = this.animaciones.map(a =>
-            `${environment.apiUrl}/gltf/animaciones/${a.filename}`
-          );
-          this.animacionService.cargarAnimaciones(animacionesUrls, true, false);
-          if (this.canvasRef?.animationEnded) {
-            this.canvasRef.animationEnded.subscribe(() => {
-              // Deseleccionar todos los radio buttons
-              const radios = document.querySelectorAll('input[name="value-radio"]') as NodeListOf<HTMLInputElement>;
-              radios.forEach(r => r.checked = false);
-          
-              // Además, si estás en modo bucle, detenemos también
-              this.isLooping = false;
-            });
+            // 1) cargamos modelo si hace falta
+            await this.canvasRef.loadSkinModel(url);
+
+            // 2) reproducimos el clip una sola vez
+            this.canvasRef.playClip(clipName, false);
+
+            // 3) actualizamos flags para que el botón Play refleje que ya está reproduciendo
+            this.isPlaying  = true;
+            this.isLooping  = false;
           }
-          
+        },
+        error: (err) => {
+          console.error('Error al generar pregunta:', err);
+          this.cargandoPregunta = false;
         }
-      },
-      error: (err) => {
-        console.error('Error al generar pregunta:', err);
-        this.cargandoPregunta = false;
-      }
-    });
+      });
   }
 
   // ==========================================================
@@ -185,34 +191,8 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
   // ==========================================================
   // MENÚ DE BOTONES (radio buttons) => play / loop / stop / webcam / veloc
   // ==========================================================
-  onRadioChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const valor = input.value;
-    
-    const animacionesUrls = this.animaciones.map(a =>
-      `${environment.apiUrl}/gltf/animaciones/${a.filename}`
-    );
-
-    switch (valor) {
-      case 'play':
-        this.animacionService.cargarAnimaciones(animacionesUrls, true, false);
-        break;
-      case 'play2':
-        this.animacionService.cargarAnimaciones(animacionesUrls, true, true);
-        break;
-      case 'stop':
-        if (this.canvasRef) {
-          this.canvasRef.stopLoop(true);
-        }
-        break;
-      case 'webcam':
-        this.toggleWebcam();
-        break;
-      case 'veloc':
-        console.log('Cambiar velocidad (demo)');
-        break;
-    }
-  }
+  
+  
   
   // ==========================================================
   // WEBCAM
@@ -299,6 +279,54 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
   // nuevo método para “Mostrar resultados”
   mostrarResultados(): void {
     this.examFinished = true;
+  }
+
+  onAnimationEnded() {
+    console.log('ModoLibreComponent: recibí animationEnded, isPlaying:', this.isPlaying);
+    this.isPlaying = false;
+    console.log('ModoLibreComponent: isPlaying ahora:', this.isPlaying);  
+  }
+
+  /** Play una sola vez la animación actual */
+  async onPlayClicked() {
+    if (!this.animaciones.length) return;
+    const { filename, clipName } = this.animaciones[0];
+    const url = `${environment.apiUrl}/gltf/animaciones/${filename}`;
+
+    // 1) Cargar el modelo si no está ya
+    await this.canvasRef.loadSkinModel(url);
+
+    // 2) Reproducir el clip que venga en la pregunta
+    this.canvasRef.playClip(clipName, false);
+
+    this.isPlaying = true;
+    this.isLooping = false;
+  }
+
+  /** Bucle en skin engine */
+  async handleLoop(checked: boolean) {
+    if (!this.animaciones.length) return;
+    const { filename, clipName } = this.animaciones[0];
+    const url = `${environment.apiUrl}/gltf/animaciones/${filename}`;
+
+    // 1) Asegurarnos de tener el modelo correcto
+    await this.canvasRef.loadSkinModel(url);
+
+    // 2) Reproducir en bucle (o parar)
+    if (checked) {
+      this.canvasRef.playClip(clipName, true);
+      this.isPlaying = false;
+    } else {
+      this.canvasRef.stopClip();
+      this.isPlaying = false;
+    }
+
+    this.isLooping = checked;
+  }
+
+  /** Velocidad (ejemplo de callback) */
+  onVelocidadClicked() {
+    console.log('Cambiar velocidad (demo)');
   }
 
   

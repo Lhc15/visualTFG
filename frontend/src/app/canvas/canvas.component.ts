@@ -64,6 +64,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private engineApi: SkinEngineApi | null = null;
   private skinIsRunning: boolean = false;
 
+  private clipDurations: Map<string, number> = new Map();
+
+
   constructor(
     private animacionService: AnimacionService,
     private gltfService: GltfService
@@ -106,7 +109,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   async ngAfterViewInit(): Promise<void> {
-    await this.initSkinEngine('/assets/hola_0.gltf');
+    const api = await this.initSkinEngine('/assets/hola_0.gltf');
+    this.loader.load(
+      '/assets/hola_0.gltf',
+      gltf => {
+        gltf.animations.forEach(anim => {
+          this.clipDurations.set(anim.name, anim.duration * 1000);
+        });
+      }
+    );
     this.initScene();
     this.initCamera();
     this.initThreeRenderer();
@@ -240,6 +251,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           this.poseInterval = null;
           console.log('Animación completada (una sola vez).');
 
+          console.log('CanvasComponent: emit animationEnded');
           // Emitir evento de final de animación
           this.animationEnded.emit();
         }
@@ -406,6 +418,15 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       // Iniciamos el motor con el nuevo URL
       console.log(`Iniciando motor de skin con URL: ${url}`);
       await this.initSkinEngine(url);
+      this.loader.load(
+        url,
+        gltf => {
+          this.clipDurations.clear();
+          gltf.animations.forEach(anim => {
+            this.clipDurations.set(anim.name, anim.duration * 1000);
+          });
+        }
+      );
       this.currentModel = url;
       console.log('Modelo cargado exitosamente');
     } catch (error) {
@@ -420,6 +441,14 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   public playClip(clip: string, loop = false) {
     this.engineApi?.play(clip, loop);
+    if (!loop) {
+      const ms = this.clipDurations.get(clip) ?? 1000;
+      console.log(`CanvasComponent: clip "${clip}" no-loop, emitir animationEnded en ${ms}ms`);
+      setTimeout(() => {
+        console.log('CanvasComponent: emit animationEnded');
+        this.animationEnded.emit();
+      }, ms);
+    }
   }
 
   public stopClip() {

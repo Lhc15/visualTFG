@@ -14,11 +14,13 @@ import { StatsService } from '../services/stats.service';
 
 import { environment } from '../../environments/environment';
 import introJs from 'intro.js';
+import { ToolMenuComponent } from '../tool-menu/tool-menu.component'; // ruta correcta
+import { take } from 'rxjs/operators';   // ➍
 
 @Component({
   selector: 'app-modo-libre',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, HeaderComponent, FormsModule],
+  imports: [CommonModule, CanvasComponent, HeaderComponent, FormsModule,ToolMenuComponent],
   templateUrl: './modo-libre.component.html',
   styleUrls: ['./modo-libre.component.css']
 })
@@ -178,7 +180,7 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   }
 
   // Modified version of the reproducirAnimacion function in modo-libre.component.ts
-  private async reproducirAnimacion(loop: boolean) {
+  async reproducirAnimacion(loop: boolean) {
     if (!this.selectedWord?.gltf) return;
 
     const url = `${environment.apiUrl}/gltf/animaciones/${this.selectedWord.gltf}`;
@@ -200,14 +202,13 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
                   : clips[0];
 
     this.canvasRef.playClip(clipName, loop);
-    this.isPlaying = true;
-
-    /* (Opcional) registrar palabra explorada ─ lo que ya tenías */
+    this.isPlaying  = !loop;
+    this.isLooping  = loop;   // opcional, para que quede siempre en sync
     this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id)
         .subscribe({ next: resp => this.exploredWordsService.setExploredCount(resp.totalExploradas) });
   }
 
-  private cambiarVelocidad() {
+  cambiarVelocidad() {
     console.log('Cambiar velocidad (demo)');
   }
 
@@ -363,6 +364,27 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
       this.isOpen = false;
     }
   }
+
+  onPlayClicked() {
+    this.isLooping = false;
+    this.isPlaying = true;
+    this.reproducirAnimacion(false);
+  }
+
+  handleLoop(checked: boolean) {
+    this.isLooping = checked;
+
+    if (checked) {
+      // Si acaban de meter el bucle, arrancamos la animación en loop
+      this.isPlaying = false;
+      this.reproducirAnimacion(true);
+    } else {
+      // Si acaban de quitar el bucle, simplemente paramos el clip
+      this.canvasRef.stopClip();
+      this.isPlaying = false;
+    }
+  }
+
   toggleDropdown(event: MouseEvent): void {
     event.stopPropagation();
     this.isOpen = !this.isOpen;
@@ -398,38 +420,12 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
     }
   }
 
-  // **************************************
-  // TUTORIAL
-  // **************************************
-  iniciarTutorial() {
-    const intro = introJs();
-    intro.setOptions({
-      steps: [
-        {
-          element: '#mode-selector',
-          intro: 'Aquí puedes elegir el modo: Libre, Guiado o Examen.',
-          position: 'right'
-        },
-        {
-          element: '#modo-libre-container',
-          intro: 'En Modo Libre verás categorías y palabras para animar el avatar.',
-          position: 'top'
-        },
-        {
-          element: '#avatar-element',
-          intro: 'Este es tu avatar 3D. ¡Puedes interactuar con él!',
-          position: 'left'
-        }
-      ],
-      showProgress: true,
-      showBullets: false,
-      nextLabel: 'Siguiente',
-      prevLabel: 'Anterior',
-      skipLabel: 'Saltar',
-      doneLabel: 'Finalizar'
-    });
-    intro.start();
+  onAnimationEnded() {
+    console.log('ModoLibreComponent: recibí animationEnded, isPlaying:', this.isPlaying);
+    this.isPlaying = false;
+    console.log('ModoLibreComponent: isPlaying ahora:', this.isPlaying);  
   }
+  
 
   // **************************************
   // LOGOUT
