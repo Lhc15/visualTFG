@@ -50,13 +50,20 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
      
   resultsHistory: boolean[] = [];         // <-- Para almacenar aciertos/fallos
 
-  selectedTool: string = '';
+ selectedTool: string | null = null;
+
 
   isLooping = false;
 
   showWebcam: boolean = false;
   // Eliminamos selectedOptionId y usamos optionStatus para almacenar el estado de cada opción:
   optionStatus: { [key: string]: 'correct' | 'incorrect' } = {};
+
+  velocSliderVisible: boolean = false;
+currentPlaybackRate: number = 1;
+lastSelectedRadio: string | null = null;
+
+
 
   constructor(
     private examenService: ExamenService,
@@ -185,34 +192,48 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
   // ==========================================================
   // MENÚ DE BOTONES (radio buttons) => play / loop / stop / webcam / veloc
   // ==========================================================
-  onRadioChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const valor = input.value;
-    
-    const animacionesUrls = this.animaciones.map(a =>
-      `${environment.apiUrl}/gltf/animaciones/${a.filename}`
-    );
+ onRadioChange(event: Event): void {
+  const input = event.target as HTMLInputElement;
+  const value = input.value;
 
-    switch (valor) {
-      case 'play':
-        this.animacionService.cargarAnimaciones(animacionesUrls, true, false);
-        break;
-      case 'play2':
-        this.animacionService.cargarAnimaciones(animacionesUrls, true, true);
-        break;
-      case 'stop':
-        if (this.canvasRef) {
-          this.canvasRef.stopLoop(true);
-        }
-        break;
-      case 'webcam':
-        this.toggleWebcam();
-        break;
-      case 'veloc':
-        console.log('Cambiar velocidad (demo)');
-        break;
-    }
+  this.selectedTool = value;
+
+  if (value === 'play') {
+    this.reproducirAnimacion(false);
   }
+
+ 
+}
+
+
+  //veloc
+  setPlaybackRate(rate: number): void {
+  this.currentPlaybackRate = rate;
+  if (this.canvasRef) {
+    this.canvasRef.setPlaybackRate(rate);
+  }
+}
+onToggleVeloc(event: Event): void {
+  const checked = (event.target as HTMLInputElement).checked;
+
+  if (!this.animaciones || this.animaciones.length === 0) {
+    alert('Primero espera a que se cargue una pregunta.');
+    (event.target as HTMLInputElement).checked = false;
+    return;
+  }
+
+  this.velocSliderVisible = checked;
+
+  if (checked) {
+    this.selectedTool = 'veloc';
+    this.lastSelectedRadio = 'veloc';
+  } else {
+    this.selectedTool = null;
+    this.lastSelectedRadio = null;
+  }
+}
+
+
   
   // ==========================================================
   // WEBCAM
