@@ -10,73 +10,18 @@
         [ngClass]="{ 'libre-half-width': showWebcam }"
       >
         <!-- Canvas con la animación -->
-        <app-canvas [animationUrls]="animaciones"></app-canvas>
-
-        <!-- Menú de herramientas (Radio Buttons) -->
-        <div class="radio-input open" (change)="onRadioChange($event)">
-          <!-- Play -->
-          <label
-            class="label label-play"
-            [class.selected]="selectedTool === 'play'"
-          >
-            <input type="radio" id="play" name="value-radio" value="play" />
-            <svg
-              class="icon"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-            >
-              <path d="M96 52v408l320-204-320-204z" />
-            </svg>
-          </label>
-
-          <!-- Toggle de “bucle”/”stop” -->
-          <label class="label label-play2">
-            <input
-              type="checkbox"
-              id="toggleLoop"
-              (change)="onToggleLoop($event)"
-            />
-
-            <!-- Icono bucle cuando NO estamos en loop -->
-            <img
-              *ngIf="!isLooping"
-              class="icon-play2"
-              src="assets/play-bucle.svg"
-              alt="Play2"
-            />
-
-            <!-- Icono STOP cuando SÍ estamos en loop -->
-            <svg
-              *ngIf="isLooping"
-              class="icon-stop"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              width="38"
-              height="38"
-            >
-              <path d="M64 64h384v384H64z" />
-            </svg>
-          </label>
-
-          <label
-            class="label label-webcam"
-            style="opacity: 0.5; pointer-events: none"
-            title="No disponible"
-          >
-            <input type="checkbox" disabled />
-            <img
-              class="icon-webcam"
-              src="assets/webcam.svg"
-              alt="Webcam (No disponible)"
-            />
-          </label>
-
-          <!-- Velocidad (Speed) -->
-          <label class="label">
-            <input type="radio" id="veloc" name="value-radio" value="veloc" />
-            <span class="text">Veloc</span>
-          </label>
-        </div>
+        <app-canvas [animationUrls]="animaciones" (animationEnded)="onAnimationEnded()"></app-canvas>
+        <app-tool-menu
+          [isPlaying]="isPlaying"
+          [isLooping]="isLooping"
+          [showWebcam]="false"           
+          [disabled]="cargandoPregunta"   
+          (playClicked)="onPlayClicked()"
+          (loopToggled)="handleLoop($event)"
+          (velocidadClicked)="onVelocidadClicked()"
+          (webcamToggled)="null">        
+        </app-tool-menu>
+        
       </div>
 
       <!-- Contenedor de la cámara, se muestra solo si showWebcam es true -->

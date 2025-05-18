@@ -10,14 +10,10 @@ const GltfFile = require('../models/gltfFiles'); // Importar el esquema vacío
 // 4. Devuelve la lista resultante en la respuesta.
 const obtenerPalabras = async (req, res) => {
     try {
-        const palabras = await Palabra.find()
-            .populate('categoria', 'nombre')
-            .populate({
-                path: 'animaciones',
-                select: 'filename',
-            });
-
-        console.log('Palabras desde el backend:', JSON.stringify(palabras, null, 2));
+        const palabras = await Palabra
+            .find()
+            .populate('categoria', 'nombre'); 
+            console.log('Palabras desde el backend:', JSON.stringify(palabras, null, 2));
         res.json(palabras);
     } catch (error) {
         console.error('Error al obtener las palabras:', error);
@@ -44,23 +40,21 @@ const obtenerPalabra = async (req, res) => {
 // 3. Utiliza 'populate' para obtener el nombre de la categoría asociada.
 // 4. Devuelve un estado 201 junto con la nueva palabra creada.
 const crearPalabra = async (req, res) => {
-    try {
-        const nuevaPalabra = new Palabra(req.body);
-        await nuevaPalabra.save();
-        const palabraConCategoria = await nuevaPalabra.populate('categoria', 'nombre');
+  try {
+    const { palabra, explicacion, categoria, gltf, clipName, nivel, orden } = req.body;
 
-        res.status(201).json({
-            ok: true,
-            palabra: palabraConCategoria,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al crear la palabra',
-        });
-    }
+    const nueva = new Palabra({ palabra, explicacion, categoria, gltf, clipName, nivel, orden });
+    await nueva.save();
+    await nueva.populate('categoria', 'nombre');
+
+    return res.status(201).json({ ok: true, palabra: nueva });
+  } catch (error) {
+    console.error('Error al crear palabra:', error);
+    return res.status(500).json({ ok: false, msg: 'Error al crear la palabra', error: error.message });
+  }
 };
+
+
 
 // La función 'editarPalabra' actualiza los datos de una palabra específica.
 // 1. Extrae el 'id' y los campos que se quieren actualizar del cuerpo de la petición.
@@ -69,38 +63,50 @@ const crearPalabra = async (req, res) => {
 // 4. Hace un 'populate' en el campo 'categoria' para extraer solo el 'nombre' de la categoría asociada.
 // 5. Si no encuentra la palabra, devuelve un error 404; en caso contrario, devuelve la palabra actualizada.
 const editarPalabra = async (req, res) => {
-    const { id } = req.params;
-    const { palabra, categoria, animaciones, explicacion, nivel, orden } = req.body;
+  const { id } = req.params;
+  console.log('[editarPalabra] id:', id);
+  console.log('[editarPalabra] req.body:', req.body);
+  console.log('Recibiendo petición para actualizar palabra:', id);
+  console.log('Datos recibidos:', req.body);
+  const { palabra, explicacion, categoria, gltf, clipName, nivel, orden } = req.body;
 
-    try {
-        const palabraEditada = await Palabra.findByIdAndUpdate(
-            id,
-            { 
-                ...(palabra && { palabra }),
-                ...(categoria && { categoria }),
-                ...(animaciones && { animaciones }),
-                ...(explicacion && { explicacion }),
-                ...(nivel !== undefined && { nivel }),
-                ...(orden !== undefined && { orden })
-            },
-            { new: true }
-        ).populate('categoria', 'nombre');
+  // 1) Construye el objeto sólo con lo que venga en el body
+  const update = {};
+  if (palabra     !== undefined) update.palabra     = palabra;
+  if (explicacion !== undefined) update.explicacion = explicacion;
+  if (categoria   !== undefined) update.categoria   = categoria;
+  if (gltf        !== undefined) update.gltf        = gltf;
+  if (clipName    !== undefined) update.clipName    = clipName;
+  if (nivel       !== undefined) update.nivel       = nivel;
+  if (orden       !== undefined) update.orden       = orden;
 
-        if (!palabraEditada) {
-            return res.status(404).json({ ok: false, msg: 'Palabra no encontrada' });
-        }
+  // (Opcional) si no hay nada que actualizar, cortas:
+  if (Object.keys(update).length === 0) {
+    return res.status(400).json({ ok: false, msg: 'Nada que actualizar' });
+  }
 
-        res.json({
-            ok: true,
-            palabra: palabraEditada,
-        });
-    } catch (error) {
-        console.error('Error al actualizar la palabra:', error);
-        res.status(500).json({
-            ok: false,
-            msg: 'Error al actualizar la palabra',
-        });
+  try {
+    const palabraEditada = await Palabra.findByIdAndUpdate(
+      id,
+      update,
+      { new: true, runValidators: true }
+    );
+
+    if (!palabraEditada) {
+      return res.status(404).json({ msg: 'Palabra no encontrada' });
     }
+
+    res.json({ ok: true, palabra: palabraEditada });
+  } catch (err) {
+    console.error('Error al actualizar la palabra:', err);
+    console.error('err.errors:', err.errors);
+    console.error('err.message:', err.message);
+    // Si es validación, puedes devolver 400; si no, 500
+    //return res.status(400).json({ ok: false, errores: err.errors || err });
+    return res
+      .status(500)
+      .json({ ok: false, msg: err.message, stack: err.stack, errores: err.errors });
+  }
 };
 
 // La función 'borrarPalabra' elimina una palabra de la base de datos por su ID.
@@ -152,11 +158,7 @@ const obtenerPalabrasPorCategoria = async (req, res) => {
 
         const palabras = await Palabra.find({ categoria })
             .populate('categoria', 'nombre')
-            .populate({
-                path: 'animaciones',
-                model: 'gltfFiles.files',
-                select: 'filename',
-            });
+           
 
         console.log('Palabras encontradas con animaciones completas:', JSON.stringify(palabras, null, 2));
         res.json(palabras);
@@ -187,16 +189,42 @@ const obtenerPalabrasPorNivel = async (req, res) => {
       const palabras = await Palabra.find({ nivel: nivelNum })
         .sort({ orden: 1 })
         .populate('categoria', 'nombre')
-        .populate({
-            path: 'animaciones',
-            select: 'filename',
-        });
+        
 
       res.json(palabras);
     } catch (error) {
       console.error('Error al obtener palabras por nivel:', error);
       res.status(500).json({ msg: 'Error al obtener palabras' });
     }
+};
+
+const editarAnimacion = async (req, res) => {
+  const { id } = req.params;
+  const { gltf, clipName } = req.body;
+
+  // Montas sólo los campos que vengan
+  const update = {};
+  if (gltf      !== undefined) update.gltf      = gltf;
+  if (clipName !== undefined) update.clipName = clipName;
+
+  if (Object.keys(update).length === 0) {
+    return res.status(400).json({ ok: false, msg: 'Nada que actualizar' });
+  }
+
+  try {
+    const palabra = await Palabra.findByIdAndUpdate(
+      id,
+      update,
+      { new: true, runValidators: true }
+    );
+    if (!palabra) {
+      return res.status(404).json({ ok: false, msg: 'Palabra no encontrada' });
+    }
+    res.json({ ok: true, palabra });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ ok: false, msg: 'Error al actualizar animación', error: err.message });
+  }
 };
 
 module.exports = {
@@ -207,6 +235,7 @@ module.exports = {
     borrarPalabra,
     asociarCategoria,
     obtenerPalabrasPorCategoria,
-    obtenerPalabrasPorNivel
+    obtenerPalabrasPorNivel,
+    editarAnimacion
 };
 

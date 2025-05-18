@@ -23,10 +23,8 @@ const PalabraSchema = Schema({
         ref: 'Categoria', // Referencia al modelo Categoría
         required: false,
     },
-    animaciones: [{ 
-        type: Schema.Types.ObjectId, // Referencia a los archivos GLTF
-        ref: 'gltfFiles.files' 
-    }],
+    gltf:      String,   // "avatar_signos.glb"
+    clipName:  String,   // "Saludar"
     nivel: {
         type: Number,
         default: 1,

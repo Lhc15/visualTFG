@@ -14,11 +14,13 @@ import { StatsService } from '../services/stats.service';
 
 import { environment } from '../../environments/environment';
 import introJs from 'intro.js';
+import { ToolMenuComponent } from '../tool-menu/tool-menu.component'; // ruta correcta
+import { take } from 'rxjs/operators';   // ➍
 
 @Component({
   selector: 'app-modo-libre',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, HeaderComponent, FormsModule],
+  imports: [CommonModule, CanvasComponent, HeaderComponent, FormsModule,ToolMenuComponent],
   templateUrl: './modo-libre.component.html',
   styleUrls: ['./modo-libre.component.css']
 })
@@ -30,7 +32,7 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   selectedCategory: any = null;
   palabrasDeCategoriaSeleccionada: any[] = [];
 
-  currentAnimationUrls: string[] = [];
+  //currentAnimationUrls: string[] = [];
   numeroPalabrasResumen = 2;
 
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
@@ -50,6 +52,8 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   // Controla si está en loop
   isLooping = false;
   currentCategorySessionId: string|null = null;
+
+  public isPlaying = false;
 
 
   constructor(
@@ -166,61 +170,45 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
       this.isLooping = true;
       this.reproducirAnimacion(true);
     } else {
-      this.isLooping = false;
-      if (this.canvasRef) {
-        this.canvasRef.stopLoop(true);
+        // desactivas bucle → PARAR SkinEngine
+        this.isLooping = false;
+        //  ↓ En lugar de stopLoop(), llamamos a stopClip()
+        this.canvasRef.stopClip();
+        // opcional: si también ligas isPlaying con ngModel
+        this.isPlaying = false;
       }
-    }
   }
 
-  private reproducirAnimacion(loop: boolean) {
-    if (!this.selectedWord) return;
+  // Modified version of the reproducirAnimacion function in modo-libre.component.ts
+  async reproducirAnimacion(loop: boolean) {
+    if (!this.selectedWord?.gltf) return;
 
-    this.statsService.recordWordEntry(this.selectedWord._id)
-    .subscribe({
-      next: () => console.log('Palabra registrada en stats'),
-      error: e => console.error('Error al registrar palabra', e)
-    });
+    const url = `${environment.apiUrl}/gltf/animaciones/${this.selectedWord.gltf}`;
 
+    /* 1 ▸ Detenemos solo el clip que estuviera sonando */
+    this.canvasRef.stopClip();
 
-    if (this.selectedWord.animaciones?.length > 0) {
-      const animacionesUrls = this.selectedWord.animaciones.map((anim: any) =>
-        `${environment.apiUrl}/gltf/animaciones/${anim.filename}`
-      );
-
-      // Llamamos a animacionService con loop
-      this.animacionService.cargarAnimaciones(animacionesUrls, true, loop);
-
-      // ----------------------------------------------------
-      // Si NO es loop, deseleccionamos "play" al terminar
-      // (Asumiendo que tu CanvasComponent o animacionService
-      //  tengan alguna forma de avisar cuando la animación
-      //  acaba, por ejemplo "canvasRef.animationEnded.subscribe"
-      //  o un callback. Ajusta a tu caso real.)
-      // ----------------------------------------------------
-      if (!loop && this.canvasRef && this.canvasRef.animationEnded) {
-        this.canvasRef.animationEnded.subscribe(() => {
-          const playRadio = document.getElementById('play') as HTMLInputElement;
-          if (playRadio) {
-            playRadio.checked = false;
-          }
-        });
-      }
-
-      // Registrar exploración
-      this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id).subscribe({
-        next: (resp) => {
-          console.log('Palabra explorada. totalExploradas:', resp.totalExploradas);
-          this.exploredWordsService.setExploredCount(resp.totalExploradas);
-        },
-        error: (err) => console.error('Error al marcar explorada:', err)
-      });
-    } else {
-      console.warn('No hay animaciones en la palabra seleccionada');
+    /* 2 ▸ Si el modelo cambia, lo cargamos; si es el mismo, lo dejamos */
+    if (this.canvasRef.currentModel !== url) {
+      await this.canvasRef.loadSkinModel(url);
     }
+
+    /* 3 ▸ Elegimos clip y lo lanzamos */
+    const clips = this.canvasRef.availableClips;
+    if (!clips.length) { console.error('Sin clips'); return; }
+
+    const clipName = this.selectedWord.clipName && clips.includes(this.selectedWord.clipName)
+                  ? this.selectedWord.clipName
+                  : clips[0];
+
+    this.canvasRef.playClip(clipName, loop);
+    this.isPlaying  = !loop;
+    this.isLooping  = loop;   // opcional, para que quede siempre en sync
+    this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id)
+        .subscribe({ next: resp => this.exploredWordsService.setExploredCount(resp.totalExploradas) });
   }
 
-  private cambiarVelocidad() {
+  cambiarVelocidad() {
     console.log('Cambiar velocidad (demo)');
   }
 
@@ -376,6 +364,27 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
       this.isOpen = false;
     }
   }
+
+  onPlayClicked() {
+    this.isLooping = false;
+    this.isPlaying = true;
+    this.reproducirAnimacion(false);
+  }
+
+  handleLoop(checked: boolean) {
+    this.isLooping = checked;
+
+    if (checked) {
+      // Si acaban de meter el bucle, arrancamos la animación en loop
+      this.isPlaying = false;
+      this.reproducirAnimacion(true);
+    } else {
+      // Si acaban de quitar el bucle, simplemente paramos el clip
+      this.canvasRef.stopClip();
+      this.isPlaying = false;
+    }
+  }
+
   toggleDropdown(event: MouseEvent): void {
     event.stopPropagation();
     this.isOpen = !this.isOpen;
@@ -411,38 +420,12 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
     }
   }
 
-  // **************************************
-  // TUTORIAL
-  // **************************************
-  iniciarTutorial() {
-    const intro = introJs();
-    intro.setOptions({
-      steps: [
-        {
-          element: '#mode-selector',
-          intro: 'Aquí puedes elegir el modo: Libre, Guiado o Examen.',
-          position: 'right'
-        },
-        {
-          element: '#modo-libre-container',
-          intro: 'En Modo Libre verás categorías y palabras para animar el avatar.',
-          position: 'top'
-        },
-        {
-          element: '#avatar-element',
-          intro: 'Este es tu avatar 3D. ¡Puedes interactuar con él!',
-          position: 'left'
-        }
-      ],
-      showProgress: true,
-      showBullets: false,
-      nextLabel: 'Siguiente',
-      prevLabel: 'Anterior',
-      skipLabel: 'Saltar',
-      doneLabel: 'Finalizar'
-    });
-    intro.start();
+  onAnimationEnded() {
+    console.log('ModoLibreComponent: recibí animationEnded, isPlaying:', this.isPlaying);
+    this.isPlaying = false;
+    console.log('ModoLibreComponent: isPlaying ahora:', this.isPlaying);  
   }
+  
 
   // **************************************
   // LOGOUT

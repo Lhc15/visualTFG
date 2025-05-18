@@ -97,6 +97,7 @@ export async function startSkinEngine(
   gltfUrl = 'assets/malanimation.gltf',
   getThreeCameras
 ){
+  
   // -------------------------------------------------------------------------
   //  CONTEXTO WEBGL
   // -------------------------------------------------------------------------
@@ -236,6 +237,112 @@ export async function startSkinEngine(
     }
   }
 
+
+  class Animator {
+    constructor(clips) {
+      this.clips = clips;
+      this.current = null;      // active clip
+      this.time = 0;
+      this.loop = false;
+      this.playing = false;
+      this.lastUpdateTime = 0;  // For consistent frame timing
+    }
+
+    play(name, loop = false) {
+      // 1) Elegir clip
+      this.current = this.clips.find(c => c.name === name) || this.clips[0];
+      if (!this.current) { console.error('No hay clips'); return; }
+
+      // 2) Parámetros básicos
+      this.loop     = loop;
+      this.playing  = true;
+
+      /*-------------------------------------------------------------
+      * 3)   << El cambio importante >>
+      *     – arrancamos justo DESPUÉS del frame-0 (T-pose)
+      *     – aplicamos un update(0) para que la pose se fijé ya
+      *------------------------------------------------------------*/
+      this.time            = 0.0001;            // ó directamente 0.04 si sabes que
+                                                // tu primer keyframe útil está a 0.04 s
+      this.lastUpdateTime  = performance.now() * 0.001;
+      this.update(0);                           // fuerza la pose del instante actual
+    }
+
+    stop() {
+      this.playing = false;
+      this.time = 0;
+    }
+
+    update(dt) {
+      if (!this.playing || !this.current) return;
+      
+      // If dt is very large (e.g. after tab switching), cap it to avoid jumps
+      const effectiveDt = Math.min(dt, 0.1);
+      this.time += effectiveDt;
+      
+      // Handle loop or end of animation
+      if (this.time > this.current.duration) {
+        if (this.loop) {
+          // For looping, wrap around but retain fractional part for smoothness
+          this.time = this.time % this.current.duration;
+        } else {
+          // For non-looping, stop at the end
+          this.time = this.current.duration;
+          this.playing = false;
+        }
+      }
+      
+      // Apply animation to each channel (joint+property)
+      this.current.channels.forEach(ch => {
+        const inputs = this.current.inputs[ch.sampler];
+        const outputs = this.current.outputs[ch.sampler];
+        
+        // Don't process if we don't have valid data
+        if (!inputs || !outputs || inputs.length < 1) return;
+        
+        // Find the keyframes to interpolate between
+        let i = 0;
+        while (i < inputs.length - 1 && inputs[i+1] <= this.time) {
+          i++;
+        }
+        
+        // Handle edge cases
+        if (i >= inputs.length - 1) {
+          i = inputs.length - 2;
+          if (i < 0) i = 0;
+        }
+        
+        // Get the times and compute interpolation factor
+        const t0 = inputs[i];
+        const t1 = inputs[i+1] || this.current.duration;
+        const segmentDuration = t1 - t0;
+        
+        // Avoid division by zero
+        const alpha = segmentDuration > 0.0001 ? 
+                      (this.time - t0) / segmentDuration : 
+                      0;
+        
+        // Determine stride based on property type (position/rotation/scale)
+        const stride = ch.path === 'rotation' ? 4 : 3;
+        
+        // Apply interpolation for each component
+        for (let k = 0; k < stride; ++k) {
+          const v0 = outputs[i * stride + k];
+          const v1 = outputs[(i+1) * stride + k] || v0;
+          
+          if (ch.path === 'rotation') {
+            // For rotations, we should use spherical interpolation (SLERP)
+            // This is a simplified approach - for proper SLERP you'd need a quaternion library
+            ch.node.source[ch.path][k] = v0 + (v1 - v0) * alpha;
+          } else {
+            // Linear interpolation for positions and scales
+            ch.node.source[ch.path][k] = v0 + (v1 - v0) * alpha;
+          }
+        }
+      });
+    }
+  }
+
   // -------------------------------------------------------------------------
   //  CARGA GLTF + PREPARACIÓN DE MESHES Y SKINS
   // -------------------------------------------------------------------------
@@ -313,109 +420,73 @@ export async function startSkinEngine(
     sc.nodes.forEach(idx => gltf.nodes[idx].setParent(sc.root));
   });
 
+  function getInputArray(sampler) {
+    // índices a los accessors → convertimos en TypedArray listo para usar
+    return getAccessorTypedArrayAndStride(gl, gltf, sampler.input).array;
+  }
+  function getOutputArray(sampler) {
+    return getAccessorTypedArrayAndStride(gl, gltf, sampler.output).array;
+  }
   // -------------------------------------------------------------------------
   //  SISTEMA DE ANIMACIÓN BÁSICO  (solo toma el primer clip)
   // -------------------------------------------------------------------------
-  let inputs=[],outputs=[],channels=[],duration=0;
-  if(gltf.animations && gltf.animations.length){
-    const clip=gltf.animations[0];
-    inputs  = clip.samplers.map(s=>getAccessorTypedArrayAndStride(gl,gltf,s.input).array);
-    outputs = clip.samplers.map(s=>getAccessorTypedArrayAndStride(gl,gltf,s.output).array);
-    channels=clip.channels.map(ch=>({
-      sampler:ch.sampler,
-      node:gltf.nodes[ch.target.node],
-      path:ch.target.path==='translation'?'position':ch.target.path,
+  //let inputs=[],outputs=[],channels=[],duration=0;
+  const clips = gltf.animations.map(anim => {
+    const inputs  = anim.samplers.map(s => getInputArray(s));
+    const outputs = anim.samplers.map(s => getOutputArray(s));
+    const channels = anim.channels.map(ch => ({
+      sampler: ch.sampler,
+      node:    gltf.nodes[ch.target.node],
+      path:    ch.target.path === 'translation'
+              ? 'position'
+              : ch.target.path,
     }));
-    duration = inputs[0][inputs[0].length-1];
-  }
+    const duration = inputs[0][inputs[0].length - 1];
+    return { name: anim.name || 'clip0', inputs, outputs, channels, duration };
+  });
+
+  const animator = new Animator(clips);
 
   // -------------------------------------------------------------------------
   //  RENDER-LOOP
   // -------------------------------------------------------------------------
-  let stop = false;
-  let isDragging = false;
-  let previousMousePosition = { x: 0, y: 0 };
-  let currentRotation = { x: 0, y: 0 };
-  const rotationSpeed = 0.02;
-  const MAX_ROTATION = Math.PI / 3; // 60 grados en radianes
+  // 1) Variables para controlar el delta y la velocidad
+  let lastTime = 0;
+  let playbackSpeed = 1.0;      // 1 = velocidad normal, <1 más lento, >1 más rápido
+  let rafId;
+  function render(now) {
+    // convertimos a segundos y sacamos delta
+    now *= 0.001;                 // ahora now es segundos absolutos
+    const dt = lastTime ? (now - lastTime) * playbackSpeed : 0;
+    lastTime = now;
 
-  // Event listeners para el control del ratón
-  canvas.addEventListener('mousedown', (e) => {
-    console.log('Mouse down');
-    isDragging = true;
-    previousMousePosition = {
-      x: e.clientX,
-      y: e.clientY
-    };
-  });
-
-  canvas.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
-
-    const deltaMove = {
-      x: e.clientX - previousMousePosition.x,
-      y: e.clientY - previousMousePosition.y
-    };
-
-    // Actualizar rotación Y con límites
-    currentRotation.y += deltaMove.x * rotationSpeed;
-    // Limitar la rotación a ±60 grados
-    currentRotation.y = Math.max(-MAX_ROTATION, Math.min(MAX_ROTATION, currentRotation.y));
-    // Mantener la rotación X en 0
-    currentRotation.x = 0;
-
-    console.log('Rotation:', currentRotation.y * (180/Math.PI)); // Mostrar en grados
-
-    previousMousePosition = {
-      x: e.clientX,
-      y: e.clientY
-    };
-  });
-
-  canvas.addEventListener('mouseup', () => {
-    console.log('Mouse up');
-    isDragging = false;
-  });
-
-  canvas.addEventListener('mouseleave', () => {
-    console.log('Mouse leave');
-    isDragging = false;
-  });
-
-  function render(ms) {
-    if(stop) return;
-    const t = ms*0.001;
+    animator.update(dt);
 
     wu.resizeCanvasToDisplaySize(gl.canvas);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.enable(gl.DEPTH_TEST);  gl.enable(gl.CULL_FACE);
+    gl.enable(gl.DEPTH_TEST);
+    gl.enable(gl.CULL_FACE);
     gl.clearColor(0, 0, 0, 0);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
     const { projectionMatrix, viewMatrix } = getThreeCameras();
 
-    // Crear matriz de modelo con la rotación actual
-    const modelMatrix = m4.identity();
-    
-    // Aplicar rotación Y usando TRS
-    const trs = new TRS(
-      [0, 0, 0],  // posición
-      [0, Math.sin(currentRotation.y/2), 0, Math.cos(currentRotation.y/2)],  // rotación (quaternion)
-      [1, 1, 1]   // escala
-    );
-    trs.getMatrix(modelMatrix);
-
-    // animación
-    if(duration){
-      const localT = t % duration;
-      channels.forEach(ch=>{
-        const inA=inputs[ch.sampler], outA=outputs[ch.sampler];
-        let i=0; while(i+1<inA.length && inA[i+1]<localT) ++i;
-        const t0=inA[i],t1=inA[i+1], α=(localT-t0)/(t1-t0);
-        const stride=(ch.path==='rotation')?4:3;
-        for(let k=0;k<stride;++k){
-          const v0=outA[i*stride+k], v1=outA[(i+1)*stride+k];
-          ch.node.source[ch.path][k]=v0+(v1-v0)*α;
+    // **Aquí aplicamos el clip activo, si hay alguno**
+    const clip = animator.current;
+    if (clip) {
+      const localT = animator.time % clip.duration;
+      clip.channels.forEach(ch => {
+        const inA  = clip.inputs[ch.sampler];
+        const outA = clip.outputs[ch.sampler];
+        let i = inA.findIndex(t => t > localT) - 1;
+        if (i < 0) i = 0;
+        const t0 = inA[i], t1 = inA[i+1] ?? clip.duration;
+        const α  = (localT - t0) / (t1 - t0 || 1);
+        const stride = ch.path === 'rotation' ? 4 : 3;
+        for (let k = 0; k < stride; ++k) {
+          const v0 = outA[i*stride + k];
+          const v1 = outA[(i+1)*stride + k] ?? v0;
+          ch.node.source[ch.path][k] = v0 + (v1 - v0) * α;
         }
       });
     }
@@ -439,19 +510,22 @@ export async function startSkinEngine(
       sc.root.traverse(draw);
     });
 
-    requestAnimationFrame(render);
-  }
-  requestAnimationFrame(render);
+    //requestAnimationFrame(render);
+    rafId = requestAnimationFrame(render);
 
-  return () => { 
-    stop = true;
-    // Limpiar event listeners
-    canvas.removeEventListener('mousedown', null);
-    canvas.removeEventListener('mousemove', null);
-    canvas.removeEventListener('mouseup', null);
-    canvas.removeEventListener('mouseleave', null);
-  };
-}
+  }
+  rafId = requestAnimationFrame(render);
+
+   return {
+     stop:    () => animator.stop(),
+     play:    (clipName, loop) => animator.play(clipName, loop),
+     clips:   clips.map(c => c.name),
+    // 2) Exponemos método para ajustar la velocidad de reproducción
+    setSpeed: (s) => { playbackSpeed = s; },
+    // 3) para limpiar el RAF si quisieras reiniciar todo
+    destroy:  () => cancelAnimationFrame(rafId),
+   };
+ }
 
 // ---------------------------------------------------------------------------
 //  HELPERS
@@ -463,6 +537,8 @@ function glTypeToArray(t){
   return {5120:Int8Array,5121:Uint8Array,5122:Int16Array,5123:Uint16Array,
           5124:Int32Array,5125:Uint32Array,5126:Float32Array}[t];
 }
+
+
 
 function getAccessorTypedArrayAndStride(gl,gltf,idx){
   const acc=gltf.accessors[idx];

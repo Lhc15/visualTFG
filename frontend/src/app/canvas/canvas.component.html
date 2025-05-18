@@ -6,18 +6,9 @@
       [class.invisible]="skinRunning"
     ></canvas>
 
-    <canvas
-      #skinCanvas
-      class="webgl skin-canvas"
-      [class.invisible]="!skinRunning"
-    ></canvas>
-  </div>
-  <div class="button-container">
-    <button (click)="toggleSkin()" class="bottom-button">
-      {{ skinRunning ? 'Detener Skin Engine' : 'Arrancar Skin Engine' }}
-    </button>
-    <button (click)="resetView()" class="bottom-button">
-      Resetear posición
-    </button>
-  </div>
+  <canvas
+    #skinCanvas
+    class="webgl skin-canvas"
+    [class.invisible]="!skinRunning"
+  ></canvas>
 </div>

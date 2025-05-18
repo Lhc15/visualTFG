@@ -34,6 +34,7 @@ export class PalabrasService {
   }
 
   editarPalabra(id: string, data: any): Observable<any> {
+    console.log('Service editarPalabra payload', data);
     return this.http.put(`${this.baseUrl}/${id}`, data, { withCredentials: true });
   }
 
@@ -47,6 +48,14 @@ export class PalabrasService {
 
   obtenerTotalNiveles(): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/nivel/total`);
+  }
+
+  asignarAnimacion(id: string, data: { gltf: string; clipName: string; }): Observable<any> {
+    return this.http.patch(
+      `${this.baseUrl}/${id}/animacion`,
+      data,
+      { withCredentials: true }
+    );
   }
   
 }

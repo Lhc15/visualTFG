@@ -7,69 +7,16 @@
         <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
 
         <!-- BARRA DE HERRAMIENTAS (radio-buttons) => solo se muestra si hay palabras -->
-        <div 
-          class="radio-input" 
-          [class.open]="toolMenuOpen" 
-          (change)="onRadioChange($event)"
-          *ngIf="words && words.length > 0 && !showWelcome"
-        >
-          <!-- Play -->
-          <label class="label label-play">
-            <input type="radio" id="play" name="value-radio" value="play" />
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-              <path d="M96 52v408l320-204-320-204z" />
-            </svg>
-          </label>
-
-          <!-- Toggle de “bucle”/”stop” -->
-          <label class="label label-play2">
-            <input
-              type="checkbox"
-              id="toggleLoop"
-              (change)="onToggleLoop($event)"
-            />
-
-            <!-- Icono bucle cuando NO estamos en loop -->
-            <img
-              *ngIf="!isLooping"
-              class="icon-play2"
-              src="assets/play-bucle.svg"
-              alt="Play2"
-            />
-
-            <!-- Icono STOP cuando SÍ estamos en loop -->
-            <svg
-              *ngIf="isLooping"
-              class="icon-stop"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 512 512"
-              width="38"
-              height="38"
-            >
-              <path d="M64 64h384v384H64z" />
-            </svg>
-          </label>
-
-          <!-- Webcam -->
-          <!-- Webcam -->
-<label class="label label-webcam">
-  <input
-    type="checkbox"
-    id="toggleWebcam"
-    [checked]="showWebcam"
-    (change)="toggleWebcam()"
-  />
-  <img class="icon-webcam" src="assets/webcam.svg" alt="Webcam" />
-</label>
-
-
-          <!-- Veloc -->
-          <label class="label">
-            <input type="radio" id="veloc" name="value-radio" value="veloc" />
-            <span class="text">Veloc</span>
-          </label>
-        </div>
-        <!-- Fin barra de herramientas -->
+          <app-tool-menu
+            [disabled]="words.length === 0 || showWelcome"
+            [isPlaying]="isPlaying"
+            [isLooping]="isLooping"
+            [showWebcam]="showWebcam"
+            (playClicked)="onPlayClicked()"
+            (loopToggled)="handleLoop($event)"
+            (webcamToggled)="toggleWebcam()"
+            (velocidadClicked)="cambiarVelocidad()">
+          </app-tool-menu>
 
 
         <!-- Botones que solo se mostrarán cuando la cámara esté activa -->

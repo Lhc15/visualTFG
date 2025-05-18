@@ -28,12 +28,18 @@ const generarPregunta = async (req, res) => {
     }
 
     const randomIndex = Math.floor(Math.random() * totalPalabras);
+    
     const palabraCorrecta = await Palabra.findOne().skip(randomIndex)
-      .populate('categoria', 'nombre')
-      .populate({
-        path: 'animaciones',
-        select: 'filename',
+     .populate('categoria', 'nombre');
+
+    // Construimos el array de animaciones desde gltf/clipName
+    const animaciones = [];
+    if (palabraCorrecta.gltf) {
+      animaciones.push({
+        filename: palabraCorrecta.gltf,
+        clipName: palabraCorrecta.clipName
       });
+    }
 
     // 3. Obtener otras 3 palabras distintas de la correcta
     const palabrasDistractoras = await Palabra.aggregate([
@@ -71,11 +77,11 @@ const generarPregunta = async (req, res) => {
     //    Sin exponer qué opción es la correcta
     return res.json({
       ok: true,
-      questionId: examQ._id,      // Para que el front luego verifique
-      correctAnswerId: palabraCorrecta._id,  // Añade esta línea
-      animaciones: palabraCorrecta.animaciones, // La animacion a reproducir
+      questionId: examQ._id,
+      correctAnswerId: palabraCorrecta._id,
+      animaciones,                   // ahora sí existe
       opciones: todasLasOpciones.map(opc => ({
-        _id: opc._id,
+        _id:   opc._id,
         palabra: opc.palabra
       }))
     });

@@ -14,6 +14,8 @@ import { UsuariosService } from '../services/usuarios.service';
 import { environment } from '../../environments/environment';
 import { StatsService } from '../services/stats.service';
 import { ExploredWordsService } from '../services/explored_word.service';
+import { Subscription } from 'rxjs';
+import { ToolMenuComponent } from '../tool-menu/tool-menu.component'; // ruta correcta
 
 import introJs from 'intro.js';
 
@@ -26,13 +28,15 @@ import introJs from 'intro.js';
     // FooterComponent,
     CanvasComponent,
     CardComponent,
+    ToolMenuComponent
   ],
   templateUrl: './modo-guiado.component.html',
   styleUrls: ['./modo-guiado.component.css'],
 })
 export class ModoGuiadoComponent implements OnInit {
 
-  @ViewChild(CanvasComponent) canvasRef!: CanvasComponent;
+  @ViewChild(CanvasComponent, { static: false })
+  canvasRef?: CanvasComponent;      //  mejor que usar “!”
 
   // Propiedades específicas del modo guiado
   words: any[] = [];
@@ -59,6 +63,8 @@ export class ModoGuiadoComponent implements OnInit {
   modo: string = 'guiado';
 
   isLoading = false; //Para el estado de carga
+  public isPlaying  = false;
+  public isLooping  = false;
 
   // Cámara
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
@@ -104,6 +110,12 @@ export class ModoGuiadoComponent implements OnInit {
     });
   }
 
+  ngAfterViewInit() {
+    this.canvasRef!.animationEnded.subscribe(() => {
+      this.isPlaying = false;
+    });
+  }
+
   navigateTo(destination: string) {
     if (destination === 'perfil') {
       this.router.navigate(['/perfil']);
@@ -141,13 +153,11 @@ export class ModoGuiadoComponent implements OnInit {
   }
 
   seleccionarPalabra(palabra: any): void {
-    if (palabra.animaciones && palabra.animaciones.length > 0) {
-      const animacionesUrls = palabra.animaciones.map(
-        (animacion: any) => `${environment.apiUrl}/gltf/animaciones/${animacion.filename}`
-      );
-      this.animacionService.cargarAnimaciones(animacionesUrls, true);
+    if (palabra.gltf) {
+    const url = `${environment.apiUrl}/gltf/animaciones/${palabra.gltf}`;
+    this.animacionService.cargarAnimaciones([ url ], true);
     } else {
-      console.warn('No hay animaciones asociadas a esta palabra.');
+      console.warn('No hay GLTF asignado para esta palabra');
     }
   }
 
@@ -224,19 +234,11 @@ export class ModoGuiadoComponent implements OnInit {
 
   // 5. Al hacer clic en la palabra → reproducir animación
   handleWordClick() {
-    const currentWord = this.words[this.currentIndex];
-    console.log('Palabra clickeada:', currentWord);
-
-    if (currentWord && currentWord.animaciones?.length > 0) {
-      const animacionesUrls = currentWord.animaciones.map(
-        (animacion: any) =>
-          `${environment.apiUrl}/gltf/animaciones/${animacion.filename}`
-      );
-      console.log('Cargando animaciones:', animacionesUrls);
-      this.animacionService.cargarAnimaciones(animacionesUrls, true);
-    } else {
-      console.warn('No hay animaciones disponibles para esta palabra');
-    }
+    const w = this.words[this.currentIndex];
+    if (!w || !w.gltf) return console.warn('Sin animación para esta palabra');
+    const url = `${environment.apiUrl}/gltf/animaciones/${w.gltf}`;
+    console.log('Cargando animación:', url);
+    this.animacionService.cargarAnimaciones([ url ], true);
   }
 
   // 6. Repetir la animación
@@ -561,69 +563,83 @@ if (loopCheckbox) loopCheckbox.checked = false;
      NUEVAS PROPIEDADES Y MÉTODOS PARA LA BARRA DE HERRAMIENTAS
      ======================================================= */
   // Controla si estamos en loop
-  isLooping = false;
 
   // Controla si el menú de herramientas se abre
   toolMenuOpen = false;
 
-  // onRadioChange = se dispara al hacer clic en play/webcam/veloc
-  onRadioChange(event: Event) {
-    const valor = (event.target as HTMLInputElement).value;
-
-    // Si no hay palabra en la posición actual, solo permitimos la webcam
-    if (!this.words[this.currentIndex] && valor !== 'webcam') {
-      alert('Primero asegúrate de tener una palabra en pantalla.');
-      return;
-    }
-
-    switch (valor) {
-      case 'play':
-        // Reproducir 1 sola vez
-        this.reproducirAnimacion(false);
-        break;
-      
-      case 'veloc':
-        this.cambiarVelocidad();
-        break;
-    }
+  private async playCurrentWord(loop: boolean) {
+    const w = this.words[this.currentIndex];
+    if (!w || !w.gltf) return;
+    const url  = `${environment.apiUrl}/gltf/animaciones/${w.gltf}`;
+    await this.canvasRef?.loadSkinModel(url);
+    this.canvasRef?.playClip(w.clipName, loop);
   }
 
-  // Toggle loop (bucle)
-  onToggleLoop(event: Event) {
-    const checked = (event.target as HTMLInputElement).checked;
-    if (!this.words[this.currentIndex]) {
-      alert('No hay palabra para animar. Selecciona una palabra primero.');
-      (event.target as HTMLInputElement).checked = false;
+  onPlayClicked() {
+    this.isLooping = false;
+    this.isPlaying = true;
+    this.playCurrentWord(false);
+  }
+
+  // handler cuando togglean el bucle
+  handleLoop(checked: boolean) {
+    this.isLooping = checked;
+    if (checked) {
+      this.isPlaying = false;
+      this.playCurrentWord(true);
+    } else {
+      this.isPlaying = false;
+      this.canvasRef?.stopClip();  // para la animación en bucle
+    }
+  }  
+ 
+  private _playSub?: Subscription;
+
+  async handlePlay(loop = false) {
+  const word   = this.words[this.currentIndex];
+  const file   = word.gltf;
+  const clip   = word.clipName;       // o word.clips[x].name
+
+  const url = `${environment.apiUrl}/gltf/animaciones/${file}`;
+
+  // 1) carga el modelo si hace falta
+  await this.canvasRef?.loadSkinModel(url);
+
+  // 2) dispara el clip
+  this.canvasRef?.playClip(clip, loop);
+}
+
+
+  // 6. Al hacer toggle loop
+  handleLoopToggle(loop: boolean) {
+    if (this.showWebcam) {
+      alert('Desactiva la webcam para reproducir la animación.');
+      // desmarcar checkbox
+      (document.getElementById('toggleLoop') as HTMLInputElement).checked = false;
       return;
     }
-
-    if (checked) {
-      this.isLooping = true;
-      this.reproducirAnimacion(true);
+    const clipName = this.words[this.currentIndex].clipName;
+    if (loop) {
+      this.canvasRef?.playClip(clipName, true);
     } else {
-      this.isLooping = false;
-      if (this.animacionService) {
-        // Parar la animación (y volver a pose inicial)
-        this.canvasRef?.stopLoop(true);
-      }
+      this.canvasRef?.stopClip();
     }
   }
 
   // Reproducir animación: adaptamos la “palabra actual”
   private reproducirAnimacion(loop: boolean) {
-    const currentWord = this.words[this.currentIndex];
-    if (!currentWord) return;
-
-    if (currentWord.animaciones?.length > 0) {
-      const animacionesUrls = currentWord.animaciones.map((anim: any) =>
-        `${environment.apiUrl}/gltf/animaciones/${anim.filename}`
-      );
+    const w = this.words[this.currentIndex];
+    if (!w || !w.gltf) {
+      console.warn('No hay GLTF asignado para esta palabra');
+      return;
+    }
+    const url = `${environment.apiUrl}/gltf/animaciones/${w.gltf}`;
 
       // Llamamos a animacionService
-      this.animacionService.cargarAnimaciones(animacionesUrls, true, loop);
+    this.animacionService.cargarAnimaciones([ url ], true, loop);
 
       // (opcional) Marcar como explorada
-      this.usuariosService.explorarPalabraLibre(this.userId, currentWord._id).subscribe({
+        this.usuariosService.explorarPalabraLibre(this.userId, w._id).subscribe({
         next: (resp) => {
           console.log('Palabra explorada (modo guiado). totalExploradas:', resp.totalExploradas);
           this.exploredWordsService.setExploredCount(resp.totalExploradas);
@@ -637,14 +653,9 @@ if (loopCheckbox) loopCheckbox.checked = false;
           if (playRadio) playRadio.checked = false;
         });
       }
-      
-
-    } else {
-      console.warn('No hay animaciones en la palabra actual');
     }
-  }
 
-  private cambiarVelocidad() {
+  cambiarVelocidad() {
     console.log('[DEBUG] cambiarVelocidad en modo guiado (demo).');
   }
 }
