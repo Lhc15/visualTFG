@@ -1,0 +1,27 @@
+#version 300 es
+precision mediump float;
+
+// Atributos de entrada
+in vec3 a_position;
+in vec3 a_normal;
+
+// Uniforms para transformaciones
+uniform mat4 u_projection;
+uniform mat4 u_view;
+uniform mat4 u_world;
+
+// Variables de salida para el fragment shader
+out vec3 v_normal;
+out vec3 v_position;
+
+void main() {
+    // Transformar la posición al espacio de vista
+    vec4 worldPosition = u_world * vec4(a_position, 1.0);
+    gl_Position = u_projection * u_view * worldPosition;
+    
+    // Transformar la normal al espacio de mundo
+    v_normal = mat3(u_world) * a_normal;
+    
+    // Pasar la posición al fragment shader
+    v_position = worldPosition.xyz;
+} 
