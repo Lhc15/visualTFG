@@ -55,6 +55,12 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
 
   public isPlaying = false;
 
+  selectedTool: string | null = null;
+velocSliderVisible: boolean = false;
+currentPlaybackRate: number = 1;
+lastSelectedRadio: string | null = null;
+
+
 
   constructor(
     private router: Router,
@@ -135,26 +141,46 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   // **************************************
   // RADIOS: Play / Webcam / Veloc
   // **************************************
-  onRadioChange(event: Event) {
-    const valor = (event.target as HTMLInputElement).value;
+onRadioChange(event: Event) {
+  const input = event.target as HTMLInputElement;
+  const value = input.value;
 
-    // Si no hay palabra seleccionada, solo permitimos la webcam
-    if (!this.selectedWord && valor !== 'webcam') {
-      alert('Primero selecciona una palabra.');
-      return;
-    }
-
-    switch (valor) {
-      case 'play':
-        // Reproducir 1 sola vez
-        this.reproducirAnimacion(false);
-        break;
-      
-      case 'veloc':
-        this.cambiarVelocidad();
-        break;
-    }
+  if (!this.selectedWord && value !== 'webcam') {
+    alert('Primero selecciona una palabra.');
+    input.checked = false;
+    return;
   }
+
+ 
+  // 👉 Otros botones
+  this.selectedTool = value;
+  this.lastSelectedRadio = value;
+
+  if (value === 'play') {
+    this.reproducirAnimacion(false);
+  }
+}
+
+onToggleVeloc(event: Event) {
+  const checked = (event.target as HTMLInputElement).checked;
+
+  if (!this.selectedWord) {
+    alert('Primero selecciona una palabra.');
+    (event.target as HTMLInputElement).checked = false;
+    return;
+  }
+
+  this.velocSliderVisible = checked;
+
+  if (checked) {
+    this.selectedTool = 'veloc';
+  } else {
+    this.selectedTool = null;
+  }
+}
+
+
+
 
   // **************************************
   // Toggle loop/play-bucle
@@ -211,6 +237,16 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   cambiarVelocidad() {
     console.log('Cambiar velocidad (demo)');
   }
+
+  //velocidad
+  setPlaybackRate(rate: number) {
+  this.currentPlaybackRate = rate;
+  if (this.canvasRef) {
+    this.canvasRef.setPlaybackRate(rate);
+  }
+}
+
+
 
   // **************************************
   // WEBCAM => se puede usar a la vez

@@ -7,6 +7,8 @@ import {
   OnDestroy,
   Output,
   EventEmitter
+  Output,
+  EventEmitter
 } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import * as THREE from 'three';
@@ -50,16 +52,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private loader: GLTFLoader = new GLTFLoader();
   private isMainActive: boolean = false;
 
-  /** Array de grupos (poses) para la animación secuencial */
   private poses: THREE.Group[] = [];
-
-  /** Avatar actual en la escena */
   private avatar!: THREE.Group | undefined;
-
-  /** Intervalo para reproducir poses secuencialmente */
   private poseInterval: any = null;
-
-  /** Suscripción a los datos de animación (animaciones + loop) */
   private animacionSubscription: Subscription;
 
   // Definimos correctamente las propiedades relacionadas con el motor de skin
@@ -69,11 +64,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private clipDurations: Map<string, number> = new Map();
 
 
+  // 👇 NUEVO: Propiedad para controlar la velocidad
+  private playbackRate: number = 1;
+
   constructor(
     private animacionService: AnimacionService,
     private gltfService: GltfService
   ) {
-    // Nos suscribimos al BehaviorSubject que emite { animaciones, loop }
     this.animacionSubscription = this.animacionService.animaciones$.subscribe(
       (data: AnimationData) => {
         // data.animaciones => array de URLs
@@ -84,7 +81,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           console.log('Recibida petición de animación:', data, '¿permitido?', permitido);
 
           if (permitido) {
-            // Pequeño retraso opcional
             setTimeout(() => {
               if (this.animacionService.permitirReproduccion()) {
                 this.cargarAnimacionesDinamicas(data.animaciones, data.loop);
@@ -95,7 +91,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
             this.limpiarCanvas();
           }
         } else {
-          // Sin animaciones => limpiar
           this.limpiarCanvas();
         }
       }
@@ -173,9 +168,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.controls.update();
   }
 
-  // --------------------------------------------------
-  // CARGA DE ANIMACIONES (POSIBLES POSES) Y REPRODUCCIÓN
-  // --------------------------------------------------
   private cargarAnimacionesDinamicas(animaciones: string[], loop: boolean): void {
     if (this.isMainActive) return;
     // 1) Detenemos animación previa, pero sin recargar la pose
@@ -187,7 +179,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
 
     this.poses = [];
-    
+
     const promises = animaciones.map((url) => {
       return new Promise<THREE.Group>((resolve, reject) => {
         this.loader.load(
@@ -211,43 +203,34 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private reproducirAnimacionSecuencial(loop: boolean): void {
     // Just in case, paramos algo previo
     this.stopLoop(false);
-    
+
     let index = 0;
+
+    const intervalMs = 120 / this.playbackRate; // 👈 Aplicar velocidad
+
     this.poseInterval = setInterval(() => {
       const currentPose = this.poses[index];
-    
+
       if (this.avatar) {
         this.avatar!.clear();
         currentPose.children.forEach(child => {
           this.avatar!.add(child.clone());
         });
       } else {
-        // Primera vez: crear el avatar
         this.avatar = currentPose.clone();
-  
-        // Aplicar transformaciones de forma consistente:
-        // 1. Resetear la posición
         this.avatar.position.set(0, 0, 0);
-  
-        // 2. Calcular el centro y restarlo para centrar el avatar
         const box = new THREE.Box3().setFromObject(this.avatar);
         const center = box.getCenter(new THREE.Vector3());
         this.avatar.position.sub(center);
-  
-        // 3. Aplicar una escala fija
         this.avatar.scale.set(1.5, 1.5, 1.5);
-  
-        // 4. Aplicar un offset vertical fijo (por ejemplo, bajar 1.1 unidades)
         this.avatar.position.y -= 1.2;
-  
-        // Agregar a la escena
         this.scene.add(this.avatar);
       }
-    
+
       index++;
       if (index >= this.poses.length) {
         if (loop) {
-          index = 0; // Repetir desde la primera
+          index = 0;
         } else {
           clearInterval(this.poseInterval);
           this.poseInterval = null;
@@ -258,7 +241,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
           this.animationEnded.emit();
         }
       }
-    }, 120);
+    }, intervalMs);
   }
   
   /**
@@ -274,7 +257,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     console.log('Animación detenida. revertToDefault:', revertToDefault);
 
     if (revertToDefault) {
-      // Limpiar el canvas (quita avatar) y recargar pose inicial
       this.limpiarCanvas();
       this.loadDefaultPose(true);
     }
@@ -294,9 +276,6 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.loadSkinModel('/assets/hola_0.gltf');
   }
 
-  // --------------------------------------------------
-  // LIMPIAR Y OTRAS UTILIDADES
-  // --------------------------------------------------
   limpiarCanvas(): void {
     if (this.isMainActive) return;
     if (this.avatar) {
@@ -486,6 +465,11 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   public stopClip() {
     this.engineApi?.stop();
+  }
+
+  setPlaybackRate(rate: number) {
+    this.playbackRate = rate;
+    console.log('Velocidad actualizada a:', rate);
   }
 
   public get availableClips(): string[] {

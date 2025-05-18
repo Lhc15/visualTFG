@@ -48,6 +48,11 @@
 
   <!-- PANTALLA 3: Modo Versus normal -->
   <div *ngIf="uiState === 'playing'" class="content">
+    <!-- Botón salir del modo -->
+<div class="exit-button" (click)="volverAModos()" title="Salir del modo">
+  <span>X</span>
+</div>
+
     <div class="layout">
       <!-- Contenedor izquierdo: Avatar O Video -->
       <div class="image-container" id="avatar-element">

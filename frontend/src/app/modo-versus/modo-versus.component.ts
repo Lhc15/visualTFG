@@ -73,7 +73,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
   hasRespondido: boolean = false;
 
   // Modo
-  selectedTool: string = '';
+  selectedTool: string | null = null;
   showWebcam: boolean = false;
   hasStarted: boolean = false; // Indica si se presionó "Empezar modo"
 
@@ -326,6 +326,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
   // Menú (radio buttons) => reproducir anim / stop / webcam...
   // ======================================================
   onRadioChange(event: Event): void {
+    
     const input = event.target as HTMLInputElement;
     const valor = input.value;
 
@@ -621,6 +622,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
     );
 
     this.animacionService.cargarAnimaciones(animacionesUrls, true, loop);
+    this.canvasRef?.setPlaybackRate(this.currentPlaybackRate);
   }
 
   private loadAuthenticatedUser(): void {
@@ -675,5 +677,83 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
   onVelocidadClickedVersus(): void {
     console.log('Cambiar velocidad (versus demo)');
   }
+
+   /** Play una sola vez la animación en Versus */
+  async onVersusPlay(): Promise<void> {
+    if (!this.animaciones.length) return;
+
+    const { filename, clipName } = this.animaciones[0];
+    const url = `${environment.apiUrl}/gltf/animaciones/${filename}`;
+
+    // 1) Asegúrate de tener el modelo cargado en el engine
+    await this.canvasRef.loadSkinModel(url);
+
+    // 2) Lanza el clip por el motor de skin
+    this.canvasRef.playClip(clipName, false);
+
+    // 3) Refleja el estado visual de “está reproduciendo”
+    this.isPlaying = true;
+    // 4) Para “desactivar” el botón Play al terminar
+    const duration = this.canvasRef['clipDurations'].get(clipName) ?? 1000;
+    setTimeout(() => this.isPlaying = false, duration);
+  }
+
+  async onVersusLoop(checked: boolean) {
+    if (!this.animaciones.length) return;
+
+    const { filename, clipName } = this.animaciones[0];
+    const url = `${environment.apiUrl}/gltf/animaciones/${filename}`;
+
+    // 1) Asegurarte de tener el modelo cargado
+    await this.canvasRef.loadSkinModel(url);
+
+    // 2) Reproducir/Parar en el engine
+    if (checked) {
+      this.canvasRef.playClip(clipName, true);
+    } else {
+      this.canvasRef.stopClip();
+    }
+
+    // 3) Actualizar estado visual
+    this.isLooping = checked;
+    this.isPlaying = false;  // en loop no mostramos “playing”
+  }
+
+  /** Velocidad en Versus (demo) */
+  onVelocidadClickedVersus(): void {
+    console.log('Cambiar velocidad (versus demo)');
+  }
+ // Dentro de la clase ModoVersusComponent
+velocSliderVisible: boolean = false;
+currentPlaybackRate: number = 1;
+lastSelectedRadio: string | null = null;
+
+
+
+
+//veloc
+  setPlaybackRate(rate: number): void {
+  this.currentPlaybackRate = rate;
+  if (this.canvasRef) {
+    this.canvasRef.setPlaybackRate(rate);
+  }
+}
+onToggleVeloc(event: Event): void {
+  const checked = (event.target as HTMLInputElement).checked;
+
+  
+
+  this.velocSliderVisible = checked;
+
+  if (checked) {
+    this.selectedTool = 'veloc';
+    this.lastSelectedRadio = 'veloc';
+  } else {
+    this.selectedTool = null;
+    this.lastSelectedRadio = null;
+  }
+}
+
+
     
 }

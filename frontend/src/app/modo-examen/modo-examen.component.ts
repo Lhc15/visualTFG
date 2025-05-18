@@ -62,6 +62,12 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
   // Eliminamos selectedOptionId y usamos optionStatus para almacenar el estado de cada opción:
   optionStatus: { [key: string]: 'correct' | 'incorrect' } = {};
 
+  velocSliderVisible: boolean = false;
+currentPlaybackRate: number = 1;
+lastSelectedRadio: string | null = null;
+
+
+
   constructor(
     private examenService: ExamenService,
     private usuariosService: UsuariosService,

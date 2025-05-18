@@ -417,6 +417,7 @@ button:active,
   align-items: stretch;
   overflow-y: auto;
   box-sizing: border-box;
+  z-index:1;
 }
 
 /* VISTA 1 DE CATEGORÍAS */
@@ -431,11 +432,11 @@ button:active,
 
 .card {
   width: 190px;
-  height: 190px;
+  height: 170px;
   border-radius: 20px;
   background: #f5f5f5;
   position: relative;
-  padding: 1.8rem;
+  padding: 2.3rem;
   border: 2px solid #c3c6ce;
   transition: 0.5s ease-out;
   overflow: visible;
@@ -446,20 +447,26 @@ button:active,
 .card-details {
   color: black;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 💡 Esto centra verticalmente */
+  align-items: center;     /* 💡 Esto centra horizontalmente */
+  text-align: center;
   gap: 0.5em;
-  display: grid;
-  place-content: center;
 }
+
+
 
 .text-title {
   font-size: 1.5em;
   font-weight: bold;
+  margin-top: 1rem;
 }
 
 .text-body {
   color: rgb(134, 134, 134);
   font-family: "Lexend", sans-serif;
-
+  margin-bottom: 1.9rem
 }
 
 .card-button {
@@ -604,5 +611,200 @@ button:active,
 .dropdown-item input {
   margin-right: 8px;
   cursor: pointer;
+}
+
+/* Radio-botones flotantes (menú de la izquierda) */
+.radio-input {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) translateX(100%);
+  transition: transform 0.4s ease;
+  width: 100px;
+  min-height: 300px;
+  padding: 10px;
+  border-radius: 10px 0px 0px 10px;
+  background-color: black;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.radio-input.open {
+  transform: translateY(-50%) translateX(0);
+}
+
+.radio-input input {
+  display: none;
+}
+
+.radio-input .label {
+  width: 83px;
+  height: 80px;
+  background: linear-gradient(to bottom, #333333, rgb(36, 35, 35));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: all 0.1s linear;
+  border-top: 1px solid #4e4d4d;
+  background-color: #333333;
+  position: relative;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.label:first-child {
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+}
+.label:last-child {
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+/* Si el radio está checked, fondo especial */
+.label:has(input[type="radio"]:checked) {
+  box-shadow: none;
+  background: linear-gradient(to bottom, #1d1d1d, #1d1d1d);
+  border-top: none;
+}
+
+.label::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 103%;
+  height: 100%;
+  border-radius: 10px;
+  background: linear-gradient(
+    to bottom,
+    transparent 10%,
+    transparent,
+    transparent 90%
+  );
+  transition: all 0.1s linear;
+  z-index: -1;
+}
+
+.label:has(input[type="radio"]:checked)::before {
+  background: linear-gradient(
+    to bottom,
+    transparent 10%,
+    #cae2fd63,
+    transparent 90%
+  );
+}
+
+.label .text {
+  color: white;
+  font-size: 15px;
+  line-height: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  transition: all 0.1s linear;
+  text-shadow: -1px -1px 1px rgba(224, 224, 224, 0.1),
+    0px 2px 3px rgba(0, 0, 0, 0.3);
+}
+.label input[type="radio"]:checked + .text {
+  color: rgb(202, 226, 253);
+  text-shadow: 0px 0px 12px #cae2fd;
+}
+
+/* Para todos tus .label con un icon dentro */
+.label .icon {
+  width: 32px;
+  height: 32px;
+  fill: #ffffff;
+  transition: fill 0.2s, filter 0.2s;
+}
+/* Cuando el radio está checked => iluminado */
+.label:has(input[type="radio"]:checked) .icon {
+  fill: rgb(202, 226, 253);
+  filter: drop-shadow(0 0 6px #cae2fd);
+}
+
+/* Icono de play-bucle */
+.icon-play2 {
+  fill: #fff;
+  transition: fill 0.2s, filter 0.2s;
+  width: 38px;
+  height: 38px;
+  cursor: pointer;
+}
+
+/* STOP dentro del PLAY2 */
+.label-play2 {
+  position: relative;
+}
+.label-stop {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  width: 27px;
+  height: 27px;
+  background-color: #444;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.label-stop input[type="radio"] {
+  display: none;
+}
+.stop-text {
+  color: white;
+  font-size: 10px;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+/* Efecto al estar marcado STOP */
+.label-stop:has(input[type="radio"]:checked) {
+  background-color: #222;
+}
+
+/* Efecto “iluminado” al estar checkeado PLAY2 */
+.label-play2:has(input[type="radio"]:checked) .icon-play2 {
+  fill: rgb(202, 226, 253);
+  filter: drop-shadow(0 0 5px #cae2fd);
+}
+
+/* Efecto “iluminado” al checkear STOP */
+.label-stop:has(input[type="radio"]:checked) .icon-stop {
+  fill: #ff0000;
+  filter: drop-shadow(0 0 5px #cae2fd);
+}
+
+/* Icono STOP */
+.icon-stop {
+  fill: #ff0000;
+  transition: fill 0.2s, filter 0.2s;
+  cursor: pointer;
+}
+
+/* Caja general de la webcam */
+.label-webcam {
+  width: 130px;
+  height: 80px;
+  position: relative;
+  background: linear-gradient(to bottom, #333, #242323);
+}
+.label-webcam input[type="radio"] {
+  display: none;
+}
+.icon-webcam {
+  display: block;
+  width: 40px;
+  height: auto;
+  margin: 0 auto;
+  transition: filter 0.2s;
+}
+.label-webcam:has(input[type="checkbox"]:checked) .icon-webcam {
+  filter: drop-shadow(0 0 5px #cae2fd);
 }
 
