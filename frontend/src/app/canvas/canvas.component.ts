@@ -22,6 +22,8 @@ interface SkinEngineApi {
   play(name: string, loop: boolean): void;
   stop(): void;
   clips: string[];
+  resetRotation(): void;
+
 }
 
 @Component({
@@ -331,54 +333,46 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       }
     });
   }
+  
 
   public async resetView(): Promise<void> {
     if (this.isMainActive) return;
 
     if (this.skinRunning) {
-      // Hacer un fade out suave
-      const canvas = this.skinCanvas.nativeElement;
-      canvas.style.transition = 'opacity 0.3s ease-out';
-      canvas.style.opacity = '0';
+    // 1) Resetea la rotación interna del skin-engine
+    if (this.engineApi?.resetRotation) {
+      this.engineApi.resetRotation();
+    }
 
-      // Esperar a que termine el fade out
-      await new Promise(resolve => setTimeout(resolve, 300));
+    // 2) Fade-out / fade-in opcional
+    const canvas = this.skinCanvas.nativeElement;
+    canvas.style.transition = 'opacity 0.3s ease-out';
+    canvas.style.opacity = '0';
+    await new Promise(r => setTimeout(r, 300));
+    canvas.style.opacity = '1';
 
-      // Reiniciar el skin engine
-      this.stopSkin?.();
-      this.stopSkin = undefined;
-      
-      // Arrancar de nuevo el skin engine
-      const { startSkinEngine } = await import('engine/skinEngine.js');
-      this.stopSkin = await startSkinEngine(
-        this.skinCanvas.nativeElement,
-        'assets/malanimation.gltf',
-        () => ({
-          projectionMatrix: new Float32Array(this.camera.projectionMatrix.elements),
-          viewMatrix: new Float32Array(this.camera.matrixWorldInverse.elements)
-        })
-      );
+    // 3) Resetea la cámara de Three.js
+    this.camera.position.set(0, 0, 5.8);
+    this.camera.lookAt(0, 0, 0);
+    this.controls.target.set(0, 0, 0);
+    this.controls.update();
 
-      // Hacer un fade in suave
-      canvas.style.opacity = '1';
     } else {
-      // Limpiar el avatar actual
       if (this.avatar) {
         this.scene.remove(this.avatar);
         this.avatar.clear();
         this.avatar = undefined;
       }
-
-      // Recargar el modelo por defecto
       this.loadDefaultPose(true);
 
-      // Resetear la cámara
       this.camera.position.set(0, 0, 5.8);
       this.camera.lookAt(0, 0, 0);
       this.controls.target.set(0, 0, 0);
       this.controls.update();
     }
   }
+
+
 
   /**
    * Obtiene si el motor de skin está corriendo actualmente

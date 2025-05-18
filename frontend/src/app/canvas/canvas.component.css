@@ -42,7 +42,7 @@
   width:  100%;
   height: 100%;
   z-index: 1;            /* por encima del threeCanvas */
-  pointer-events: auto;  /* Permitir eventos del ratón */
+  pointer-events: auto; /* Permitir eventos del ratón */
   transition: opacity 0.3s ease-out;  /* Añadimos la transición */
 }
 

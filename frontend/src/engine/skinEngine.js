@@ -110,6 +110,12 @@ export async function startSkinEngine(
     const skinPI = wu.createProgramInfo(gl, [skinVS, fs]);
     const meshPI = wu.createProgramInfo(gl, [meshVS, fs]);
 
+  // Then modify these lines in the existing code:
+  // Replace:
+
+  // With:
+  // Use the global rotation variable (already assigned to window.currentRotation above)
+
   // -------------------------------------------------------------------------
   //  CLASES AUXILIARES
   // -------------------------------------------------------------------------
@@ -454,7 +460,68 @@ export async function startSkinEngine(
   let lastTime = 0;
   let playbackSpeed = 1.0;      // 1 = velocidad normal, <1 más lento, >1 más rápido
   let rafId;
+  let stop = false;
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    let currentRotation = { x: 0, y: 0 };
+    const rotationSpeed = 0.02;
+    const MAX_ROTATION = Math.PI / 3; // 60 grados en radianes
+
+    // Event listeners para el control del ratón
+    canvas.addEventListener('mousedown', (e) => {
+      console.log('Mouse down');
+      isDragging = true;
+      previousMousePosition = {
+        x: e.clientX,
+        y: e.clientY
+      };
+    });
+  canvas.addEventListener('mousemove', (e) => {
+    if (!isDragging) return;
+
+    const deltaMove = {
+      x: e.clientX - previousMousePosition.x,
+      y: e.clientY - previousMousePosition.y
+    };
+
+    // Actualizar rotación Y con límites
+    currentRotation.y += deltaMove.x * rotationSpeed;
+    // Limitar la rotación a ±60 grados
+    currentRotation.y = Math.max(-MAX_ROTATION, Math.min(MAX_ROTATION, currentRotation.y));
+    // Mantener la rotación X en 0
+    currentRotation.x = 0;
+
+    console.log('Rotation:', currentRotation.y * (180/Math.PI)); // Mostrar en grados
+
+    previousMousePosition = {
+      x: e.clientX,
+      y: e.clientY
+    };
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    console.log('Mouse up');
+    isDragging = false;
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    console.log('Mouse leave');
+    isDragging = false;
+  });
+
   function render(now) {
+
+    // Crear matriz de modelo con la rotación actual
+    const modelMatrix = m4.identity();
+
+    // Aplicar rotación Y usando TRS
+    const trs = new TRS(
+      [0, 0, 0],  // posición
+      [0, Math.sin(currentRotation.y/2), 0, Math.cos(currentRotation.y/2)],  // rotación (quaternion)
+      [1, 1, 1]   // escala
+    );
+    trs.getMatrix(modelMatrix);
+
     // convertimos a segundos y sacamos delta
     now *= 0.001;                 // ahora now es segundos absolutos
     const dt = lastTime ? (now - lastTime) * playbackSpeed : 0;
@@ -491,18 +558,23 @@ export async function startSkinEngine(
       });
     }
 
-    const shared = { 
+    const shared = {
       u_lightDirection: m4.normalize([-1,3,5]),
-      u_world: modelMatrix 
+      // combinamos tu rotación global con la transform de cada nodo
+      u_world: (node) => {
+        const out = m4.identity();
+        return m4.multiply(modelMatrix, node.world, out);
+      }
     };
 
     const draw = node => {
-      node.drawables.forEach(d => d.render(
-        node,
-        projectionMatrix,
-        viewMatrix,
-        shared
-      ));
+      const worldMatrix = shared.u_world(node);
+      node.drawables.forEach(d =>
+        d.render(node, projectionMatrix, viewMatrix, {
+          u_lightDirection: shared.u_lightDirection,
+          u_world:          worldMatrix
+        })
+      );
     };
 
     gltf.scenes.forEach(sc => {
@@ -524,6 +596,8 @@ export async function startSkinEngine(
     setSpeed: (s) => { playbackSpeed = s; },
     // 3) para limpiar el RAF si quisieras reiniciar todo
     destroy:  () => cancelAnimationFrame(rafId),
+    resetRotation: () => { currentRotation.x = 0; currentRotation.y = 0; },
+
    };
  }
 
