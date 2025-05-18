@@ -56,9 +56,9 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
   public isPlaying = false;
 
   selectedTool: string | null = null;
-velocSliderVisible: boolean = false;
-currentPlaybackRate: number = 1;
-lastSelectedRadio: string | null = null;
+  velocSliderVisible: boolean = false;
+  currentPlaybackRate: number = 1;
+  lastSelectedRadio: string | null = null;
 
 
 
@@ -240,11 +240,9 @@ onToggleVeloc(event: Event) {
 
   //velocidad
   setPlaybackRate(rate: number) {
-  this.currentPlaybackRate = rate;
-  if (this.canvasRef) {
-    this.canvasRef.setPlaybackRate(rate);
+    this.currentPlaybackRate = rate;
+    this.canvasRef?.setPlaybackRate(rate);
   }
-}
 
 
 

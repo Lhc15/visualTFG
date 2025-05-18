@@ -52,7 +52,7 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
      
   resultsHistory: boolean[] = [];         // <-- Para almacenar aciertos/fallos
 
-  selectedTool: string = '';
+  selectedTool: string | null = null;
 
   
   isPlaying = false;       // para reflejar “una sola reproducción”

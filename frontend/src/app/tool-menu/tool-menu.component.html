@@ -19,8 +19,23 @@
   </label>
 
   <!-- Velocidad -------------------------------------------------------->
-  <label class="label">
-    <input type="radio" name="value-radio" (click)="onVelocidad()"/>
-    <span class="text">Veloc</span>
+  <!-- Velocidad (Speed) -->
+  <label class="label label-veloc" [class.selected]="velocSliderVisible">
+    <input
+      type="checkbox"
+      id="toggleVeloc"
+      (change)="onToggleVeloc($event)"
+      [checked]="velocSliderVisible"
+      [disabled]="disabled"
+    />
+    <img class="icon-veloc" src="assets/veloc.svg" alt="Velocidad" />
   </label>
+
+
+  <!-- Barra de selección de velocidad -->
+  <div *ngIf="velocSliderVisible" class="veloc-slider-fixed">
+    <button (click)="setPlaybackRate(0.5)" [class.active]="currentPlaybackRate === 0.5">x0.5</button>
+    <button (click)="setPlaybackRate(1)" [class.active]="currentPlaybackRate === 1">x1</button>
+    <button (click)="setPlaybackRate(1.5)" [class.active]="currentPlaybackRate === 1.5">x1.5</button>
+  </div>
 </div>

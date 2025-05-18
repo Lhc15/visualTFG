@@ -20,13 +20,14 @@
         <!-- tools-menu -->
         <app-tool-menu
           [isPlaying]="isPlaying"
+          [currentPlaybackRate]="currentPlaybackRate"
+          (rateChange)="setPlaybackRate($event)"
           [isLooping]="isLooping"
           [showWebcam]="showWebcam"
           [disabled]="!selectedWord"
           (playClicked)="onPlayClicked()"
           (loopToggled)="handleLoop($event)"
-          (webcamToggled)="toggleWebcam()"
-          (velocidadClicked)="cambiarVelocidad()">
+          (webcamToggled)="toggleWebcam()">
         </app-tool-menu>
               
       </div>

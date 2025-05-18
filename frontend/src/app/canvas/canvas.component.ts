@@ -7,8 +7,6 @@ import {
   OnDestroy,
   Output,
   EventEmitter
-  Output,
-  EventEmitter
 } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import * as THREE from 'three';
@@ -467,10 +465,27 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.engineApi?.stop();
   }
 
-  setPlaybackRate(rate: number) {
+  /** en CanvasComponent */
+  public setPlaybackRate(rate: number) {
     this.playbackRate = rate;
     console.log('Velocidad actualizada a:', rate);
+
+    // 1) Si el skinEngine está activo, ajusta su velocidad
+    if (this.engineApi && typeof (this.engineApi as any).setSpeed === 'function') {
+      (this.engineApi as any).setSpeed(rate);
+    }
+
+    // 2) Si tienes un loop de poses secuencial en marcha, reinícialo
+    if (this.poseInterval) {
+      // guarda el estado de loop
+      const looping = !!this.poseInterval;
+      clearInterval(this.poseInterval);
+      this.poseInterval = null;
+      // relanza con el nuevo playbackRate
+      this.reproducirAnimacionSecuencial(looping);
+    }
   }
+
 
   public get availableClips(): string[] {
     return this.engineApi?.clips ?? [];
