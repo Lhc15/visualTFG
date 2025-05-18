@@ -506,3 +506,14 @@ app-card {
   font-weight: 1300; 
   transform: scale(1.5); 
 } */
+
+.label-veloc .icon-veloc {
+  width: 40px;
+  height: 40px;
+  transition: filter 0.2s;
+  filter: brightness(1);
+}
+
+.label-veloc.selected .icon-veloc {
+  filter: drop-shadow(0 0 6px #cae2fd) brightness(1.3);
+}

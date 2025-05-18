@@ -65,15 +65,16 @@
 
           <!-- Veloc -->
           <!-- Veloc -->
-<label class="label label-veloc">
+<label class="label label-veloc" [class.selected]="velocSliderVisible">
   <input
     type="checkbox"
     id="toggleVeloc"
     (change)="onToggleVeloc($event)"
     [checked]="velocSliderVisible"
   />
-  <span class="text">Veloc</span>
+  <img class="icon-veloc" src="assets/veloc.svg" alt="Velocidad" />
 </label>
+
 
 <!-- Barra de velocidad -->
 <div *ngIf="velocSliderVisible" class="veloc-slider-fixed">
