@@ -431,11 +431,11 @@ button:active,
 
 .card {
   width: 190px;
-  height: 190px;
+  height: 170px;
   border-radius: 20px;
   background: #f5f5f5;
   position: relative;
-  padding: 1.8rem;
+  padding: 2.3rem;
   border: 2px solid #c3c6ce;
   transition: 0.5s ease-out;
   overflow: visible;
@@ -446,20 +446,26 @@ button:active,
 .card-details {
   color: black;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 💡 Esto centra verticalmente */
+  align-items: center;     /* 💡 Esto centra horizontalmente */
+  text-align: center;
   gap: 0.5em;
-  display: grid;
-  place-content: center;
 }
+
+
 
 .text-title {
   font-size: 1.5em;
   font-weight: bold;
+  margin-top: 1rem;
 }
 
 .text-body {
   color: rgb(134, 134, 134);
   font-family: "Lexend", sans-serif;
-
+  margin-bottom: 1.9rem
 }
 
 .card-button {
@@ -853,3 +859,195 @@ button:active,
 .label-veloc.selected .icon-veloc {
   filter: drop-shadow(0 0 6px #cae2fd) brightness(1.3);
 }
+
+/* From Uiverse.io by Pradeepsaranbishnoi */ 
+.voltage-button {
+  position: relative;
+}
+
+.voltage-button button {
+  color: white;
+  background: #008bf8;
+  padding: 1rem 3rem 1rem 3rem;
+  border-radius: 5rem;
+  border: 5px solid #5978F3;
+  font-size: 1.2rem;
+  line-height: 1em;
+  letter-spacing: 0.075em;
+  transition: background 0.3s;
+}
+
+.voltage-button button:hover {
+  cursor: pointer;
+  background: #0F1C53;
+}
+
+.card:hover .voltage-button svg,
+.card:hover .voltage-button .dots {
+  opacity: 1;
+}
+
+
+.voltage-button svg {
+  display: block;
+  position: absolute;
+  top: -0.75em;
+  left: -0.25em;
+  width: calc(100% + 0.5em);
+  height: calc(100% + 1.5em);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s;
+  transition-delay: 0.1s;
+}
+
+.voltage-button svg path {
+  stroke-dasharray: 100;
+  filter: url("#glow");
+}
+
+.voltage-button svg path.line-1 {
+  stroke: #f6de8d;
+  stroke-dashoffset: 0;
+  animation: spark-1 3s linear infinite;
+}
+
+.voltage-button svg path.line-2 {
+  stroke: #6bfeff;
+  stroke-dashoffset: 500;
+  animation: spark-2 3s linear infinite;
+}
+
+.voltage-button .dots {
+  opacity: 0;
+  transition: opacity 0.3s;
+  transition-delay: 0.4s;
+}
+
+.voltage-button .dots .dot {
+  width: 1rem;
+  height: 1rem;
+  background: white;
+  border-radius: 100%;
+  position: absolute;
+  opacity: 0;
+}
+
+.voltage-button .dots .dot-1 {
+  top: 0;
+  left: 20%;
+  animation: fly-up 3s linear infinite;
+}
+
+.voltage-button .dots .dot-2 {
+  top: 0;
+  left: 55%;
+  animation: fly-up 3s linear infinite;
+  animation-delay: 0.5s;
+}
+
+.voltage-button .dots .dot-3 {
+  top: 0;
+  left: 80%;
+  animation: fly-up 3s linear infinite;
+  animation-delay: 1s;
+}
+
+.voltage-button .dots .dot-4 {
+  bottom: 0;
+  left: 30%;
+  animation: fly-down 3s linear infinite;
+  animation-delay: 2.5s;
+}
+
+.voltage-button .dots .dot-5 {
+  bottom: 0;
+  left: 65%;
+  animation: fly-down 3s linear infinite;
+  animation-delay: 1.5s;
+}
+
+@keyframes spark-1 {
+  to {
+    stroke-dashoffset: -1000;
+  }
+}
+
+@keyframes spark-2 {
+  to {
+    stroke-dashoffset: -500;
+  }
+}
+
+@keyframes fly-up {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.2);
+  }
+
+  5% {
+    opacity: 1;
+    transform: translateY(-1.5rem) scale(0.4);
+  }
+
+  10%, 100% {
+    opacity: 0;
+    transform: translateY(-3rem) scale(0.2);
+  }
+}
+
+@keyframes fly-down {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.2);
+  }
+
+  5% {
+    opacity: 1;
+    transform: translateY(1.5rem) scale(0.4);
+  }
+
+  10%, 100% {
+    opacity: 0;
+    transform: translateY(3rem) scale(0.2);
+  }
+}
+/* Ajuste para que el botón esté más pequeño y centrado en la card */
+.small-explora-btn {
+  position: absolute;
+  bottom: -20px; /* bajamos más el botón */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: auto;
+  z-index: 2;
+}
+
+
+.small-explora-btn button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-width: 3px;
+}
+
+/* Opcional: reducir un poco las animaciones para que no sobresalga tanto */
+.small-explora-btn svg {
+  top: -0.5em;
+  left: -0.3em;
+  width: calc(100% + 0.6em);
+  height: calc(100% + 1.2em);
+}
+
+/* 🔒 Oculto por defecto */
+.hidden-hover-button {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+/* 👁️ Visible al hacer hover sobre la card */
+.card:hover .hidden-hover-button {
+  opacity: 1;
+  pointer-events: all;
+}
+
