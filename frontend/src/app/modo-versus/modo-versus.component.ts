@@ -61,7 +61,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
   optionStatus: { [key: string]: 'correct' | 'incorrect' } = {};
 
   // Modo
-  selectedTool: string = '';
+  selectedTool: string | null = null;
   showWebcam: boolean = false;
   hasStarted: boolean = false; // Indica si se presionó "Empezar modo"
 
@@ -81,6 +81,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
 
 
   private isSuddenDeath = false; 
+  
 
 
 
@@ -312,6 +313,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
   // Menú (radio buttons) => reproducir anim / stop / webcam...
   // ======================================================
   onRadioChange(event: Event): void {
+    
     const input = event.target as HTMLInputElement;
     const valor = input.value;
 
@@ -604,6 +606,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
     );
   
     this.animacionService.cargarAnimaciones(animacionesUrls, true, loop);
+    this.canvasRef?.setPlaybackRate(this.currentPlaybackRate);
   }
 
   private loadAuthenticatedUser(): void {
@@ -612,5 +615,37 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
       error: err => console.error('No pude cargar usuario autenticado', err)
     });
   }
+ // Dentro de la clase ModoVersusComponent
+velocSliderVisible: boolean = false;
+currentPlaybackRate: number = 1;
+lastSelectedRadio: string | null = null;
+
+
+
+
+//veloc
+  setPlaybackRate(rate: number): void {
+  this.currentPlaybackRate = rate;
+  if (this.canvasRef) {
+    this.canvasRef.setPlaybackRate(rate);
+  }
+}
+onToggleVeloc(event: Event): void {
+  const checked = (event.target as HTMLInputElement).checked;
+
+  
+
+  this.velocSliderVisible = checked;
+
+  if (checked) {
+    this.selectedTool = 'veloc';
+    this.lastSelectedRadio = 'veloc';
+  } else {
+    this.selectedTool = null;
+    this.lastSelectedRadio = null;
+  }
+}
+
+
     
 }
