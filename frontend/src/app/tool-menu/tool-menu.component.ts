@@ -14,6 +14,7 @@ export class ToolMenuComponent {
   @Input() disabled    = false;
   @Input() isPlaying   = false;
   @Input() currentPlaybackRate = 1;
+  @Input() webcamDisabled = false;
 
   @Output() playClicked   = new EventEmitter<void>();
   @Output() loopToggled   = new EventEmitter<boolean>();
@@ -24,7 +25,10 @@ export class ToolMenuComponent {
 
   onPlay()            { if (!this.disabled) this.playClicked.emit(); }
   onLoop(ev: Event)   { this.loopToggled.emit((ev.target as HTMLInputElement).checked); }
-  onWebcam(ev: Event) { this.webcamToggled.emit((ev.target as HTMLInputElement).checked); }
+  onWebcam(ev: Event) {
+    if (this.webcamDisabled) return;            // no emito si está deshabilitada
+    this.webcamToggled.emit((ev.target as HTMLInputElement).checked);
+  }
 
   onToggleVeloc(ev: Event) {
     const checked = (ev.target as HTMLInputElement).checked;

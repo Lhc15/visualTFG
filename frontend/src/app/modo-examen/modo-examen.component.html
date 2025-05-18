@@ -18,7 +18,9 @@
           [disabled]="cargandoPregunta"   
           (playClicked)="onPlayClicked()"
           (loopToggled)="handleLoop($event)"
-          (velocidadClicked)="onVelocidadClicked()"
+          [currentPlaybackRate]="currentPlaybackRate"
+          (rateChange)="setPlaybackRate($event)"
+          [webcamDisabled]="true"
           (webcamToggled)="null">        
         </app-tool-menu>
         

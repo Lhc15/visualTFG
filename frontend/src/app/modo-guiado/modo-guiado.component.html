@@ -15,7 +15,9 @@
             (playClicked)="onPlayClicked()"
             (loopToggled)="handleLoop($event)"
             (webcamToggled)="toggleWebcam()"
-            (velocidadClicked)="cambiarVelocidad()">
+            [currentPlaybackRate]="currentPlaybackRate"
+            (rateChange)="setPlaybackRate($event)"
+            (velocidadClicked)="velocSliderVisible = !velocSliderVisible">
           </app-tool-menu>
 
 

@@ -63,8 +63,8 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
   optionStatus: { [key: string]: 'correct' | 'incorrect' } = {};
 
   velocSliderVisible: boolean = false;
-currentPlaybackRate: number = 1;
-lastSelectedRadio: string | null = null;
+  currentPlaybackRate: number = 1;
+  lastSelectedRadio: string | null = null;
 
 
 
@@ -330,11 +330,9 @@ lastSelectedRadio: string | null = null;
     this.isLooping = checked;
   }
 
-  /** Velocidad (ejemplo de callback) */
-  onVelocidadClicked() {
-    console.log('Cambiar velocidad (demo)');
+   setPlaybackRate(rate: number) {
+    this.currentPlaybackRate = rate;
+    this.canvasRef?.setPlaybackRate(rate);
   }
-
-  
   
 }

@@ -192,3 +192,55 @@
 .label-webcam:has(input[type="checkbox"]:checked) .icon-webcam {
   filter: drop-shadow(0 0 5px #cae2fd);
 }
+
+.veloc-slider-fixed {
+  position: fixed;
+  top: calc(100%); /* justo debajo del menú */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background-color: rgba(0, 0, 0, 0.8);
+  padding: 8px;
+  border-radius: 4px;
+  z-index: 9999 !important;
+}
+
+.veloc-slider-fixed button {
+  background-color: #444;
+  color: white;
+  font-family: 'Lexend', sans-serif;
+  border: 2px solid black;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+  width: 100%;
+}
+
+.veloc-slider-fixed button:hover {
+  background-color: #666;
+}
+
+.veloc-slider-fixed button.active {
+  background-color: #41b8d5;
+  color: black;
+  font-weight: bold;
+}
+
+
+
+.label-veloc .icon-veloc {
+  width: 40px;
+  height: 40px;
+  transition: filter 0.2s;
+  filter: brightness(1);
+}
+
+.label-veloc.selected .icon-veloc {
+  filter: drop-shadow(0 0 6px #cae2fd) brightness(1.3);
+}

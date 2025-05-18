@@ -675,35 +675,14 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
 
   /** Velocidad en Versus (demo) */
  // Dentro de la clase ModoVersusComponent
-velocSliderVisible: boolean = false;
-currentPlaybackRate: number = 1;
-lastSelectedRadio: string | null = null;
+  velocSliderVisible: boolean = false;
+  currentPlaybackRate: number = 1;
+  lastSelectedRadio: string | null = null;
 
-
-
-
-//veloc
-  setPlaybackRate(rate: number): void {
-  this.currentPlaybackRate = rate;
-  if (this.canvasRef) {
-    this.canvasRef.setPlaybackRate(rate);
+ setPlaybackRate(rate: number): void {
+    this.currentPlaybackRate = rate;
+    this.canvasRef?.setPlaybackRate(rate);
   }
-}
-onToggleVeloc(event: Event): void {
-  const checked = (event.target as HTMLInputElement).checked;
-
-  
-
-  this.velocSliderVisible = checked;
-
-  if (checked) {
-    this.selectedTool = 'veloc';
-    this.lastSelectedRadio = 'veloc';
-  } else {
-    this.selectedTool = null;
-    this.lastSelectedRadio = null;
-  }
-}
 
 
     

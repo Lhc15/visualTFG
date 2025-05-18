@@ -13,9 +13,17 @@
   </label>
 
   <!-- Webcam ----------------------------------------------------------->
-  <label class="label label-webcam">
-    <input type="checkbox" [checked]="showWebcam" (change)="onWebcam($event)"/>
-    <img class="icon-webcam" src="assets/webcam.svg"/>
+  <label
+    class="label label-webcam"
+    [style.opacity]="webcamDisabled ? 0.5 : 1"
+    [title]="webcamDisabled ? 'No disponible' : 'Webcam'">
+    <input
+      type="checkbox"
+      [checked]="showWebcam"
+      (change)="onWebcam($event)"
+      [disabled]="webcamDisabled"
+    />
+    <img class="icon-webcam" src="assets/webcam.svg" alt="Webcam" />
   </label>
 
   <!-- Velocidad -------------------------------------------------------->
