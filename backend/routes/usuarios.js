@@ -74,17 +74,11 @@ router.put(
   actualizarUsuario
 );
 
-// router.put(
-//   "/:id",
-//   [
-//     validarJWT,
-//     check("email", "El argumento email es obligatorio").not().isEmpty(),
-//     check("id", "El identificador no es válido").isMongoId(),
-//     validarCampos,
-//     tieneRol("ROL_ADMIN"),
-//   ],
-//   actualizarUsuario
-// );
+const { enviarResetEmail, resetearPassword } = require('../controllers/auth');
+
+router.post('/auth/reset-password', enviarResetEmail);
+router.post('/auth/reset-password/:token', resetearPassword);
+
 
 router.delete(
   "/:id",

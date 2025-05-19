@@ -19,6 +19,7 @@ import { MiperfilComponent } from './miperfil/miperfil.component';
 import { ModoLibreComponent } from './modo-libre/modo-libre.component';
 import { ModoExamenComponent } from './modo-examen/modo-examen.component';
 import { ModoVersusComponent } from './modo-versus/modo-versus.component';
+import { ResetPasswordComponent } from './reset-password/reset-password.component';
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
@@ -39,6 +40,7 @@ export const routes: Routes = [
   { path: 'libre', component: ModoLibreComponent },
   { path: 'examen', component: ModoExamenComponent },
   { path: 'versus', component: ModoVersusComponent },
+  { path: 'reset-password/:token', component: ResetPasswordComponent},
   { path: 'test-upload', component: TestUploadComponent, canActivate: [AdminRoleGuard] }, //canActivate: [AdminGuard] }, // Protege esta ruta
   { path: '**', redirectTo: 'landing' },
 ];

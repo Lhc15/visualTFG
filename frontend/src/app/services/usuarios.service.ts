@@ -128,6 +128,13 @@ export class UsuariosService {
     return this.http.post<any>(`${this.apiUrl}/auth/reset-password`, { email });
   }
 
+  resetPasswordWithToken(token: string, nuevaPassword: string) {
+  return this.http.post(`${this.apiUrl}/auth/reset-password/${token}`, {
+    nuevaPassword,
+  });
+}
+
+
   
 
 }
