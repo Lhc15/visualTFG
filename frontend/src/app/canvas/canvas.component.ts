@@ -136,7 +136,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private initCamera() {
     const aspect = window.innerWidth / window.innerHeight;
     this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
-    this.camera.position.set(0, 0, 5.8);
+    this.camera.position.set(0, 0, 3.8);
     this.camera.lookAt(0, 0, 0);
   }
 
@@ -224,7 +224,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         const center = box.getCenter(new THREE.Vector3());
         this.avatar.position.sub(center);
         this.avatar.scale.set(1.5, 1.5, 1.5);
-        this.avatar.position.y -= 1.2;
+        this.avatar.position.y -= 1.0;
+
         this.scene.add(this.avatar);
       }
 
@@ -332,7 +333,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     canvas.style.opacity = '1';
 
     // 3) Resetea la cámara de Three.js
-    this.camera.position.set(0, 0, 5.8);
+    this.camera.position.set(0, 0, 3.8);
     this.camera.lookAt(0, 0, 0);
     this.controls.target.set(0, 0, 0);
     this.controls.update();
@@ -345,7 +346,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       }
       this.loadDefaultPose(true);
 
-      this.camera.position.set(0, 0, 5.8);
+      this.camera.position.set(0, 0, 3.8);
       this.camera.lookAt(0, 0, 0);
       this.controls.target.set(0, 0, 0);
       this.controls.update();
@@ -365,36 +366,26 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    * Inicializa el motor de skin
    */
   private async initSkinEngine(url = '/assets/hola_0.gltf') {
-    try {
-      const { startSkinEngine } = await import('engine/skinEngine.js');
-      
-      console.log('Iniciando skin engine con URL:', url);
-      
-      this.engineApi = await startSkinEngine(
-        this.skinCanvas.nativeElement,
-        url,
-        () => ({
-          projectionMatrix: new Float32Array(this.camera.projectionMatrix.elements),
-          viewMatrix: new Float32Array(this.camera.matrixWorldInverse.elements),
-        }),
-      ) as unknown as SkinEngineApi;
+    const { startSkinEngine } = await import('engine/skinEngine.js');
+    this.engineApi = await startSkinEngine(
+      this.skinCanvas.nativeElement,
+      url,
+      () => ({
+        projectionMatrix: new Float32Array(this.camera.projectionMatrix.elements),
+        viewMatrix:       new Float32Array(this.camera.matrixWorldInverse.elements),
+      }),
+    ) as unknown as SkinEngineApi;
 
-      // Si hay alguna animación disponible, podríamos reproducirla
-      if (this.engineApi.clips.length > 0) {
-        console.log('Clips disponibles:', this.engineApi.clips);
-        // Si quieres reproducir algún clip específico como idle
-        // this.engineApi.play(this.engineApi.clips[0], true);
-      }
-
-      this.skinIsRunning = true;
-      this.skinCanvas.nativeElement.style.display = 'block';
-      
-      return this.engineApi;
-    } catch (error) {
-      console.error('Error al iniciar el skin engine:', error);
-      throw error;
+    // ⚡ Aquí aplicamos siempre el playbackRate que tengas
+    if ((this.engineApi as any).setSpeed) {
+      (this.engineApi as any).setSpeed(this.playbackRate);
     }
+
+    this.skinIsRunning = true;
+    this.skinCanvas.nativeElement.style.display = 'block';
+    return this.engineApi;
   }
+
 
   /**
    * Alterna entre mostrar/ocultar el skin
