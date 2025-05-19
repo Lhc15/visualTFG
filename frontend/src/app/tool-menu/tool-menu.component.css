@@ -170,6 +170,8 @@
   fill: #ff0000;
   transition: fill 0.2s, filter 0.2s;
   cursor: pointer;
+  width: 30px;
+  height: 30px;
 }
 
 /* Caja general de la webcam */
