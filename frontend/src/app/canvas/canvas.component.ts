@@ -16,6 +16,8 @@ import { AnimacionService, AnimationData } from '../services/animacion.service';
 import { GltfService } from '../services/gltf.service';
 import { Subscription } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+
 
 // Definir la interfaz para el API del motor de skin
 interface SkinEngineApi {
@@ -67,7 +69,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private animacionService: AnimacionService,
-    private gltfService: GltfService
+    private gltfService: GltfService,
+    public  router: Router
   ) {
     this.animacionSubscription = this.animacionService.animaciones$.subscribe(
       (data: AnimationData) => {

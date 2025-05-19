@@ -1,22 +1,17 @@
 <div class="canvas-container">
   <div class="canvas-wrapper">
+    <canvas #threeCanvas class="webgl" [class.invisible]="skinRunning"></canvas>
+
     <canvas
-      #threeCanvas
-      class="webgl"
-      [class.invisible]="skinRunning"
+      #skinCanvas
+      class="webgl skin-canvas"
+      [class.invisible]="!skinRunning"
     ></canvas>
+  </div>
 
-  <canvas
-    #skinCanvas
-    class="webgl skin-canvas"
-    [class.invisible]="!skinRunning"
-  ></canvas>
-</div>
-
-<div class="button-container">
-    <button (click)="resetView()" class="bottom-button">
+  <div class="button-container">
+    <button   *ngIf="!router.url.includes('landing')" (click)="resetView()" class="bottom-button">
       Resetear posición
     </button>
   </div>
-
-
+</div>
