@@ -42,8 +42,8 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
   player2Name: string = '';
 
   // Marcador para cada jugador: un array de 3 “slots” que pueden ser 'hit' (acierto), 'miss' (fallo) o 'empty'
-  player1Score: string[] = ['empty', 'empty', 'empty'];
-  player2Score: string[] = ['empty', 'empty', 'empty'];
+  player1Score: string[] = ['empty'];
+  player2Score: string[] = ['empty'];
 
   // Puntero al “slot” actual de cada jugador
   player1Index: number = 0;
@@ -90,7 +90,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
 
   authUser!: { uid: string; username: string };
 
-  private isSuddenDeath = false;
+  isSuddenDeath = false;
 
   constructor(
     private examenService: ExamenService,
@@ -507,8 +507,8 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
     // Si no estamos en muerte súbita
     if (!this.isSuddenDeath) {
       // Verificar si ambos jugadores han completado sus 3 turnos
-      const p1Complete = this.player1Index === 3;
-      const p2Complete = this.player2Index === 3;
+      const p1Complete = this.player1Index === 1;
+      const p2Complete = this.player2Index === 1;
 
       // Caso 1: Si ambos han completado sus turnos
       if (p1Complete && p2Complete) {
@@ -531,7 +531,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
       // Caso 2: Si uno ha completado sus turnos pero el otro no
       if (p1Complete && !p2Complete) {
         // Solo declaramos ganador al player1 si es matemáticamente imposible para player2 alcanzarlo
-        const p2PossibleHits = p2Hits + (3 - this.player2Index);
+        const p2PossibleHits = p2Hits + (1 - this.player2Index);
         if (p1Hits > p2PossibleHits) {
           this.ganador = this.player1Name;
           this.handleWin();
@@ -541,7 +541,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
 
       if (p2Complete && !p1Complete) {
         // Solo declaramos ganador al player2 si es matemáticamente imposible para player1 alcanzarlo
-        const p1PossibleHits = p1Hits + (3 - this.player1Index);
+        const p1PossibleHits = p1Hits + (1 - this.player1Index);
         if (p2Hits > p1PossibleHits) {
           this.ganador = this.player2Name;
           this.handleWin();
@@ -552,8 +552,8 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
       // Caso 3: Ninguno ha completado sus turnos
       // Comprobamos si matemáticamente es imposible para uno alcanzar al otro
       if (!p1Complete && !p2Complete) {
-        const p1PossibleHits = p1Hits + (3 - this.player1Index);
-        const p2PossibleHits = p2Hits + (3 - this.player2Index);
+        const p1PossibleHits = p1Hits + (1 - this.player1Index);
+        const p2PossibleHits = p2Hits + (1 - this.player2Index);
 
         if (p1Hits > p2PossibleHits) {
           this.ganador = this.player1Name;

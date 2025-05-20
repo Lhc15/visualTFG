@@ -195,8 +195,8 @@
             <button
               class="next-turn-btn"
               (click)="nextTurn()"
-              [disabled]="!hasRespondido"
-              [ngClass]="{ 'disabled-btn': !hasRespondido }"
+              [disabled]="!hasRespondido || (!isSuddenDeath && (player1Index + player2Index) !== 1)"
+              [ngClass]="{ 'disabled-btn': !hasRespondido || (!isSuddenDeath && (player1Index + player2Index) !== 1) }"
             >
               Siguiente turno
             </button>
