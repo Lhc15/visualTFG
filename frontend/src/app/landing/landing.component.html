@@ -45,7 +45,9 @@
     <div class="landing-right">
       <div class="canvas-section">
         <div class="landing">
-          <app-canvas></app-canvas>
+          <app-canvas #canvas
+            (animationEnded)="onHelloEnded()">
+          </app-canvas>
         </div>
       </div>
     </div>

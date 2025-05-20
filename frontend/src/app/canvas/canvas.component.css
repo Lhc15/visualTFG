@@ -2,7 +2,7 @@
 /* Tu CSS original */
 .canvas-container {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -16,9 +16,9 @@
 .canvas-wrapper {
   position: relative;
   width: 100%;
-  height: 100%;
+  height: calc(100vh - 20px);
   max-width: 1000px;
-  max-height: 530px;
+  max-height: none;
 }
 
 /* Este era tu estilo original para el único canvas */
@@ -29,7 +29,7 @@
   position: relative;    /* importante para que sea "flow" */
   z-index: 0;
   max-width: 1000px;
-  max-height: 530px;
+  max-height: none;
   box-sizing: border-box;
   border-radius: 4px;
 }

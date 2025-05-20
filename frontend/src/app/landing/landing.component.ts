@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, OnDestroy  } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, AfterViewInit, OnDestroy  } from '@angular/core';
 import { LoginComponent } from '../login/login.component';
 import { RegistroComponent } from '../registro/registro.component';
 import { CommonModule } from '@angular/common';
@@ -19,10 +19,12 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
   imports: [CommonModule, LoginComponent, RegistroComponent,CanvasComponent, HeaderComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
-export class LandingComponent implements OnInit, OnDestroy {
-  isRegisterVisible: boolean = false;
+export class LandingComponent implements AfterViewInit, OnDestroy {
+  @ViewChild(CanvasComponent) canvasRef!: CanvasComponent;
 
-  private waveInterval: any;
+  isRegisterVisible: boolean = false;
+  private gapAfterHello = 3000;
+  private timeoutId!: any;
 
   showRegister() {
     this.isRegisterVisible = true;
@@ -34,20 +36,40 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   constructor(private animacionService: AnimacionService) {}
 
-  ngOnInit(): void {
-    this.cargarAnimacionHola();  // Cargar la animación al inicio
+  
 
-    this.waveInterval = setInterval(() => {
-      this.cargarAnimacionHola();
-    }, 5000);
+   ngAfterViewInit() {
+    // tan pronto como el Canvas esté listo, arranca la animación de "hola"
+    this.playHelloLoop();
   }
 
-  ngOnDestroy(): void {
-    // Limpiar el intervalo cuando se destruya el componente (buena práctica)
-    if (this.waveInterval) {
-      clearInterval(this.waveInterval);
+  ngOnDestroy() {
+    clearInterval(this.timeoutId);
+  }
+
+  private async playHelloLoop() {
+    if (!this.canvasRef) return;
+
+    const url = `${environment.apiUrl}/gltf/animaciones/holaanimation.gltf`;
+    console.log('[Landing] cargando modelo hello:', url);
+    await this.canvasRef.loadSkinModel(url);
+
+    const clips = this.canvasRef.availableClips;
+    if (clips.length) {
+      console.log('[Landing] reproduciendo clip', clips[0], 'sin bucle');
+      this.canvasRef.playClip(clips[0], false);
+      // ahora esperamos a que lance animationEnded…
+    } else {
+      console.error('[Landing] no hay clips para reproducir');
     }
   }
+
+  /** llamado cuando CanvasComponent emite animationEnded */
+  onHelloEnded() {
+    console.log(`[Landing] hello terminó, esperando ${this.gapAfterHello}ms antes de repetir`);
+    this.timeoutId = setTimeout(() => this.playHelloLoop(), this.gapAfterHello);
+  }
+
 
   private cargarAnimacionHola(): void {
     // 1er bloque
