@@ -135,7 +135,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private initCamera() {
     const aspect = window.innerWidth / window.innerHeight;
-    this.camera = new THREE.PerspectiveCamera(45, aspect, 0.1, 100);
+    this.camera = new THREE.PerspectiveCamera(47, aspect, 0.1, 100);
     this.camera.position.set(0, 0, 3.8);
     this.camera.lookAt(0, 0, 0);
   }
