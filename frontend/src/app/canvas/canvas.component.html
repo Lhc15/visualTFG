@@ -10,8 +10,8 @@
   </div>
 
   <div class="button-container">
-    <button   *ngIf="!router.url.includes('landing')" (click)="resetView()" class="bottom-button">
-      Resetear posición
+    <button *ngIf="!router.url.includes('landing')" (click)="resetView()" class="bottom-button">
+      <i class="fas fa-undo"></i>
     </button>
   </div>
 </div>
