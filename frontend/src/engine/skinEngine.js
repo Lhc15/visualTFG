@@ -465,7 +465,9 @@ export async function startSkinEngine(
     let previousMousePosition = { x: 0, y: 0 };
     let currentRotation = { x: 0, y: 0 };
     const rotationSpeed = 0.02;
-    const MAX_ROTATION = Math.PI / 3; // 60 grados en radianes
+    const MAX_ROTATION_Y = Math.PI / 3; // 60 grados en radianes
+    const MAX_ROTATION_X = Math.PI / 3; // 60 grados hacia adelante (para ver desde arriba)
+    const MIN_ROTATION_X = 0; // No permitir rotación hacia atrás
 
     // Event listeners para el control del ratón
     canvas.addEventListener('mousedown', (e) => {
@@ -476,117 +478,124 @@ export async function startSkinEngine(
         y: e.clientY
       };
     });
-  canvas.addEventListener('mousemove', (e) => {
-    if (!isDragging) return;
 
-    const deltaMove = {
-      x: e.clientX - previousMousePosition.x,
-      y: e.clientY - previousMousePosition.y
-    };
+    canvas.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
 
-    // Actualizar rotación Y con límites
-    currentRotation.y += deltaMove.x * rotationSpeed;
-    // Limitar la rotación a ±60 grados
-    currentRotation.y = Math.max(-MAX_ROTATION, Math.min(MAX_ROTATION, currentRotation.y));
-    // Mantener la rotación X en 0
-    currentRotation.x = 0;
+      const deltaMove = {
+        x: e.clientX - previousMousePosition.x,
+        y: e.clientY - previousMousePosition.y
+      };
 
-    console.log('Rotation:', currentRotation.y * (180/Math.PI)); // Mostrar en grados
+      // Actualizar rotación Y con límites
+      currentRotation.y += deltaMove.x * rotationSpeed;
+      // Limitar la rotación Y a ±60 grados
+      currentRotation.y = Math.max(-MAX_ROTATION_Y, Math.min(MAX_ROTATION_Y, currentRotation.y));
 
-    previousMousePosition = {
-      x: e.clientX,
-      y: e.clientY
-    };
-  });
+      // Actualizar rotación X con límites (invertido)
+      currentRotation.x += deltaMove.y * rotationSpeed;
+      // Limitar la rotación X: solo permitir rotación hacia adelante hasta 60 grados
+      currentRotation.x = Math.max(MIN_ROTATION_X, Math.min(MAX_ROTATION_X, currentRotation.x));
 
-  canvas.addEventListener('mouseup', () => {
-    console.log('Mouse up');
-    isDragging = false;
-  });
+      console.log('Rotation Y:', currentRotation.y * (180/Math.PI), 'Rotation X:', currentRotation.x * (180/Math.PI));
 
-  canvas.addEventListener('mouseleave', () => {
-    console.log('Mouse leave');
-    isDragging = false;
-  });
-
-  function render(now) {
-
-    // Crear matriz de modelo con la rotación actual
-    const modelMatrix = m4.identity();
-
-    // Aplicar rotación Y usando TRS
-    const trs = new TRS(
-      [0, 0, 0],  // posición
-      [0, Math.sin(currentRotation.y/2), 0, Math.cos(currentRotation.y/2)],  // rotación (quaternion)
-      [1, 1, 1]   // escala
-    );
-    trs.getMatrix(modelMatrix);
-
-    // convertimos a segundos y sacamos delta
-    now *= 0.001;                 // ahora now es segundos absolutos
-    const dt = lastTime ? (now - lastTime) * playbackSpeed : 0;
-    lastTime = now;
-
-    animator.update(dt);
-
-    wu.resizeCanvasToDisplaySize(gl.canvas);
-    gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-    gl.enable(gl.DEPTH_TEST);
-    gl.enable(gl.CULL_FACE);
-    gl.clearColor(0, 0, 0, 0);
-    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
-    const { projectionMatrix, viewMatrix } = getThreeCameras();
-
-    // **Aquí aplicamos el clip activo, si hay alguno**
-    const clip = animator.current;
-    if (clip) {
-      const localT = animator.time % clip.duration;
-      clip.channels.forEach(ch => {
-        const inA  = clip.inputs[ch.sampler];
-        const outA = clip.outputs[ch.sampler];
-        let i = inA.findIndex(t => t > localT) - 1;
-        if (i < 0) i = 0;
-        const t0 = inA[i], t1 = inA[i+1] ?? clip.duration;
-        const α  = (localT - t0) / (t1 - t0 || 1);
-        const stride = ch.path === 'rotation' ? 4 : 3;
-        for (let k = 0; k < stride; ++k) {
-          const v0 = outA[i*stride + k];
-          const v1 = outA[(i+1)*stride + k] ?? v0;
-          ch.node.source[ch.path][k] = v0 + (v1 - v0) * α;
-        }
-      });
-    }
-
-    const shared = {
-      u_lightDirection: m4.normalize([-1,3,5]),
-      // combinamos tu rotación global con la transform de cada nodo
-      u_world: (node) => {
-        const out = m4.identity();
-        return m4.multiply(modelMatrix, node.world, out);
-      }
-    };
-
-    const draw = node => {
-      const worldMatrix = shared.u_world(node);
-      node.drawables.forEach(d =>
-        d.render(node, projectionMatrix, viewMatrix, {
-          u_lightDirection: shared.u_lightDirection,
-          u_world:          worldMatrix
-        })
-      );
-    };
-
-    gltf.scenes.forEach(sc => {
-      sc.root.updateWorldMatrix();
-      sc.root.traverse(draw);
+      previousMousePosition = {
+        x: e.clientX,
+        y: e.clientY
+      };
     });
 
-    //requestAnimationFrame(render);
-    rafId = requestAnimationFrame(render);
+    canvas.addEventListener('mouseup', () => {
+      console.log('Mouse up');
+      isDragging = false;
+    });
 
-  }
-  rafId = requestAnimationFrame(render);
+    canvas.addEventListener('mouseleave', () => {
+      console.log('Mouse leave');
+      isDragging = false;
+    });
+
+    function render(now) {
+      // Crear matriz de modelo con la rotación actual
+      const modelMatrix = m4.identity();
+
+      // Aplicar rotaciones X e Y usando TRS
+      const trs = new TRS(
+        [0, 0, 0],  // posición
+        [
+          Math.sin(currentRotation.x/2) * Math.cos(currentRotation.y/2),
+          Math.sin(currentRotation.y/2) * Math.cos(currentRotation.x/2),
+          Math.sin(currentRotation.x/2) * Math.sin(currentRotation.y/2),
+          Math.cos(currentRotation.x/2) * Math.cos(currentRotation.y/2)
+        ],  // rotación (quaternion combinando X e Y)
+        [1, 1, 1]   // escala
+      );
+      trs.getMatrix(modelMatrix);
+
+      // convertimos a segundos y sacamos delta
+      now *= 0.001;                 // ahora now es segundos absolutos
+      const dt = lastTime ? (now - lastTime) * playbackSpeed : 0;
+      lastTime = now;
+
+      animator.update(dt);
+
+      wu.resizeCanvasToDisplaySize(gl.canvas);
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+      gl.enable(gl.DEPTH_TEST);
+      gl.enable(gl.CULL_FACE);
+      gl.clearColor(0, 0, 0, 0);
+      gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+
+      const { projectionMatrix, viewMatrix } = getThreeCameras();
+
+      // **Aquí aplicamos el clip activo, si hay alguno**
+      const clip = animator.current;
+      if (clip) {
+        const localT = animator.time % clip.duration;
+        clip.channels.forEach(ch => {
+          const inA  = clip.inputs[ch.sampler];
+          const outA = clip.outputs[ch.sampler];
+          let i = inA.findIndex(t => t > localT) - 1;
+          if (i < 0) i = 0;
+          const t0 = inA[i], t1 = inA[i+1] ?? clip.duration;
+          const α  = (localT - t0) / (t1 - t0 || 1);
+          const stride = ch.path === 'rotation' ? 4 : 3;
+          for (let k = 0; k < stride; ++k) {
+            const v0 = outA[i*stride + k];
+            const v1 = outA[(i+1)*stride + k] ?? v0;
+            ch.node.source[ch.path][k] = v0 + (v1 - v0) * α;
+          }
+        });
+      }
+
+      const shared = {
+        u_lightDirection: m4.normalize([-1,3,5]),
+        // combinamos tu rotación global con la transform de cada nodo
+        u_world: (node) => {
+          const out = m4.identity();
+          return m4.multiply(modelMatrix, node.world, out);
+        }
+      };
+
+      const draw = node => {
+        const worldMatrix = shared.u_world(node);
+        node.drawables.forEach(d =>
+          d.render(node, projectionMatrix, viewMatrix, {
+            u_lightDirection: shared.u_lightDirection,
+            u_world:          worldMatrix
+          })
+        );
+      };
+
+      gltf.scenes.forEach(sc => {
+        sc.root.updateWorldMatrix();
+        sc.root.traverse(draw);
+      });
+
+      //requestAnimationFrame(render);
+      rafId = requestAnimationFrame(render);
+    }
+    rafId = requestAnimationFrame(render);
 
    return {
      stop:    () => animator.stop(),
@@ -596,7 +605,10 @@ export async function startSkinEngine(
     setSpeed: (s) => { playbackSpeed = s; },
     // 3) para limpiar el RAF si quisieras reiniciar todo
     destroy:  () => cancelAnimationFrame(rafId),
-    resetRotation: () => { currentRotation.x = 0; currentRotation.y = 0; },
+    resetRotation: () => { 
+      currentRotation.x = 0; 
+      currentRotation.y = 0; 
+    },
 
    };
  }
