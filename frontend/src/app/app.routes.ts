@@ -19,12 +19,17 @@ import { MiperfilComponent } from './miperfil/miperfil.component';
 import { ModoLibreComponent } from './modo-libre/modo-libre.component';
 import { ModoExamenComponent } from './modo-examen/modo-examen.component';
 import { ModoVersusComponent } from './modo-versus/modo-versus.component';
+import { LearningObjectComponent } from './learning-object/learning-object.component';
+
+
+
 
 export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'modos', component: ModosComponent },
   { path: 'landing', component: LandingComponent },
   {path: 'perfil', component: MiperfilComponent },
+  
   { path: 'admin', component: AdminComponent, canActivate: [AdminRoleGuard], 
     children: [
       { path: '', redirectTo: 'usuarios', pathMatch: 'full' },
@@ -40,6 +45,9 @@ export const routes: Routes = [
   { path: 'examen', component: ModoExamenComponent },
   { path: 'versus', component: ModoVersusComponent },
   { path: 'test-upload', component: TestUploadComponent, canActivate: [AdminRoleGuard] }, //canActivate: [AdminGuard] }, // Protege esta ruta
+  { path: 'learning', component: LearningObjectComponent },
+
   { path: '**', redirectTo: 'landing' },
+  
 ];
 
