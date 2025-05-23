@@ -61,17 +61,20 @@
 
 /* Estilos para el botón */
 .bottom-button {
-  padding: 8px 16px;
-  background-color: rgba(0, 123, 255, 0.9);
-  color: white;
-  border: none;
-  border-radius: 4px;
+  background-color: #41b8d5;
+  font-family: "Lexend", sans-serif;
+  padding: 0.2em 0.8em;
+  font-weight: 900;
+  font-size: 18px;
+  border: 3px solid black;
+  border-radius: 0.4em;
+  box-shadow: 0.1em 0.1em;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .bottom-button:hover {
-  background-color: rgba(0, 86, 179, 0.9);
+  transform: translate(-0.05em, -0.05em);
+  box-shadow: 0.2em 0.2em;
 }
 
 .skin-button, .reset-button {
