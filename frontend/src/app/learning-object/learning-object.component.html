@@ -1,0 +1,25 @@
+<div class="close-button">
+  <button (click)="close()">✖ Cerrar</button>
+</div>
+<div class="download-buttons">
+  <a
+    href="assets/learning/visualvoices/vviiss.epub"
+    download="VisualVoices-curso.epub"
+    class="btn-download"
+  >
+    📥 Descargar EPUB
+  </a>
+  <a
+    href="assets/learning/visualvoices/visua.zip"
+    download="VisualVoices-curso-scorm.zip"
+    class="btn-download"
+  >
+    📥 Descargar SCORM
+  </a>
+</div>
+
+<iframe
+  [src]="contentUrl"
+  class="full-frame"
+  title="Objeto de aprendizaje">
+</iframe>
