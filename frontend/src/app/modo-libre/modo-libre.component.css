@@ -983,3 +983,13 @@ button:active,
   opacity: 1;
   pointer-events: all;
 }
+
+:host ::ng-deep canvas.skin-canvas {
+  position: absolute !important;
+  top: 0 !important;
+  left: -18% !important;      /* 1 contenedor hacia la izquierda */
+  width: 300%  !important;
+  height: 100% !important;
+  pointer-events: auto;
+  transition: opacity 0.3s ease-out;
+}

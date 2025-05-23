@@ -101,7 +101,9 @@
   box-shadow: 3px 3px black;
   color:black;
   z-index: 10;
-  
+  width: fit-content;
+  white-space: nowrap;
+
   /* 🔹 CENTRADO TOTAL */
   display: flex;
   justify-content: center;
@@ -110,6 +112,31 @@
   line-height: 1; /* Evita que el texto se desplace por padding */
   min-height: 50px; /* Evita que el botón sea demasiado pequeño */
   min-width: 120px; /* Para que no se deforme */
+}
+
+/* Si tu componente usa ViewEncapsulation.Emulated */
+:host ::ng-deep .word-button-container .word-button {
+  /* que su ancho sea el del contenido, no el 100% */
+  width: auto !important;
+  max-width: none !important;
+
+  /* opcional: para que el contenedor sólo crezca lo necesario */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  
+  /* conserva tu padding habitual */
+  padding: 0.5em 1em;
+}
+
+:host ::ng-deep canvas.skin-canvas {
+  position: absolute !important;
+  top: 0 !important;
+  left: -18% !important;      /* 1 contenedor hacia la izquierda */
+  width: 300%  !important;
+  height: 100% !important;
+  pointer-events: auto;
+  transition: opacity 0.3s ease-out;
 }
 
 /* 🔹 Ajustes cuando la cámara está activa */

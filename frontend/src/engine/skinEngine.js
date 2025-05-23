@@ -422,7 +422,7 @@ export async function startSkinEngine(
   // escenas
   gltf.scenes.forEach(sc => {
   // bajamos todo el modelo 1.2 unidades en Y
-    sc.root = new Node(new TRS([0, -1.0, 0]), sc.name);
+    sc.root = new Node(new TRS([0, -1.2, 0]), sc.name);
     sc.nodes.forEach(idx => gltf.nodes[idx].setParent(sc.root));
   });
 

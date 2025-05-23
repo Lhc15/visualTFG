@@ -224,7 +224,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         const center = box.getCenter(new THREE.Vector3());
         this.avatar.position.sub(center);
         this.avatar.scale.set(1.5, 1.5, 1.5);
-        this.avatar.position.y -= 1.0;
+        this.avatar.position.y -= 1.2;
 
         this.scene.add(this.avatar);
       }
@@ -262,6 +262,10 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       this.limpiarCanvas();
       this.loadDefaultPose(true);
     }
+  }
+
+  public getClipDuration(name: string): number {
+    return this.clipDurations.get(name) ?? 1000;
   }
 
   // --------------------------------------------------

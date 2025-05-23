@@ -58,6 +58,48 @@
   justify-content: center;
   align-items: center;
   height: 85vh;
+  max-width: 400px; /* Añade esta línea */
+  margin: 0 auto; /* Centra el contenedor */
+}
+
+/* ————————————————
+   Canvas idéntico al de la Landing
+———————————————— */
+
+:host ::ng-deep canvas.skin-canvas {
+  position: absolute;
+  top: 0;
+  left: -79% !important;       /* <— desplaza 1 contenedor de ancho (100%) hacia la izquierda */
+  width: 300% !important;   /* igual que en landing */
+  height: 100% !important;
+  z-index: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease-out;
+}
+
+:host ::ng-deep app-canvas .button-container {
+  left: -150px !important; /* o prueba con 5px, –5px, lo que necesites */
+}
+
+.canvas-section {
+  width: 100%;
+  max-width: 400px;      /* mismo ancho máximo */
+  height: 100%;      /* rellena el 100% de avatar-container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+canvas.webgl {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Asegura que el componente ocupe todo ese espacio */
+app-canvas {
+  width: 100%;
+  height: auto;
+  display: block;
 }
 
 /* CONTENEDORES DE MODOS */
@@ -73,6 +115,8 @@
   max-width: 700px;
   margin-right: 95px;
 }
+
+
 
 /* CARD DE MODO */
 
