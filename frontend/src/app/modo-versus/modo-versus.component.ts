@@ -85,6 +85,9 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
   mediaRecorder!: MediaRecorder;
   currentTurnName: string = '';
 
+  mostrarExitButton: boolean = true; // activa la X al inicio de uiState === 'playing'
+
+
 
   sessionId!: string; // Nueva: identificador de la “sesión de examen”
 

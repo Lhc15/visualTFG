@@ -49,9 +49,21 @@
   <!-- PANTALLA 3: Modo Versus normal -->
   <div *ngIf="uiState === 'playing'" class="content">
     <!-- Botón salir del modo -->
-<div class="exit-button" (click)="volverAModos()" title="Salir del modo">
+    <!-- <div class="exit-button" (click)="volverAModos()" title="Salir del modo">
+      <span>X</span>
+    </div> -->
+
+    <div
+  *ngIf="uiState === 'playing' && showWebcam"
+  class="exit-button"
+  (click)="volverAModos()"
+  title="Salir del modo"
+>
   <span>X</span>
 </div>
+
+
+
 
     <div class="layout">
       <!-- Contenedor izquierdo: Avatar O Video -->
@@ -79,7 +91,7 @@
         ></video>
 
         <!-- Menú de herramientas (Radio Buttons) -->
-         <!-- Barra de herramientas -->
+        <!-- Barra de herramientas -->
         <app-tool-menu
           *ngIf="!showRecordedVideo"
           [isPlaying]="isPlaying"
@@ -91,7 +103,7 @@
           [currentPlaybackRate]="currentPlaybackRate"
           (rateChange)="setPlaybackRate($event)"
           [webcamDisabled]="true"
-          (webcamToggled)="null"
+          (webcamToggled)="(null)"
         ></app-tool-menu>
 
         <!-- Parte superior-derecha: palabra y botón Grabar -->
@@ -195,8 +207,15 @@
             <button
               class="next-turn-btn"
               (click)="nextTurn()"
-              [disabled]="!hasRespondido || (!isSuddenDeath && (player1Index + player2Index) !== 1)"
-              [ngClass]="{ 'disabled-btn': !hasRespondido || (!isSuddenDeath && (player1Index + player2Index) !== 1) }"
+              [disabled]="
+                !hasRespondido ||
+                (!isSuddenDeath && player1Index + player2Index !== 1)
+              "
+              [ngClass]="{
+                'disabled-btn':
+                  !hasRespondido ||
+                  (!isSuddenDeath && player1Index + player2Index !== 1)
+              }"
             >
               Siguiente turno
             </button>
