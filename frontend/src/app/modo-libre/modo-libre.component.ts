@@ -232,6 +232,12 @@ onToggleVeloc(event: Event) {
     this.isLooping  = loop;   // opcional, para que quede siempre en sync
     this.usuariosService.explorarPalabraLibre(this.userId, this.selectedWord._id)
         .subscribe({ next: resp => this.exploredWordsService.setExploredCount(resp.totalExploradas) });
+
+    this.statsService.recordWordEntry(this.selectedWord._id)
+      .subscribe({
+        next: () => console.log('Palabra registrada en stats'),
+        error: err => console.error('Error registrando palabra aprendida:', err)
+      });
   }
 
   cambiarVelocidad() {
