@@ -10,6 +10,7 @@ const { generarJWT } = require('../helpers/jwt');
 // 5. Determina el tiempo de expiración de la cookie según si se activó o no 'rememberMe'.
 // 6. Envía la cookie al cliente, configurada para ser segura (httpOnly) y con la duración adecuada.
 // 7. Devuelve la respuesta con el token (opcionalmente) en el body.
+
 const login = async (req, res = response) => {
   const LoginLog = require('../models/loginLog');
 
@@ -19,6 +20,7 @@ const login = async (req, res = response) => {
     // Buscamos en la base de datos el usuario que coincida con el email
     // Solo obtenemos el campo 'password' y 'rol' por motivos de seguridad y eficiencia
     const usuarioBD = await Usuario.findOne({ email }, 'password rol isnewuser');
+
 
     // Verificamos si el usuario existe
     if (!usuarioBD) {
@@ -31,6 +33,7 @@ const login = async (req, res = response) => {
 
     // Comparamos el password recibido con el password hasheado en la base de datos
     const validPassword = bcrypt.compareSync(password, usuarioBD.password);
+    
     if (!validPassword) {
       return res.status(400).json({
         ok: false,
