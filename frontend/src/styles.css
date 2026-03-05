@@ -8,7 +8,7 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #F5F5DC;
+    background-color: #F5F0E8;
   }
   
   #modos-container {
@@ -58,4 +58,38 @@ app-canvas
 {
     display: flex;
     width: 50vw;
+}
+
+/* =====================================================
+   Visual Voices — Paleta de Color v1.0
+   Cálida · Azul + Verde + Beige · WCAG AA/AAA
+   ===================================================== */
+:root {
+  /* — Fondos — */
+  --color-bg:           #F5F0E8;  /* Fondo general */
+  --color-surface:      #FDFAF4;  /* Paneles, tarjetas */
+  --color-avatar-bg:    #F5E8C8;  /* Panel del avatar */
+
+  /* — Azul (principal) — */
+  --color-blue-900:     #1A4F8A;  /* Toolbar, encabezados */
+  --color-blue-600:     #2E72C2;  /* Hover, iconos activos */
+  --color-blue-400:     #6FA8DC;  /* Highlight selección */
+  --color-blue-100:     #C8DFF5;  /* Fondo tarjeta activa */
+
+  /* — Verde (acción) — */
+  --color-green-900:    #2A5C3F;  /* Hover botón acción */
+  --color-green-600:    #3D8B5E;  /* Botones CTA */
+  --color-green-400:    #7EC8A0;  /* Barra progreso */
+  --color-green-100:    #C8EDD9;  /* Badges de nivel */
+
+  /* — Beige (calidez) — */
+  --color-beige-accent: #C49A5A;  /* Iconos culturales */
+  --color-border:       #D4CBBA;  /* Divisores */
+
+  /* — Texto — */
+  --color-text:         #1C1F1A;  /* Body text */
+  --color-text-muted:   #4A5240;  /* Labels, metadatos */
+
+  /* — Sistema — */
+  --color-error:        #B83232;  /* Error, respuesta incorrecta */
 }

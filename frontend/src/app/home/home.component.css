@@ -20,7 +20,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 80vh;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
   max-width: 100% !important; 
   width: 100% !important;
 }
@@ -29,7 +29,7 @@
 .content {
   width: 100vw;
   height: 100vh;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -58,7 +58,7 @@
 
 .button-grid {
   flex: 0 0 35%;
-  background-color: #f4a940;
+  background-color: #C49A5A;
   padding: 20px;
   height: 100vh;
   display: flex;
@@ -146,7 +146,7 @@
   justify-items: center;
 }
 .secondary-button {
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: black;
   font-size: 1.4rem;
   
@@ -161,7 +161,7 @@
   border-width: 3px;
 }
 .secondary-button:hover {
-  background-color: #35a0c7;
+  background-color: #2E72C2;
 }
 
 /* Importar la fuente personalizada desde la carpeta public */
@@ -256,7 +256,7 @@
   flex-direction: column;  /* Organiza en columna: video arriba, botón abajo */
   align-items: center;
   justify-content: center;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
 }
 
 /* El video en modo espejo */
@@ -277,14 +277,14 @@
   font-size: 1rem;          /* Fuente más pequeña */
   border: none;
   border-radius: 12px;      /* Bordes redondeados */
-  background-color: #ff4d4d;/* Color de fondo */
+  background-color: #B83232;/* Color de fondo */
   color: white;             /* Color de texto */
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .small-disable-webcam-btn:hover {
-  background-color: #e60000;
+  background-color: #B83232;
 }
 
 .current-word {
@@ -306,13 +306,13 @@
   height: auto;
   border: 2px solid black;
   border-radius: 12px;            /* Bordes redondeados */
-  background-color: #41b8d5;      /* Color de fondo que combina con los otros botones */
+  background-color: #2E72C2;      /* Color de fondo que combina con los otros botones */
   color: rgb(0, 0, 0);                   /* Texto blanco para buen contraste */
   transition: background-color 0.3s ease;
 }
 
 .small-webcam-btn:hover {
-  background-color: #35a0c7;      /* Cambio de color en hover */
+  background-color: #2E72C2;      /* Cambio de color en hover */
 }
 
 

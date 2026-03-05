@@ -123,7 +123,7 @@ body, html {
   border-radius: 15px;
   padding: 10px; /* Reducido de 15px a 12px */
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  border: 3px solid #f2c464;
+  border: 3px solid #F5F0E8;
   display: flex;
   flex-direction: column;
   transition: transform .3s ease;
@@ -145,7 +145,7 @@ body, html {
   margin-bottom: 8px; /* Reducido de 10px a 8px */
   font-size: 1rem; /* Reducido de 1.1rem a 1rem */
   text-align: center;
-  border-bottom: 2px solid #f2c464;
+  border-bottom: 2px solid #F5F0E8;
   padding-bottom: 6px; /* Reducido de 8px a 6px */
 }
 
@@ -165,7 +165,7 @@ body, html {
 /* Estilo de la tarjeta de perfil */
 .card {
   --main-color: #fff;
-  --submain-color: #ccc;
+  --submain-color: #D4CBBA;
   --bg-color: #000;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
@@ -273,7 +273,7 @@ body, html {
 }
 
 .modal-content {
-  background-color: #f2c464;
+  background-color: #F5F0E8;
   border-radius: 10px;
   padding: 25px; /* Reducido de 30px a 25px */
   text-align: center;
@@ -310,7 +310,7 @@ body, html {
   padding: 8px; /* Reducido de 10px a 8px */
   margin: 4px 0; /* Reducido de 5px a 4px */
   border-radius: 4px;
-  border: 1px solid #ccc;
+  border: 1px solid #D4CBBA;
   font-size: 14px;
   color: black;
   background-color: #f9f9f9;
@@ -330,7 +330,7 @@ body, html {
 }
 
 .form-group .error-message {
-  color: #b71c1c;
+  color: #B83232;
   font-size: 0.8rem;
   margin-top: 3px; /* Reducido de 4px a 3px */
   height: 16px;
@@ -352,7 +352,7 @@ body, html {
 }
 
 .form-group.show-error input {
-  border: 2px solid #b71c1c;
+  border: 2px solid #B83232;
 }
 
 .start-button {
@@ -361,7 +361,7 @@ body, html {
   font-family: "Lexend", sans-serif;
   border: 3px solid black;
   border-radius: 0.4em;
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: rgb(0, 0, 0);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.3s ease;
@@ -530,7 +530,7 @@ body, html {
 /* Mejora accesibilidad para interacción con gráficos */
 :host ::ng-deep .ngx-charts .bar:focus,
 :host ::ng-deep .ngx-charts .arc:focus {
-  outline: 2px solid #41b8d5;
+  outline: 2px solid #2E72C2;
   outline-offset: 2px;
 }
 
@@ -665,12 +665,12 @@ body, html {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #ccc;
+  background-color: #D4CBBA;
   transition: background-color 0.3s ease;
 }
 
 .level-dots span.completed {
-  background-color: #41b8d5;
+  background-color: #2E72C2;
 }
 
 .levels-label {

@@ -7,7 +7,7 @@
     
     body {
       font-family: Arial, sans-serif;
-      background-color: #fff8d4; /* Fondo amarillo claro */
+      background-color: #F5F0E8; /* Fondo amarillo claro */
       min-height: 100vh;
     }
     
@@ -20,7 +20,7 @@
     }
     
     .header {
-      background-color: #f4b400; /* Fondo amarillo fuerte */
+      background-color: #C49A5A; /* Fondo amarillo fuerte */
       padding: 20px 0;
       text-align: center;
       width: 100%;
@@ -61,7 +61,7 @@
       max-width: 400px;
       padding: 30px;
       text-align: center;
-      background-color: #f2c464; /* Fondo amarillo suave */
+      background-color: #F5F0E8; /* Fondo amarillo suave */
       border-radius: 15px;
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombras */
       margin-left: 20px; /* Añadido margen a la izquierda */
@@ -75,7 +75,7 @@
       flex-direction: column;
       gap: 20px;
       padding: 40px;
-      background-color: #f9e59f;
+      background-color: #FDFAF4;
       border-radius: 15px;
       
     }
@@ -92,7 +92,7 @@
     .input-field {
       width: 100%;
       padding: 14px;
-      border: 1px solid #ddd;
+      border: 1px solid #D4CBBA;
       border-radius: 8px;
       font-size: 16px;
       background-color: white;
@@ -148,7 +148,7 @@
     .register-box {
       margin-top: 20px; /* Espacio entre el formulario y el cuadro */
       padding: 15px; /* Espaciado interno */
-      background-color: #f9e59f; /* Fondo amarillo suave */
+      background-color: #FDFAF4; /* Fondo amarillo suave */
       border-radius: 15px; /* Bordes redondeados */
       text-align: center; /* Centra el texto */
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombras para resaltar */
@@ -165,14 +165,14 @@
   }
 
   .register-box .register a {
-      color: #f4b400; /* Color del enlace */
+      color: #C49A5A; /* Color del enlace */
       font-weight: bold;
       text-decoration: none;
       transition: color 0.3s ease;
   }
 
   .register-box .register a:hover {
-      color: #d19600;
+      color: #8C6A3F;
   }
 
     
@@ -182,20 +182,20 @@
     }
     
     .register a {
-      color: #f4b400;
+      color: #C49A5A;
       text-decoration: none;
       font-weight: bold;
       transition: color 0.3s ease;
     }
     
     .register a:hover {
-      color: #d19600;
+      color: #8C6A3F;
     }
     
     .divider {
       width: 90%;
       height: 1px;
-      background-color: #ccc;
+      background-color: #D4CBBA;
       margin: 15px 0;
       position: relative;
     }
@@ -205,7 +205,7 @@
       top: -12px;
       left: 50%;
       transform: translateX(-50%);
-      background-color: #f9e59f;
+      background-color: #FDFAF4;
       padding: 0 10px;
       font-size: 0.9rem;
       color: #666;
@@ -289,7 +289,7 @@
 
   /* Estilos para el enlace de "Volver al Inicio de Sesión" */
   .back-to-login {
-    color: #f4b400;
+    color: #C49A5A;
     text-decoration: none;
     font-weight: bold;
     transition: color 0.3s ease;
@@ -299,12 +299,12 @@
   }
 
   .back-to-login:hover {
-    color: #d19600;
+    color: #8C6A3F;
   }
 
   /* Asegurarse de que el mensaje de error/éxito tenga el mismo estilo */
   .reset-message {
-    color: #41b8d5; /* O el color que prefieras */
+    color: #2E72C2; /* O el color que prefieras */
     font-size: 0.93rem;
     margin-top: 10px;
     text-align: center;
@@ -326,17 +326,17 @@
   }
 
   .btn-secondary {
-    background-color: #f4b400 !important; /* Usamos !important para asegurar que este estilo tenga prioridad */
+    background-color: #C49A5A !important; /* Usamos !important para asegurar que este estilo tenga prioridad */
     color: white;
     margin-top: 10px;
   }
 
   .btn-secondary:hover {
-    background-color: #d19600 !important;
+    background-color: #8C6A3F !important;
   }
 
   .success-message {
-    color: #28a745;
+    color: #3D8B5E;
     font-size: 0.93rem;
     margin-top: 10px;
     text-align: center;
@@ -349,7 +349,7 @@
   }
 
   .password-reset-form .btn.btn-secondary {
-    background-color: #f4b400 !important;
+    background-color: #C49A5A !important;
     color: white;
     margin-top: 10px; /* O el margen que necesites */
     /* Sin position absolute */
@@ -362,7 +362,7 @@
   }
   
   .form-group.show-error input {
-    border-color: #b71c1c;
+    border-color: #B83232;
   }
   
   .form-group {
@@ -373,7 +373,7 @@
   
   
   .form-group .error-message {
-    color: #b71c1c;
+    color: #B83232;
     font-size: 0.8rem;
     margin-top: 4px;
     height: 16px;

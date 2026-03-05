@@ -28,7 +28,7 @@ html, body {
   flex-direction: column;
   align-items: center;
 min-height: 100vh;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -36,7 +36,7 @@ min-height: 100vh;
 .content {
   width: 100vw;
   height: 100vh;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -70,7 +70,7 @@ min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
 }
 
 /* Estilo del video en modo espejo */
@@ -87,7 +87,7 @@ min-height: 100vh;
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: #41b8d5; /* Azul llamativo */
+  background-color: #2E72C2; /* Azul llamativo */
   padding: 0.5em 1em;
   border-radius: 12px;
   font-weight: bold;
@@ -129,20 +129,20 @@ min-height: 100vh;
   font-size: 1rem;
   border: none;
   border-radius: 12px;
-  background-color: #ff4d4d;
+  background-color: #B83232;
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 .small-disable-webcam-btn:hover {
-  background-color: #e60000;
+  background-color: #B83232;
 }
 
 /* Panel derecho con las 4 opciones */
 .right-panel {
   position: relative;
   flex: 0 0 35%;
-  background-color: #f4a940;
+  background-color: #C49A5A;
   padding: 20px;
   height: 100vh;
   display: flex;
@@ -189,12 +189,12 @@ min-height: 100vh;
   height: auto;
   border: 2px solid black;
   border-radius: 12px;
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: rgb(0, 0, 0);
   transition: background-color 0.3s ease;
 }
 .small-webcam-btn:hover {
-  background-color: #35a0c7;
+  background-color: #2E72C2;
 }
 
 /* Pantalla de inicio: Botón "Empezar" */
@@ -213,7 +213,7 @@ min-height: 100vh;
   font-family: "Lexend", sans-serif;
   border: 3px solid black;
   border-radius: 0.4em;
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: rgb(0, 0, 0);
   cursor: pointer;
   transition: transform 0.2s ease, background-color 0.3s ease;
@@ -336,12 +336,12 @@ min-height: 100vh;
   display: none;
 }
 .icon-stop {
-  fill: #ff0000;
+  fill: #B83232;
   transition: fill 0.2s, filter 0.2s;
   cursor: pointer;
 }
 .label-stop:has(input[type="radio"]:checked) .icon-stop {
-  fill: #ff0000;
+  fill: #B83232;
   filter: drop-shadow(0 0 5px #cae2fd);
 }
 
@@ -418,7 +418,7 @@ min-height: 100vh;
   font-size: 17px;
   font-weight: 500;
   color: #000000;
-  background: #35a0c7;
+  background: #2E72C2;
   cursor: pointer;
   box-shadow: transparent;
   border: 3px solid #000000;
@@ -476,13 +476,13 @@ min-height: 100vh;
 
 /* Iconos de "check" y "x" grandes */
 .icon-correct {
-  color: #28a745;
+  color: #3D8B5E;
   font-size: 2rem;
   animation: pop 0.5s ease-out;
   text-shadow: 0 0 10px rgba(40,167,69,0.7);
 }
 .icon-incorrect {
-  color: #dc3545;
+  color: #B83232;
   font-size: 2rem;
   animation: shake 0.5s ease;
   text-shadow: 0 0 10px rgba(220,53,69,0.7);
@@ -540,7 +540,7 @@ min-height: 100vh;
 .turn-announce-container {
   width: 100vw;
   height: 100vh;
-  background-color: #fff8d4; /* o #fff8d4, si prefieres */
+  background-color: #F5F0E8; /* o #F5F0E8, si prefieres */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -596,7 +596,7 @@ min-height: 100vh;
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background-color: #ccc; /* color "empty" */
+  background-color: #D4CBBA; /* color "empty" */
   border: 2px solid #333;
   display: inline-block;
 }
@@ -644,7 +644,7 @@ min-height: 100vh;
   margin-top: 90px;;
   padding: 5px 10px;              /* Menos padding para que sea pequeño */
   font-size: 1rem; 
-  background-color: #28a745; /* o el verde que prefieras */
+  background-color: #3D8B5E; /* o el verde que prefieras */
   color: black;
   transition: background-color 0.3s ease;
   border: 3px solid black;
@@ -661,7 +661,7 @@ min-height: 100vh;
   margin-top: 90px;;
   padding: 5px 10px;              /* Menos padding para que sea pequeño */
   font-size: 1rem; 
-  background-color: #ff4d4d;
+  background-color: #B83232;
   color: black;
   transition: background-color 0.3s ease;
   border: 3px solid black;
@@ -690,7 +690,7 @@ min-height: 100vh;
 }
 
 .winner-message {
-  background-color: #f4a940;
+  background-color: #C49A5A;
   padding: 2rem 3rem;
   border-radius: 12px;
   text-align: center;
@@ -732,7 +732,7 @@ min-height: 100vh;
   font-family: "Lexend", sans-serif;
   border: 3px solid black;
   border-radius: 0.4em;
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: black;
   font-weight: bold;
   cursor: pointer;
@@ -799,7 +799,7 @@ min-height: 100vh;
 }
 
 .veloc-slider-fixed button.active {
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: black;
   font-weight: bold;
 }

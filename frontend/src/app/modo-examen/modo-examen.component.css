@@ -18,7 +18,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 80vh;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -27,7 +27,7 @@
 .content {
   width: 100vw;
   height: 100vh;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -51,7 +51,7 @@
 
 .button-grid {
   flex: 0 0 35%;
-  background-color: #f4a940;
+  background-color: #C49A5A;
   padding: 20px;
   height: 100vh;
   display: flex;
@@ -113,7 +113,7 @@
   justify-items: center;
 }
 .secondary-button {
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: black;
   font-size: 1.4rem;
 
@@ -128,7 +128,7 @@
   border-width: 3px;
 }
 .secondary-button:hover {
-  background-color: #35a0c7;
+  background-color: #2E72C2;
 }
 
 /* Importar la fuente personalizada desde la carpeta public */
@@ -241,7 +241,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #fff8d4;
+  background-color: #F5F0E8;
 }
 
 .camera-container {
@@ -265,14 +265,14 @@
   font-size: 1rem; /* Fuente más pequeña */
   border: none;
   border-radius: 12px; /* Bordes redondeados */
-  background-color: #ff4d4d; /* Color de fondo */
+  background-color: #B83232; /* Color de fondo */
   color: white; /* Color de texto */
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 .small-disable-webcam-btn:hover {
-  background-color: #e60000;
+  background-color: #B83232;
 }
 
 .current-word {
@@ -315,14 +315,14 @@
   height: auto;
   border: 2px solid black;
   border-radius: 12px; /* Bordes redondeados */
-  background-color: #41b8d5; /* Color de fondo que combina con los otros botones */
+  background-color: #2E72C2; /* Color de fondo que combina con los otros botones */
   color: rgb(0, 0, 0); /* Texto blanco para buen contraste */
   transition: background-color 0.3s ease;
   z-index: 999;
 }
 
 .tutorial-btn:hover {
-  background-color: #35a0c7; /* Cambio de color en hover */
+  background-color: #2E72C2; /* Cambio de color en hover */
 }
 
 .back-to-modes-button {
@@ -333,14 +333,14 @@
   height: auto;
   border: 2px solid black;
   border-radius: 12px; /* Bordes redondeados */
-  background-color: #41b8d5; /* Color de fondo que combina con los otros botones */
+  background-color: #2E72C2; /* Color de fondo que combina con los otros botones */
   color: rgb(0, 0, 0); /* Texto blanco para buen contraste */
   transition: background-color 0.3s ease;
   z-index: 999;
 }
 
 .back-to-modes-button:hover {
-  background-color: #35a0c7; /* Cambio de color en hover */
+  background-color: #2E72C2; /* Cambio de color en hover */
 }
 
 /* search-bar.css */
@@ -393,7 +393,7 @@
 .right-panel {
   position: relative; /* Muy importante */
   flex: 0 0 35%;
-  background-color: #f4a940;
+  background-color: #C49A5A;
   padding: 20px;
   height: 100vh;
   display: flex;
@@ -459,7 +459,7 @@
   font-size: 17px;
   font-weight: 500;
   color: #000000;
-  background: #35a0c7;
+  background: #2E72C2;
   cursor: pointer;
   box-shadow: transparent;
   border: 3px solid #000000;
@@ -518,7 +518,7 @@
 /* Botón que muestra el dropdown */
 .dropdown-button {
   width: 100%;
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   border: 2px solid #000;
   border-radius: 8px;
   padding: 8px 12px;
@@ -632,7 +632,7 @@
   width: 60%;
   border-radius: 1rem;
   border: none;
-  background-color: #008bf8;
+  background-color: #2E72C2;
   color: #fff;
   font-size: 1rem;
   padding: 0.5rem 1rem;
@@ -645,7 +645,7 @@
 
 /* Hover */
 .card:hover {
-  border-color: #008bf8;
+  border-color: #2E72C2;
   box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
 }
 
@@ -809,7 +809,7 @@
   height: 100%;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  box-shadow: inset 0px -4px 0px #dddddd, 0px -4px 0px #f4f5f6;
+  box-shadow: inset 0px -4px 0px #D4CBBAddd, 0px -4px 0px #f4f5f6;
   border-radius: 20px;
   transition: 0.3s ease-in-out; /* Smooth animation */
   z-index: 1;
@@ -985,7 +985,7 @@
 
 /* icon-stop para el sub-icono STOP */
 .icon-stop {
-  fill: #ff0000;
+  fill: #B83232;
   transition: fill 0.2s, filter 0.2s;
 
   cursor: pointer;
@@ -999,7 +999,7 @@
 
 /* Efecto “iluminado” al checkear STOP */
 .label-stop:has(input[type="radio"]:checked) .icon-stop {
-  fill: #ff0000;
+  fill: #B83232;
   filter: drop-shadow(0 0 5px #cae2fd);
 }
 
@@ -1074,14 +1074,14 @@
 
 /* Estilos para iconos de feedback más llamativos */
 .icon-correct {
-  color: #28a745; /* Verde brillante */
+  color: #3D8B5E; /* Verde brillante */
   font-size: 2rem; /* Tamaño grande */
   animation: pop 0.5s ease-out;
   text-shadow: 0 0 10px rgba(40, 167, 69, 0.7);
 }
 
 .icon-incorrect {
-  color: #dc3545; /* Rojo vibrante */
+  color: #B83232; /* Rojo vibrante */
   font-size: 2rem;
   animation: shake 0.5s ease;
   text-shadow: 0 0 10px rgba(220, 53, 69, 0.7);
@@ -1216,7 +1216,7 @@
 
 .exam-summary {
   text-align: center;
-  /* background:  #f4a940; */
+  /* background:  #C49A5A; */
   background: transparent;
   font-family: "ChauPhilomene", sans-serif;
   padding: 20px;
@@ -1229,7 +1229,7 @@
 
 .exam-summary .mt-4 button {
   margin: 0 0.75rem; /* 0 arriba/abajo, 0.75rem izquierda/derecha */
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   font-size: 1.2rem;
 }
 
@@ -1242,14 +1242,14 @@
 }
 
 .icon-correct {
-  color: #28a745;
+  color: #3D8B5E;
   /* animation: pop 0.5s ease-out; */
   animation: none;
   text-shadow: none;
 }
 
 .icon-incorrect {
-  color: #dc3545;
+  color: #B83232;
   /* animation: shake 0.5s ease; */
   animation: none;
   text-shadow: none;
@@ -1321,7 +1321,7 @@
 }
 
 .veloc-slider-fixed button.active {
-  background-color: #41b8d5;
+  background-color: #2E72C2;
   color: black;
   font-weight: bold;
 }
