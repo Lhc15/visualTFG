@@ -17,7 +17,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 80vh;
-  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+  background-color: var(--color-bg);
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -25,7 +25,7 @@
 .content {
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+  background-color: var(--color-bg);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -59,7 +59,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+  background-color: var(--color-bg);
 }
 
 /* VIDEO */
@@ -90,7 +90,7 @@
   position: absolute;
   top: 20px;
   right: 20px;
-  background-color: #1E6EE8; /* Azul llamativo */
+  background-color: var(--color-brand); /* Azul llamativo */
   padding: 0.5em 1em;
   border-radius: 12px;
   font-weight: bold;
@@ -177,18 +177,18 @@
   font-size: 1rem;
   border: none;
   border-radius: 12px;
-  background-color: #C0333D;
+  background-color: var(--color-error);
   color: white;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 .small-disable-webcam-btn:hover {
-  background-color: #C0333D;
+  background-color: var(--color-error);
 }
 
 .button-grid {
   flex: 0 0 35%;
-  background-color: #F7FCFA;
+  background-color: var(--color-surface);
   padding: 20px;
   height: 100vh;
   display: flex;
@@ -232,12 +232,12 @@
   height: auto;
   border: 2px solid black;
   border-radius: 12px;
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   color: rgb(0, 0, 0);
   transition: background-color 0.3s ease;
 }
 .small-webcam-btn:hover {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand-dark);
 }
 
 /* CUADRO MODO GUIADO */
@@ -344,7 +344,7 @@ app-card {
 }
 
 .veloc-slider-fixed button.active {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   color: black;
   font-weight: bold;
 }

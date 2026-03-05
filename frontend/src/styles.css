@@ -1,4 +1,35 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================
+   VISUAL VOICES — PALETA FINAL
+   Naranja Vivo #E04A1A · Off-white cálido
+   WCAG AA/AAA compliant
+   ============================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* — Naranja (marca) — */
+  --color-brand:         #E04A1A;
+  --color-brand-dark:    #A03010;
+  --color-brand-deep:    #6B1E08;
+  --color-brand-light:   #FAD9CC;
+  --color-brand-pale:    #FDF0EB;
+
+  /* — Fondos — */
+  --color-bg:            #F9F6F3;
+  --color-surface:       #FFFFFF;
+  --color-surface-2:     #F2EDE8;
+  --color-border:        #E8DDD6;
+
+  /* — Texto — */
+  --color-text:          #1C0E0A;
+  --color-text-muted:    #5C4438;
+
+  /* — Sistema — */
+  --color-success:       #2A7A4A;
+  --color-error:         #C22A18;
+  --color-locked:        #C8BEB8;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -8,12 +39,13 @@
   body {
     margin: 0;
     padding: 0;
-    background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
-    min-height: 100vh;
+    background-color: var(--color-bg);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--color-text);
   }
   
   #modos-container {
-    padding: 0.2rem 2rem; /* Márgenes internos left-right */
+    padding: 0.2rem 2rem;
   }
 
   /* Forzar LTR en el tooltip */
@@ -22,26 +54,23 @@
     text-align: left !important;
   }
 
-  /* Asegurarte de que no te aplique left:0;right:auto */
   .introjs-skipbutton {
-    position: static !important; /* o absolute, según quieras */
+    position: static !important;
     left: auto !important; 
     right: auto !important; 
     margin-right: 1rem !important;
   }
 
-  /* Si quieres mantener el layout horizontal de los botones: */
   .introjs-tooltipbuttons {
     display: flex !important;
     justify-content: space-between !important;
     padding-right: 2rem !important;
-    padding-left: 2rem !important; /* para que también no se pegue a la izquierda */
-    gap: 1rem; /* margen interno entre botones */
-
+    padding-left: 2rem !important;
+    gap: 1rem;
   }
 
   .introjs-helperLayer.custom-highlight {
-    transform: translateY(-40px) !important; /* Desplaza el highlight 50px hacia arriba */
+    transform: translateY(-40px) !important;
     padding-top: 60px !important;
     padding-bottom: 30px !important;
     padding-left: 5px !important;
@@ -49,48 +78,11 @@
     box-sizing: content-box !important;
   }
 
-
-  /* (Opcional) Si quieres más espacio alrededor del texto */
   .introjs-tooltiptext {
     margin-bottom: 1rem;
   }
 
-app-canvas
-{
+app-canvas {
     display: flex;
     width: 50vw;
-}
-
-/* =====================================================
-   Visual Voices — Paleta de Color v1.0
-   Cálida · Azul + Verde + Beige · WCAG AA/AAA
-   ===================================================== */
-:root {
-  /* — Fondos — */
-  --color-bg:           #EEF7F2;  /* Fondo general */
-  --color-surface:      #F7FCFA;  /* Paneles, tarjetas */
-  --color-avatar-bg:    #B0EDE6;  /* Panel del avatar */
-
-  /* — Azul (principal) — */
-  --color-blue-900:     #0A6B5E;  /* Toolbar, encabezados */
-  --color-blue-600:     #1E6EE8;  /* Hover, iconos activos */
-  --color-blue-400:     #4D96FF;  /* Highlight selección */
-  --color-blue-100:     #C2DCFF;  /* Fondo tarjeta activa */
-
-  /* — Verde (acción) — */
-  --color-green-900:    #0A6B5E;  /* Hover botón acción */
-  --color-green-600:    #0F9A86;  /* Botones CTA */
-  --color-green-400:    #12C4A8;  /* Barra progreso */
-  --color-green-100:    #B0EDE6;  /* Badges de nivel */
-
-  /* — Beige (calidez) — */
-  --color-beige-accent: #F7FCFA;  /* Iconos culturales */
-  --color-border:       #C0DDD7;  /* Divisores */
-
-  /* — Texto — */
-  --color-text:         #0D1F1C;  /* Body text */
-  --color-text-muted:   #3A5850;  /* Labels, metadatos */
-
-  /* — Sistema — */
-  --color-error:        #C0333D;  /* Error, respuesta incorrecta */
 }

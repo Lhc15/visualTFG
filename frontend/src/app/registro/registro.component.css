@@ -9,7 +9,7 @@
 
 body {
   font-family: "Lexend", sans-serif;
-  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+  background-color: var(--color-bg);
   min-height: 100vh;
 }
 
@@ -21,7 +21,7 @@ body {
   flex-direction: column;
   gap: 20px;
   padding: 40px;
-  background-color: #F7FCFA;
+  background-color: var(--color-brand-pale);
   border-radius: 15px;
   
 }
@@ -38,7 +38,7 @@ body {
 .input-field {
   width: 100%;
   padding: 14px;
-  border: 1px solid #C0DDD7;
+  border: 1px solid #ddd;
   border-radius: 8px;
   font-size: 16px;
   background-color: white;
@@ -67,7 +67,7 @@ body {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  background-color: #F7FCFA;
+  background-color: var(--color-brand-pale);
   padding: 15px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -80,14 +80,14 @@ body {
 }
 
 .login a {
-  color: #F7FCFA;
+  color: var(--color-brand);
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s ease;
 }
 
 .login a:hover {
-  color: #8C6A3F;
+  color: #d19600;
 }
 
 /* Password toggling */
@@ -117,10 +117,10 @@ body {
 
 
 .form-group.show-error input {
-  border-color: #C0333D;
+  border-color: #b71c1c;
 }
 .form-group .error-message {
-  color: #C0333D;
+  color: #b71c1c;
   font-size: 0.8rem;
   margin-top: 4px;
   height: 16px;

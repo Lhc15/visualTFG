@@ -58,13 +58,13 @@ div > button.tutorial-btn {
   height: auto;
   border: 2px solid black;
   border-radius: 12px;
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   color: rgb(0, 0, 0);
   transition: background-color 0.3s ease;
 }
 
 .tutorial-btn:hover {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand-dark);
 }
 
 .card-leaving {
@@ -97,7 +97,7 @@ div > button.tutorial-btn {
   text-transform: uppercase;
   cursor: pointer;
   font-family: "Lexend", sans-serif;
-  background-color: #1E6EE8; /* Azul llamativo */
+  background-color: var(--color-brand); /* Azul llamativo */
   color: black;
   border: 3px solid black;
   border-radius: 12px;
@@ -108,7 +108,7 @@ div > button.tutorial-btn {
 }
 
 .word-button.selected-word {
-  background-color: #C0DDD7;
+  background-color: var(--color-locked);
   color: black;
   cursor: default;
   opacity: 1;
@@ -121,7 +121,7 @@ div > button.tutorial-btn {
 } */
 
 .word-button:disabled {
-  background-color: #1E6EE8 !important;
+  background-color: var(--color-brand) !important;
   color: black;
 }
 
@@ -143,7 +143,7 @@ div > button.tutorial-btn {
 }
 
 /* .word-button:hover {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand-dark);
   transform: translate(-0.05em, -0.05em);
   box-shadow: 0.2em 0.2em;
 } */
@@ -216,7 +216,7 @@ button.learn-more {
 }
 
 button {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   font-family: "Lexend", sans-serif;
   padding: 0.6em 1.3em;
   font-weight: 900;
@@ -238,14 +238,14 @@ button:active {
 }
 
 .learn-more:disabled {
-  background-color: #C0DDD7;
+  background-color: var(--color-locked);
   color: black;
   cursor: default;
   opacity: 1;
 }
 
 .disabled-button {
-  background-color: #C0DDD7;
+  background-color: var(--color-locked);
   color: #555;
 }
 

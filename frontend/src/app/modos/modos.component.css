@@ -20,7 +20,7 @@
   justify-content: space-between;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+  background-color: var(--color-bg);
   padding: 20px;
   overflow: hidden;
 }
@@ -121,7 +121,7 @@ app-canvas {
 /* CARD DE MODO */
 
 .mode-card {
-  background-color: #C2DCFF;
+  background-color: var(--color-surface-2);
   padding: 30px;
   min-height: 210px;
   width: 100%;
@@ -138,7 +138,7 @@ app-canvas {
 }
 
 .mode-card:hover {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   transform: scale(1.07);
 }
 
@@ -223,7 +223,7 @@ app-canvas {
   margin-top: 10px;
   width: 150%;
   height: 20px;
-  background-color: #C0DDD7;
+  background-color: var(--color-locked);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -232,7 +232,7 @@ app-canvas {
   margin-top: 10px;
   width: 100%;
   height: 35px;
-  background-color: #C0DDD7;
+  background-color: var(--color-locked);
   border-radius: 10px;
   overflow: hidden;
 }
@@ -256,7 +256,7 @@ app-canvas {
 
 .progress-fill {
   height: 100%;
-  background-color: #0F9A86;
+  background-color: var(--color-success);
   transition: width 0.5s ease-in-out;
 }
 
@@ -300,12 +300,12 @@ app-canvas {
 }
 .progress-ring__background {
   fill: none;
-  stroke: #C0DDD7;
+  stroke: #ddd;
   stroke-width: 10;
 }
 .progress-ring__progress {
   fill: none;
-  stroke: #1E6EE8;
+  stroke: rgb(10, 117, 247);
   stroke-width: 10;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.5s ease;
@@ -380,7 +380,7 @@ app-canvas {
 .bg {
   padding: 20px;
   border-radius: 10px;
-  --base-color: #C2DCFF;
+  --base-color: var(--color-surface-2);
   margin-left: -80px;
 }
 
@@ -563,7 +563,7 @@ app-canvas {
 
 /* Botón Modo Individual */
 .buttons-group button:first-child {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
 }
 
 .buttons-group button:first-child::before {
@@ -575,13 +575,13 @@ app-canvas {
 }
 
 .buttons-group button:first-child:hover {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand-dark);
   transform: translateY(-3px);
 }
 
 /* Botón Modo Versus con imagen personalizada */
 .buttons-group button:last-child {
-  background-color: #ff7b54;
+  background-color: var(--color-brand);
   padding-left: 15px; /* Ajuste para imagen personalizada */
 }
 
@@ -599,7 +599,7 @@ app-canvas {
 }
 
 .buttons-group button:last-child:hover {
-  background-color: #e86642;
+  background-color: var(--color-brand-dark);
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(255, 123, 84, 0.4), 
               0 0 5px 2px rgba(255, 69, 0, 0.3);
@@ -651,7 +651,7 @@ app-canvas {
 
 /* Añadir brillo alrededor del botón Versus al hacer hover */
 .buttons-group button:last-child:hover {
-  background-color: #e86642;
+  background-color: var(--color-brand-dark);
   transform: translateY(-3px);
   box-shadow: 0 6px 15px rgba(255, 123, 84, 0.4), 
               0 0 5px 2px rgba(255, 69, 0, 0.3);

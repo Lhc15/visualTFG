@@ -61,7 +61,7 @@
 
 /* Estilos para el botón */
 .bottom-button {
-  background-color: #1E6EE8;
+  background-color: var(--color-bg);
   font-family: "Lexend", sans-serif;
   padding: 0.2em 0.8em;
   font-weight: 900;
@@ -81,7 +81,7 @@
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #0F9A86;
+  background-color: var(--color-success);
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -89,13 +89,13 @@
 }
 
 .skin-button:hover, .reset-button:hover {
-  background-color: #0A6B5E;
+  background-color: var(--color-success);
 }
 
 .reset-button {
-  background-color: #2196F3;
+  background-color: var(--color-brand);
 }
 
 .reset-button:hover {
-  background-color: #1976D2;
+  background-color: var(--color-brand-dark);
 }

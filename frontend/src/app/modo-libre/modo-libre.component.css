@@ -17,7 +17,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 80vh;
-  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+  background-color: var(--color-bg);
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -29,7 +29,7 @@
 .content {
   width: 100vw;
   height: 100vh;
-  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+  background-color: var(--color-bg);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -57,7 +57,7 @@
 
 .button-grid {
   flex: 0 0 35%;
-  background-color: #F7FCFA;
+  background-color: var(--color-surface);
   padding: 20px;
   height: 100vh;
   display: flex;
@@ -91,7 +91,7 @@ button,
 .small-disable-webcam-btn,
 .small-webcam-btn,
 .tutorial-btn {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   font-family: "Lexend", sans-serif;
   padding: 0.6em 1.3em;
   font-weight: 900;
@@ -108,7 +108,7 @@ button:hover,
 .small-disable-webcam-btn:hover,
 .small-webcam-btn:hover,
 .tutorial-btn:hover {
-  background-color: #1E6EE8;
+  background-color: var(--color-brand-dark);
   transform: translate(-0.05em, -0.05em);
   box-shadow: 0.2em 0.2em;
 }
@@ -295,7 +295,7 @@ button:active,
     display: flex;
     justify-content: center; /* Centra el video dentro del contenedor */
     align-items: center; /* Asegura que el video se mantenga bien centrado */
-    background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+    background-color: var(--color-bg);
   }
   
   /* VIDEO */
@@ -322,7 +322,7 @@ button:active,
   text-transform: uppercase;
   cursor: pointer;
   font-family: "Lexend", sans-serif;
-  background-color: #1E6EE8; /* Azul llamativo */
+  background-color: var(--color-brand); /* Azul llamativo */
   color: black;
   border: 3px solid black;
   border-radius: 12px;
@@ -409,7 +409,7 @@ button:active,
   position: relative;
   overflow: visible;
   flex: 0 0 35%;
-  background-color: #F7FCFA;
+  background-color: var(--color-surface);
   padding: 20px;
   height: 100vh;
   display: flex;
@@ -473,7 +473,7 @@ button:active,
 
 /* Hover en la Card */
 .card:hover {
-  border-color: #1E6EE8;
+  border-color: #008bf8;
   box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
 }
 .card:hover .card-button {
@@ -496,7 +496,7 @@ button:active,
   margin-top: 30px;
 }
 
-/* Botones de palabras: #1E6EE8 + borde negro */
+/* Botones de palabras: var(--color-brand) + borde negro */
 .word-item {
   display: flex;
   justify-content: center;
@@ -505,7 +505,7 @@ button:active,
    font-weight: 900;
    font-size: 24px;
    font-family: "Lexend", sans-serif;
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   color: black;
   border: 3px solid black; /* Igual que el otro botón */
   border-radius: 0.4em; /* Ajustado para coincidir */
@@ -544,7 +544,7 @@ button:active,
 
 .dropdown-button {
   width: 100%;
-  background-color: #1E6EE8;
+  background-color: var(--color-brand);
   border: 2px solid #000;
   border-radius: 8px;
   padding: 8px 12px;
@@ -762,13 +762,13 @@ button:active,
 
 /* Efecto “iluminado” al checkear STOP */
 .label-stop:has(input[type="radio"]:checked) .icon-stop {
-  fill: #C0333D;
+  fill: #ff0000;
   filter: drop-shadow(0 0 5px #cae2fd);
 }
 
 /* Icono STOP */
 .icon-stop {
-  fill: #C0333D;
+  fill: #ff0000;
   transition: fill 0.2s, filter 0.2s;
   cursor: pointer;
 }
@@ -800,7 +800,7 @@ button:active,
 
 .voltage-button button {
   color: white;
-  background: #1E6EE8;
+  background: #008bf8;
   padding: 1rem 3rem 1rem 3rem;
   border-radius: 5rem;
   border: 5px solid #5978F3;
