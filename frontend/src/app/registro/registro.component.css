@@ -9,7 +9,7 @@
 
 body {
   font-family: "Lexend", sans-serif;
-  background-color: #F5F0E8;
+  background-color: #EEF7F2;
   min-height: 100vh;
 }
 
@@ -21,7 +21,7 @@ body {
   flex-direction: column;
   gap: 20px;
   padding: 40px;
-  background-color: #FDFAF4;
+  background-color: #F7FCFA;
   border-radius: 15px;
   
 }
@@ -38,7 +38,7 @@ body {
 .input-field {
   width: 100%;
   padding: 14px;
-  border: 1px solid #D4CBBA;
+  border: 1px solid #C0DDD7;
   border-radius: 8px;
   font-size: 16px;
   background-color: white;
@@ -67,7 +67,7 @@ body {
   justify-content: center;
   align-items: center;
   margin-top: 20px;
-  background-color: #FDFAF4;
+  background-color: #F7FCFA;
   padding: 15px;
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -80,7 +80,7 @@ body {
 }
 
 .login a {
-  color: #C49A5A;
+  color: #F7FCFA;
   text-decoration: none;
   font-weight: bold;
   transition: color 0.3s ease;
@@ -117,10 +117,10 @@ body {
 
 
 .form-group.show-error input {
-  border-color: #B83232;
+  border-color: #C0333D;
 }
 .form-group .error-message {
-  color: #B83232;
+  color: #C0333D;
   font-size: 0.8rem;
   margin-top: 4px;
   height: 16px;

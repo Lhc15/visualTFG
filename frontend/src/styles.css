@@ -8,7 +8,7 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #F5F0E8;
+    background-color: #EEF7F2;
   }
   
   #modos-container {
@@ -66,30 +66,30 @@ app-canvas
    ===================================================== */
 :root {
   /* — Fondos — */
-  --color-bg:           #F5F0E8;  /* Fondo general */
-  --color-surface:      #FDFAF4;  /* Paneles, tarjetas */
-  --color-avatar-bg:    #F5E8C8;  /* Panel del avatar */
+  --color-bg:           #EEF7F2;  /* Fondo general */
+  --color-surface:      #F7FCFA;  /* Paneles, tarjetas */
+  --color-avatar-bg:    #B0EDE6;  /* Panel del avatar */
 
   /* — Azul (principal) — */
-  --color-blue-900:     #1A4F8A;  /* Toolbar, encabezados */
-  --color-blue-600:     #2E72C2;  /* Hover, iconos activos */
-  --color-blue-400:     #6FA8DC;  /* Highlight selección */
-  --color-blue-100:     #C8DFF5;  /* Fondo tarjeta activa */
+  --color-blue-900:     #0A6B5E;  /* Toolbar, encabezados */
+  --color-blue-600:     #1E6EE8;  /* Hover, iconos activos */
+  --color-blue-400:     #4D96FF;  /* Highlight selección */
+  --color-blue-100:     #C2DCFF;  /* Fondo tarjeta activa */
 
   /* — Verde (acción) — */
-  --color-green-900:    #2A5C3F;  /* Hover botón acción */
-  --color-green-600:    #3D8B5E;  /* Botones CTA */
-  --color-green-400:    #7EC8A0;  /* Barra progreso */
-  --color-green-100:    #C8EDD9;  /* Badges de nivel */
+  --color-green-900:    #0A6B5E;  /* Hover botón acción */
+  --color-green-600:    #0F9A86;  /* Botones CTA */
+  --color-green-400:    #12C4A8;  /* Barra progreso */
+  --color-green-100:    #B0EDE6;  /* Badges de nivel */
 
   /* — Beige (calidez) — */
-  --color-beige-accent: #C49A5A;  /* Iconos culturales */
-  --color-border:       #D4CBBA;  /* Divisores */
+  --color-beige-accent: #F7FCFA;  /* Iconos culturales */
+  --color-border:       #C0DDD7;  /* Divisores */
 
   /* — Texto — */
-  --color-text:         #1C1F1A;  /* Body text */
-  --color-text-muted:   #4A5240;  /* Labels, metadatos */
+  --color-text:         #0D1F1C;  /* Body text */
+  --color-text-muted:   #3A5850;  /* Labels, metadatos */
 
   /* — Sistema — */
-  --color-error:        #B83232;  /* Error, respuesta incorrecta */
+  --color-error:        #C0333D;  /* Error, respuesta incorrecta */
 }

@@ -29,7 +29,7 @@
   align-items: center;
   width: 100%;
   padding: 0px 40px; 
-  background-color: #F5F0E8;
+  background-color: #EEF7F2;
   box-sizing: border-box;
   position: relative;
   top: 0;
@@ -72,22 +72,22 @@
 }
 
 .btn.register {
-  background-color:  #2E72C2;
+  background-color:  #1E6EE8;
   color: black;
 }
 .btn.register:hover {
   transform: scale(1.1); 
-  background-color: #2E72C2;
+  background-color: #1E6EE8;
 }
 
 .btn.login {
-  background-color: #2E72C2;
+  background-color: #1E6EE8;
   color: black;
 }
 
 .btn.login:hover {
   transform: scale(1.1);
-  background-color: #2E72C2;
+  background-color: #1E6EE8;
 }  */
 
 .landing-container {
@@ -100,7 +100,7 @@
 
 .landing-left {
   width: 50%;
-  background-color: #F5F0E8;
+  background-color: #EEF7F2;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -149,7 +149,7 @@
 }
 .landing-right {
   width: 50%;
-  background-color: #F5F0E8;
+  background-color: #EEF7F2;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Lo mueve hacia abajo */
@@ -169,7 +169,7 @@
 /* Contenedor de ambas pestañas */
 .tabs-container {
   display: flex;
-  background: #FDFAF4;
+  background: #F7FCFA;
   border-radius: 12px 12px 0 0;
   justify-content: space-evenly;
   width: 450px;
@@ -198,12 +198,12 @@
   left: 0;
   width: 100%;
   height: 3px;
-  background-color: #2E72C2;
+  background-color: #1E6EE8;
 }
 
 /* Contenedor del contenido de la pestaña */
 .tab-content {
-  background: #FDFAF4;
+  background: #F7FCFA;
   border-radius: 0 0 12px 12px; 
   width: 450px;
   box-shadow: 0 0 8px rgba(0,0,0,0.1); 
@@ -218,7 +218,7 @@
 
 .landing-left {
   width: 50%;
-  background-color: #F5F0E8;
+  background-color: #EEF7F2;
   display: flex;
   flex-direction: column;
   justify-content: flex-start; 
@@ -265,7 +265,7 @@
 
 /* .landing-right {
   width: 50%;
-  background-color: #F5F0E8; 
+  background-color: #EEF7F2; 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -354,7 +354,7 @@
     align-items: center;
     padding: 40px;
     width: 100%;
-    background-color: #F5F0E8;
+    background-color: #EEF7F2;
     
 }
 
@@ -408,11 +408,11 @@ app-login, app-registro {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #F5F0E8;
+    background-color: #EEF7F2;
 }
 
 .container_arriba {
-    background-color: #F5F0E8;
+    background-color: #EEF7F2;
     padding: 40px;
     margin-bottom: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -429,7 +429,7 @@ app-login, app-registro {
 @supports (scrollbar-width: thin) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: #444 #F5F0E8;
+    scrollbar-color: #444 #EEF7F2;
   }
 }
 
@@ -444,7 +444,7 @@ app-login, app-registro {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #F5F0E8; 
+  background-color: #EEF7F2; 
 }
 
 /* ---------------------------------------------------------------------------
@@ -460,18 +460,18 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background-color: #F5F0E8;
+  background-color: #EEF7F2;
   font-family: "Lexend", sans-serif !important;
 }
 .lol{
-  background-color: #F5F0E8 !important;
+  background-color: #EEF7F2 !important;
   height: 100vh;
 
 }
 
  body, html {
   height: 100%;
-  background-color:  #F5F0E8; 
+  background-color:  #EEF7F2; 
   overflow-x: hidden
 }
 
@@ -556,7 +556,7 @@ body {
 .login-form input {
   padding: 10px;
   font-size: 1rem;
-  border: 2px solid #D4CBBA;
+  border: 2px solid #C0DDD7;
   border-radius: 5px;
 }
 
@@ -564,7 +564,7 @@ body {
   padding: 12px;
   font-size: 1.2rem;
   color: white;
-  background-color: #2E72C2;
+  background-color: #1E6EE8;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -572,7 +572,7 @@ body {
 }
 
 .login-form button:hover {
-  background-color: #2E72C2;
+  background-color: #1E6EE8;
 } 
 
 .landing-register{
@@ -590,7 +590,7 @@ body {
 
 
 .footer {
-  background-color: #F5F0E8 ; 
+  background-color: #EEF7F2 ; 
   color: black;
   text-align: center;
   padding: 20px;
