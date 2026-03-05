@@ -8,7 +8,8 @@
   body {
     margin: 0;
     padding: 0;
-    background-color: #EEF7F2;
+    background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
+    min-height: 100vh;
   }
   
   #modos-container {

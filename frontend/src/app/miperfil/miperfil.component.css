@@ -273,7 +273,7 @@ body, html {
 }
 
 .modal-content {
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   border-radius: 10px;
   padding: 25px; /* Reducido de 30px a 25px */
   text-align: center;

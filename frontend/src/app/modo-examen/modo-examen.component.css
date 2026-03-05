@@ -18,7 +18,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 80vh;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -27,7 +27,7 @@
 .content {
   width: 100vw;
   height: 100vh;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -241,7 +241,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
 }
 
 .camera-container {

@@ -17,7 +17,7 @@
   flex-direction: column;
   align-items: center;
   min-height: 80vh;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   max-width: 100% !important;
   width: 100% !important;
 }
@@ -29,7 +29,7 @@
 .content {
   width: 100vw;
   height: 100vh;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -295,7 +295,7 @@ button:active,
     display: flex;
     justify-content: center; /* Centra el video dentro del contenedor */
     align-items: center; /* Asegura que el video se mantenga bien centrado */
-    background-color: #EEF7F2;
+    background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   }
   
   /* VIDEO */

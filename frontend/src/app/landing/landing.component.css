@@ -29,7 +29,7 @@
   align-items: center;
   width: 100%;
   padding: 0px 40px; 
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   box-sizing: border-box;
   position: relative;
   top: 0;
@@ -100,7 +100,7 @@
 
 .landing-left {
   width: 50%;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -149,7 +149,7 @@
 }
 .landing-right {
   width: 50%;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   display: flex;
   flex-direction: column;
   justify-content: flex-start; /* Lo mueve hacia abajo */
@@ -218,7 +218,7 @@
 
 .landing-left {
   width: 50%;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   display: flex;
   flex-direction: column;
   justify-content: flex-start; 
@@ -265,7 +265,7 @@
 
 /* .landing-right {
   width: 50%;
-  background-color: #EEF7F2; 
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF); 
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -354,7 +354,7 @@
     align-items: center;
     padding: 40px;
     width: 100%;
-    background-color: #EEF7F2;
+    background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
     
 }
 
@@ -408,11 +408,11 @@ app-login, app-registro {
     display: flex;
     flex-direction: column;
     min-height: 100vh;
-    background-color: #EEF7F2;
+    background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
 }
 
 .container_arriba {
-    background-color: #EEF7F2;
+    background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
     padding: 40px;
     margin-bottom: 40px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -444,7 +444,7 @@ app-login, app-registro {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #EEF7F2; 
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF); 
 }
 
 /* ---------------------------------------------------------------------------
@@ -460,7 +460,7 @@ body {
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   font-family: "Lexend", sans-serif !important;
 }
 .lol{

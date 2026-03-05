@@ -20,7 +20,7 @@
   justify-content: space-between;
   align-items: center;
   height: 100vh;
-  background-color: #EEF7F2;
+  background: linear-gradient(160deg, #B0EDE6, #C2DCFF);
   padding: 20px;
   overflow: hidden;
 }
