@@ -134,8 +134,9 @@ app-canvas {
   opacity: 1;
 }
 
+/* aumentar padding para más altura */
 .card-inner {
-  padding: 24px 16px;
+  padding: 28px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -163,6 +164,14 @@ app-canvas {
   color: var(--color-text-dark, #1C0E0A);
   margin: 0;
   line-height: 1.2;
+}
+
+.card-inner p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  color: rgba(28, 14, 10, 0.5);
+  margin: 0;
+  line-height: 1.4;
 }
 
 /* Línea de acento inferior */
