@@ -96,7 +96,8 @@ app-canvas {
 .category-card {
   position: absolute;
   z-index: 5;
-  width: 160px;
+  width: 200px;
+  min-height: 200px;
   border-radius: 18px;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
@@ -136,12 +137,12 @@ app-canvas {
 
 /* aumentar padding para más altura */
 .card-inner {
-  padding: 28px 20px;
+  padding: 36px 20px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 16px;
   position: relative;
   z-index: 1;
 }
@@ -203,13 +204,10 @@ app-canvas {
    4 puntos distribuidos de -150° a -30° (parte superior del círculo)
    ============================================= */
 
-/* arc-1: Abecedario — izquierda del arco (-150°) */
+/* arc-1: Abecedario — izquierda del arco, más abajo */
 .arc-1 {
-  left: calc(50% + 38vw * cos(-150deg) - 80px);
-  top:  calc(65% + 38vh * sin(-150deg) - 70px);
-  /* fallback para navegadores sin cos/sin en CSS */
-  left: 5%;
-  top: 42%;
+  left: 4%;
+  top: 55%;
   transform: rotate(-8deg);
 }
 
@@ -229,8 +227,8 @@ app-canvas {
 
 /* arc-4: Conversamos — derecha del arco (-30°) */
 .arc-4 {
-  right: 5%;
-  top: 42%;
+  right: 4%;
+  top: 55%;
   transform: rotate(8deg);
 }
 
