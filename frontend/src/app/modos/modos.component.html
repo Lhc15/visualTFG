@@ -5,73 +5,68 @@
     <span>{{ hoveredCategory }}</span>
   </div>
 
-  <!-- Stage: card izq | avatar | card der -->
-  <div class="modos-stage">
-
-    <!-- Col 1: Abecedario -->
-    <div class="card-left-col">
-      <div
-        class="category-card"
-        [class.active]="hoveredCategory === 'Abecedario'"
-        (mouseenter)="onHover('abecedario')"
-        (mouseleave)="onLeave()"
-        (click)="navigateTo('/abecedario')"
-      >
-        <div class="card-inner">
-          <div class="card-icon">🤟</div>
-          <h3>Abecedario</h3>
-          <p>Aprende a deletrear en LSE letra a letra</p>
-        </div>
-        <div class="card-glow"></div>
-      </div>
+  <!-- Avatar ocupa toda la pantalla -->
+  <div class="avatar-zone">
+    <div class="avatar-canvas-wrap">
+      <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
     </div>
+  </div>
 
-    <!-- Col 2: Avatar central -->
-    <div class="avatar-zone">
-      <div class="avatar-ring"></div>
-      <div class="avatar-canvas-wrap">
-        <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
-      </div>
-
-      <!-- Card inferior: Gramática — encima del avatar -->
-      <div class="card-bottom-row">
-        <div
-          class="category-card card-bottom"
-          [class.active]="hoveredCategory === 'Gramática'"
-          (mouseenter)="onHover('gramatica')"
-          (mouseleave)="onLeave()"
-          (click)="navigateTo('/guiado')"
-        >
-          <div class="card-inner">
-            <div class="card-icon">✋</div>
-            <div>
-              <h3>Gramática</h3>
-              <p>Estructura y reglas de la LSE</p>
-            </div>
-          </div>
-          <div class="card-glow"></div>
-        </div>
-      </div>
+  <!-- Cards en arco superior -->
+  <div
+    class="category-card arc-card arc-1"
+    [class.active]="hoveredCategory === 'Abecedario'"
+    (mouseenter)="onHover('abecedario')"
+    (mouseleave)="onLeave()"
+    (click)="navigateTo('/abecedario')"
+  >
+    <div class="card-inner">
+      <div class="card-icon">🤟</div>
+      <h3>Abecedario</h3>
     </div>
+    <div class="card-glow"></div>
+  </div>
 
-    <!-- Col 3: Vocabulario -->
-    <div class="card-right-col">
-      <div
-        class="category-card"
-        [class.active]="hoveredCategory === 'Vocabulario'"
-        (mouseenter)="onHover('vocabulario')"
-        (mouseleave)="onLeave()"
-        (click)="navigateTo('/libre')"
-      >
-        <div class="card-inner">
-          <div class="card-icon">📖</div>
-          <h3>Vocabulario</h3>
-          <p>Explora y practica palabras del día a día</p>
-        </div>
-        <div class="card-glow"></div>
-      </div>
+  <div
+    class="category-card arc-card arc-2"
+    [class.active]="hoveredCategory === 'Vocabulario'"
+    (mouseenter)="onHover('vocabulario')"
+    (mouseleave)="onLeave()"
+    (click)="navigateTo('/libre')"
+  >
+    <div class="card-inner">
+      <div class="card-icon">📖</div>
+      <h3>Vocabulario</h3>
     </div>
+    <div class="card-glow"></div>
+  </div>
 
+  <div
+    class="category-card arc-card arc-3"
+    [class.active]="hoveredCategory === 'Gramática'"
+    (mouseenter)="onHover('gramatica')"
+    (mouseleave)="onLeave()"
+    (click)="navigateTo('/guiado')"
+  >
+    <div class="card-inner">
+      <div class="card-icon">✋</div>
+      <h3>Gramática</h3>
+    </div>
+    <div class="card-glow"></div>
+  </div>
+
+  <div
+    class="category-card arc-card arc-4"
+    [class.active]="hoveredCategory === '¿Conversamos?'"
+    (mouseenter)="onHover('conversamos')"
+    (mouseleave)="onLeave()"
+    (click)="navigateTo('/conversamos')"
+  >
+    <div class="card-inner">
+      <div class="card-icon">💬</div>
+      <h3>¿Conversamos?</h3>
+    </div>
+    <div class="card-glow"></div>
   </div>
 
 </div>

@@ -1,6 +1,6 @@
 /* =============================================
    MODOS — Visual Voices
-   Avatar ocupa toda la pantalla, cards flotando
+   4 cards en arco sobre el avatar
    ============================================= */
 
 :host {
@@ -10,8 +10,6 @@
   overflow: hidden;
 }
 
-/* Wrapper: posición relativa para que las cards
-   puedan flotar en absolute sobre el avatar */
 .modos-wrapper {
   width: 100%;
   height: 100vh;
@@ -20,18 +18,17 @@
   overflow: hidden;
 }
 
-/* Fondo decorativo sutil */
 .modos-wrapper::before {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(224, 74, 26, 0.06) 0%, transparent 70%);
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(224, 74, 26, 0.05) 0%, transparent 70%);
   pointer-events: none;
   z-index: 0;
 }
 
 /* =============================================
-   SUBTÍTULO DE CATEGORÍA
+   SUBTÍTULO
    ============================================= */
 
 .category-subtitle {
@@ -40,7 +37,7 @@
   left: 50%;
   transform: translateX(-50%);
   font-family: 'Fraunces', serif;
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: var(--color-brand, #E04A1A);
   letter-spacing: 0.06em;
@@ -57,23 +54,16 @@
 }
 
 /* =============================================
-   STAGE — solo contiene el avatar (100% pantalla)
-   ============================================= */
-
-.modos-stage {
-  width: 100%;
-  height: 100vh;
-  position: relative;
-  z-index: 1;
-}
-
-/* =============================================
-   AVATAR — ocupa toda la pantalla como en otros componentes
+   AVATAR — pantalla completa
    ============================================= */
 
 .avatar-zone {
   width: 100%;
   height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 
 .avatar-canvas-wrap {
@@ -87,53 +77,32 @@ app-canvas {
   display: block;
 }
 
-/* Anillo — oculto hasta que se confirme posición del avatar */
-.avatar-ring {
-  display: none;
-}
-
-@keyframes pulse-ring {
-  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.5; }
-  50%       { transform: translate(-50%, -50%) scale(1.05); opacity: 1;   }
-}
-
-/* Ocultar botón de herramientas del canvas */
 :host ::ng-deep app-canvas .button-container {
   display: none;
 }
 
+:host ::ng-deep .canvas-container {
+  margin: 0 auto;
+}
+
+:host ::ng-deep .canvas-wrapper {
+  margin: 0 auto;
+}
+
 /* =============================================
-   CARDS — flotando en absolute sobre el avatar
+   CARDS — base
    ============================================= */
 
-/* Card izquierda */
-.card-left-col {
-  position: absolute;
-  left: 5%;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
-}
-
-/* Card derecha */
-.card-right-col {
-  position: absolute;
-  right: 5%;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 5;
-}
-
-/* Card base */
 .category-card {
-  position: relative;
-  width: 220px;
-  border-radius: 20px;
+  position: absolute;
+  z-index: 5;
+  width: 160px;
+  border-radius: 18px;
   background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 2px solid rgba(28, 14, 10, 0.08);
-  box-shadow: 0 4px 24px rgba(28, 14, 10, 0.08);
+  box-shadow: 0 4px 20px rgba(28, 14, 10, 0.08);
   cursor: pointer;
   overflow: hidden;
   transition:
@@ -144,18 +113,16 @@ app-canvas {
 
 .category-card:hover,
 .category-card.active {
-  transform: translateY(-8px) scale(1.04);
   border-color: var(--color-brand, #E04A1A);
   box-shadow:
-    0 12px 40px rgba(224, 74, 26, 0.18),
+    0 12px 40px rgba(224, 74, 26, 0.2),
     0 0 0 1px rgba(224, 74, 26, 0.2);
 }
 
-/* Glow interno */
 .card-glow {
   position: absolute;
   inset: 0;
-  border-radius: 20px;
+  border-radius: 18px;
   background: radial-gradient(ellipse at 50% 0%, rgba(224, 74, 26, 0.1) 0%, transparent 70%);
   opacity: 0;
   transition: opacity 0.35s ease;
@@ -167,20 +134,19 @@ app-canvas {
   opacity: 1;
 }
 
-/* Contenido */
 .card-inner {
-  padding: 36px 24px;
+  padding: 24px 16px;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
   position: relative;
   z-index: 1;
 }
 
 .card-icon {
-  font-size: 3rem;
+  font-size: 2.2rem;
   line-height: 1;
   transition: transform 0.3s ease;
 }
@@ -192,18 +158,11 @@ app-canvas {
 
 .card-inner h3 {
   font-family: 'Fraunces', serif;
-  font-size: 1.4rem;
+  font-size: 1rem;
   font-weight: 700;
   color: var(--color-text-dark, #1C0E0A);
   margin: 0;
-}
-
-.card-inner p {
-  font-family: 'DM Sans', sans-serif;
-  font-size: 0.85rem;
-  color: rgba(28, 14, 10, 0.5);
-  margin: 0;
-  line-height: 1.5;
+  line-height: 1.2;
 }
 
 /* Línea de acento inferior */
@@ -226,46 +185,48 @@ app-canvas {
 }
 
 /* =============================================
-   CARD INFERIOR — Gramática
+   POSICIONES EN ARCO
+   El arco va de izq-abajo → centro-arriba → der-abajo
+   Orden: Abecedario | Vocabulario | Gramática | Conversamos
+
+   Arco centrado en 50% horizontal, parte baja ~70% vertical
+   Radio horizontal ~38vw, radio vertical ~38vh
+   4 puntos distribuidos de -150° a -30° (parte superior del círculo)
    ============================================= */
 
-.card-bottom-row {
-  position: absolute;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 5;
+/* arc-1: Abecedario — izquierda del arco (-150°) */
+.arc-1 {
+  left: calc(50% + 38vw * cos(-150deg) - 80px);
+  top:  calc(65% + 38vh * sin(-150deg) - 70px);
+  /* fallback para navegadores sin cos/sin en CSS */
+  left: 5%;
+  top: 42%;
+  transform: rotate(-8deg);
 }
 
-.card-bottom {
-  width: 260px;
+/* arc-2: Vocabulario — izquierda-centro (-110°) */
+.arc-2 {
+  left: 22%;
+  top: 10%;
+  transform: rotate(-4deg);
 }
 
-.card-bottom .card-inner {
-  flex-direction: row;
-  text-align: left;
-  gap: 16px;
-  padding: 20px 24px;
+/* arc-3: Gramática — derecha-centro (-70°) */
+.arc-3 {
+  right: 22%;
+  top: 10%;
+  transform: rotate(4deg);
 }
 
-.card-bottom .card-icon {
-  font-size: 2rem;
-  flex-shrink: 0;
+/* arc-4: Conversamos — derecha del arco (-30°) */
+.arc-4 {
+  right: 5%;
+  top: 42%;
+  transform: rotate(8deg);
 }
 
-.card-bottom .card-inner h3 {
-  font-size: 1.15rem;
-}
-
-/* =============================================
-   CENTRADO DEL CANVAS EN MODOS
-   ============================================= */
-
-/* Forzar que el canvas-container se centre horizontalmente */
-:host ::ng-deep .canvas-container {
-  margin: 0 auto;
-}
-
-:host ::ng-deep .canvas-wrapper {
-  margin: 0 auto;
-}
+/* Hover anula rotación */
+.arc-1:hover, .arc-1.active { transform: rotate(0deg) translateY(-6px) scale(1.04); }
+.arc-2:hover, .arc-2.active { transform: rotate(0deg) translateY(-6px) scale(1.04); }
+.arc-3:hover, .arc-3.active { transform: rotate(0deg) translateY(-6px) scale(1.04); }
+.arc-4:hover, .arc-4.active { transform: rotate(0deg) translateY(-6px) scale(1.04); }

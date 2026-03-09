@@ -3,34 +3,24 @@ import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CanvasComponent } from '../canvas/canvas.component';
 
-// Mapeo de categoría → animaciones del avatar
-// Ajusta las rutas cuando tengas los .glb de cada categoría
 const CATEGORY_ANIMATIONS: Record<string, string[]> = {
-  vocabulario: [
-    // 'assets/animations/vocabulario.glb'
-  ],
-  gramatica: [
-    // 'assets/animations/gramatica.glb'
-  ],
-  abecedario: [
-    // 'assets/animations/abecedario.glb'
-  ],
+  vocabulario:  [],
+  gramatica:    [],
+  abecedario:   [],
+  conversamos:  [],
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  vocabulario: 'Vocabulario',
-  gramatica:   'Gramática',
-  abecedario:  'Abecedario',
+  vocabulario:  'Vocabulario',
+  gramatica:    'Gramática',
+  abecedario:   'Abecedario',
+  conversamos:  '¿Conversamos?',
 };
 
 @Component({
   selector: 'app-modos',
   standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    CanvasComponent,
-  ],
+  imports: [CommonModule, RouterModule, CanvasComponent],
   templateUrl: './modos.component.html',
   styleUrls: ['./modos.component.css'],
 })
