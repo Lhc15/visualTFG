@@ -1,177 +1,77 @@
-<app-header></app-header>
+<div class="modos-wrapper">
 
-<div class="mode-selector-container">
-  <div class="icon-menu-fixed">
-    <a (click)="navigateTo('perfil')" title="Mi Perfil">
-      <i class="fa-solid fa-user"></i>
-    </a>
-    <a (click)="logout()" title="Cerrar Sesión">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </a>
-     
+  <!-- Subtítulo que aparece en hover -->
+  <div class="category-subtitle" [class.visible]="hoveredCategory">
+    <span>{{ hoveredCategory }}</span>
   </div>
 
-  <div class="avatar-container avatar-canvas-container">
-    <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
-  </div>
+  <!-- Stage: card izq | avatar | card der -->
+  <div class="modos-stage">
 
-  <div class="modes-container">
-    <div
-      class="mode-card"
-      *ngFor="let mode of modes"
-      (click)="navigateToMode(mode.route)"
-    >
-      <div class="mode-title">
-        <h2><img [src]="mode.icon" alt="Icono" />{{ mode.name }}</h2>
-        <p>{{ mode.description }}</p>
-      </div>
-
-      <div class="mode-stats">
-        <ng-container [ngSwitch]="mode.id">
-          <!-- APRENDE PARA NUEVOS USUARIOS NO FUNCIONAL -->
-          <ng-container *ngSwitchCase="'guiado'">
-            <div *ngIf="isNewUserInGuidedMode; else guiadoStats">
-              <!-- <div class="stat-box empty-guide">
-                <p>¡Empieza ahora y descubre nuevas palabras!</p>
-                <div class="progressTwo">
-                  <div
-                    class="progress-bar progress-bar-striped progress-bar-animated"
-                    [ngClass]="animatedProgressColor"
-                    [style.width.%]="animatedProgress"
-                  >
-                    <span class="progress-text">{{ animatedProgress }}%</span>
-                  </div>
-                </div>
-              </div> -->
-            </div>
-            <ng-template #guiadoStats>
-              <!-- MODO GUIADO: APRENDE -->
-
-              <!-- Caja 1: nivel -->
-              <div class="stat-box level-box">
-                <p>Estás en el nivel</p>
-                <div class="level-circle">{{ userLevel }}</div>
-              </div>
-              <!-- Caja 2: Progreso -->
-              <div class="stat-box">
-                <p>Progreso actual</p>
-                <div class="progress">
-                  <div
-                    class="progress-bar progress-bar-striped progress-bar-animated"
-                    [ngClass]="getProgressColor(progressPercent)"
-                    [style.width.%]="progressPercent"
-                  >
-                    <span class="progress-text">{{ progressPercent }}%</span>
-                  </div>
-                </div>
-              </div>
-              <!-- Caja 3: Última palabra -->
-              <div class="stat-box">
-                <p *ngIf="nextLevel; else lastWord"></p>
-                <ng-template #lastWord>
-                  <p>Última palabra</p>
-                  <!-- From Uiverse.io by JkHuger -->
-                  <div class="animation">{{ lastWordLearned }}</div>
-                </ng-template>
-              </div>
-            </ng-template>
-          </ng-container>
-
-          <!-- MODO LIBRE: EXPLORA -->
-          <ng-container *ngSwitchCase="'libre'">
-            <!-- Caja 1: Palabras exploradas -->
-            <!-- <div class="stat-box">
-              <p>
-                Has explorado {{ exploredCount }} / {{ totalWords }} palabras
-              </p>
-            </div> -->
-            <div class="stat-box">
-              <svg viewBox="0 0 100 100" class="progress-ring">
-                <circle
-                  class="progress-ring__background"
-                  cx="50"
-                  cy="50"
-                  r="40"
-                />
-                <circle
-                  class="progress-ring__progress"
-                  cx="50"
-                  cy="50"
-                  r="40"
-                  stroke-dasharray="251.2"
-                  [attr.stroke-dashoffset]="
-                    251.2 - (exploredCount / totalWords) * 251.2
-                  "
-                />
-                <text x="50" y="50" class="progress-text-explored">
-                  {{ exploredCount }}/{{ totalWords }}
-                </text>
-              </svg>
-              <p>palabras exploradas</p>
-            </div>
-            <!-- Caja 2: Categoría más explorada -->
-            <div class="stat-box">
-              <ng-container *ngIf="mostExploredCategoryName; else noCategory">
-                <span class="star">⭐⭐⭐</span>
-                <p>
-                  Categoría favorita:
-                  {{ mostExploredCategoryName }}
-                  <!-- ( {{ mostExploredCategoryCount }} palabras) -->
-                </p>
-              </ng-container>
-              <ng-template #noCategory>
-                <p>No hay categoría más explorada</p>
-              </ng-template>
-            </div>
-
-            <!-- Caja 3: Tiempo total -->
-            <div class="stat-box">
-              <svg
-                width="200"
-                height="200"
-                viewBox="0 0 100 100"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="50" cy="50" r="45" fill="black" stroke="none" />
-                <line
-                  id="hand"
-                  x1="50"
-                  y1="50"
-                  x2="50"
-                  y2="15"
-                  stroke="white"
-                  stroke-width="3"
-                  stroke-linecap="round"
-                >
-                  <animateTransform
-                    attributeName="transform"
-                    type="rotate"
-                    from="0 50 50"
-                    to="360 50 50"
-                    dur="5s"
-                    repeatCount="indefinite"
-                  />
-                </line>
-                <circle cx="50" cy="50" r="3" fill="white" />
-              </svg>
-              <p>
-                Tiempo práctica: <br />
-                {{ tiempoLibreMs / 60000 | number : "1.0-0" }} minutos
-              </p>
-            </div>
-          </ng-container>
-
-          <!-- MODO EXAMEN: RÉTATE -->
-          <ng-container *ngSwitchCase="'examen'">
-            <div class="buttons-group">
-              <button (click)="navigateToMode('/examen')">Modo Individual</button>
-              <button (click)="navigateToMode('/versus')">Modo Versus</button>
-            </div>
-          <!-- </div> -->
-
-          </ng-container>
-        </ng-container>
+    <!-- Col 1: Abecedario -->
+    <div class="card-left-col">
+      <div
+        class="category-card"
+        [class.active]="hoveredCategory === 'Abecedario'"
+        (mouseenter)="onHover('abecedario')"
+        (mouseleave)="onLeave()"
+        (click)="navigateTo('/abecedario')"
+      >
+        <div class="card-inner">
+          <div class="card-icon">🤟</div>
+          <h3>Abecedario</h3>
+          <p>Aprende a deletrear en LSE letra a letra</p>
+        </div>
+        <div class="card-glow"></div>
       </div>
     </div>
+
+    <!-- Col 2: Avatar central -->
+    <div class="avatar-zone">
+      <div class="avatar-ring"></div>
+      <div class="avatar-canvas-wrap">
+        <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
+      </div>
+
+      <!-- Card inferior: Gramática — encima del avatar -->
+      <div class="card-bottom-row">
+        <div
+          class="category-card card-bottom"
+          [class.active]="hoveredCategory === 'Gramática'"
+          (mouseenter)="onHover('gramatica')"
+          (mouseleave)="onLeave()"
+          (click)="navigateTo('/guiado')"
+        >
+          <div class="card-inner">
+            <div class="card-icon">✋</div>
+            <div>
+              <h3>Gramática</h3>
+              <p>Estructura y reglas de la LSE</p>
+            </div>
+          </div>
+          <div class="card-glow"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col 3: Vocabulario -->
+    <div class="card-right-col">
+      <div
+        class="category-card"
+        [class.active]="hoveredCategory === 'Vocabulario'"
+        (mouseenter)="onHover('vocabulario')"
+        (mouseleave)="onLeave()"
+        (click)="navigateTo('/libre')"
+      >
+        <div class="card-inner">
+          <div class="card-icon">📖</div>
+          <h3>Vocabulario</h3>
+          <p>Explora y practica palabras del día a día</p>
+        </div>
+        <div class="card-glow"></div>
+      </div>
+    </div>
+
   </div>
+
 </div>

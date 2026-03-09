@@ -1,659 +1,271 @@
-@font-face {
-  font-family: "ChauPhilomene";
-  src: url("../../assets/fonts/chauphilomene.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
+/* =============================================
+   MODOS — Visual Voices
+   Avatar ocupa toda la pantalla, cards flotando
+   ============================================= */
 
-@font-face {
-  font-family: "Lexend";
-  src: url("../../assets/fonts/lexend.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-/* ESTILOS GENERALES */
-
-.mode-selector-container {
-  color: black;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+:host {
+  display: block;
+  width: 100%;
   height: 100vh;
-  background-color: #fff8d4;
-  padding: 20px;
   overflow: hidden;
 }
 
-/* ICONOS MENÚ DERECHA */
-
-.icon-menu-fixed {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  gap: 15px;
-  font-size: 30px;
-  background: none;
-  padding: 0;
-  z-index: 1000;
-}
-
-.icon-menu-fixed a {
-  color: black;
-  text-decoration: none;
-  transition: transform 0.2s ease;
-  cursor: pointer;
-}
-
-.icon-menu-fixed a:hover {
-  transform: scale(1.1);
-}
-
-/* AVATAR */
-
-.avatar-container {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 85vh;
-  max-width: 400px; /* Añade esta línea */
-  margin: 0 auto; /* Centra el contenedor */
-}
-
-/* ————————————————
-   Canvas idéntico al de la Landing
-———————————————— */
-
-:host ::ng-deep canvas.skin-canvas {
-  position: absolute;
-  top: 0;
-  left: -79% !important;       /* <— desplaza 1 contenedor de ancho (100%) hacia la izquierda */
-  width: 300% !important;   /* igual que en landing */
-  height: 100% !important;
-  z-index: 1;
-  pointer-events: auto;
-  transition: opacity 0.3s ease-out;
-}
-
-:host ::ng-deep app-canvas .button-container {
-  left: -150px !important; /* o prueba con 5px, –5px, lo que necesites */
-}
-
-.canvas-section {
+/* Wrapper: posición relativa para que las cards
+   puedan flotar en absolute sobre el avatar */
+.modos-wrapper {
   width: 100%;
-  max-width: 400px;      /* mismo ancho máximo */
-  height: 100%;      /* rellena el 100% de avatar-container */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 100vh;
+  background-color: var(--color-bg, #F9F6F3);
+  position: relative;
+  overflow: hidden;
 }
 
-canvas.webgl {
-  width: 100% !important;
-  height: 100% !important;
+/* Fondo decorativo sutil */
+.modos-wrapper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 50% at 50% 50%, rgba(224, 74, 26, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* Asegura que el componente ocupe todo ese espacio */
+/* =============================================
+   SUBTÍTULO DE CATEGORÍA
+   ============================================= */
+
+.category-subtitle {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--color-brand, #E04A1A);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.category-subtitle.visible {
+  opacity: 1;
+}
+
+/* =============================================
+   STAGE — solo contiene el avatar (100% pantalla)
+   ============================================= */
+
+.modos-stage {
+  width: 100%;
+  height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================
+   AVATAR — ocupa toda la pantalla como en otros componentes
+   ============================================= */
+
+.avatar-zone {
+  width: 100%;
+  height: 100vh;
+}
+
+.avatar-canvas-wrap {
+  width: 100%;
+  height: 100%;
+}
+
 app-canvas {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
 }
 
-/* CONTENEDORES DE MODOS */
-
-.modes-container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 25px;
-  width: 40%;
-  height: 85vh;
-  max-width: 700px;
-  margin-right: 95px;
+/* Anillo — oculto hasta que se confirme posición del avatar */
+.avatar-ring {
+  display: none;
 }
 
+@keyframes pulse-ring {
+  0%, 100% { transform: translate(-50%, -50%) scale(1);    opacity: 0.5; }
+  50%       { transform: translate(-50%, -50%) scale(1.05); opacity: 1;   }
+}
 
+/* Ocultar botón de herramientas del canvas */
+:host ::ng-deep app-canvas .button-container {
+  display: none;
+}
 
-/* CARD DE MODO */
+/* =============================================
+   CARDS — flotando en absolute sobre el avatar
+   ============================================= */
 
-.mode-card {
-  background-color: #8fd4e3;
-  padding: 30px;
-  min-height: 210px;
-  width: 100%;
-  max-width: 650px;
+/* Card izquierda */
+.card-left-col {
+  position: absolute;
+  left: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+/* Card derecha */
+.card-right-col {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+
+/* Card base */
+.category-card {
+  position: relative;
+  width: 220px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid rgba(28, 14, 10, 0.08);
+  box-shadow: 0 4px 24px rgba(28, 14, 10, 0.08);
+  cursor: pointer;
+  overflow: hidden;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.category-card:hover,
+.category-card.active {
+  transform: translateY(-8px) scale(1.04);
+  border-color: var(--color-brand, #E04A1A);
+  box-shadow:
+    0 12px 40px rgba(224, 74, 26, 0.18),
+    0 0 0 1px rgba(224, 74, 26, 0.2);
+}
+
+/* Glow interno */
+.card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(224, 74, 26, 0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.35s ease;
+  pointer-events: none;
+}
+
+.category-card:hover .card-glow,
+.category-card.active .card-glow {
+  opacity: 1;
+}
+
+/* Contenido */
+.card-inner {
+  padding: 36px 24px;
+  text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+.card-icon {
+  font-size: 3rem;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover .card-icon,
+.category-card.active .card-icon {
+  transform: scale(1.2) rotate(-5deg);
+}
+
+.card-inner h3 {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text-dark, #1C0E0A);
+  margin: 0;
+}
+
+.card-inner p {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(28, 14, 10, 0.5);
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Línea de acento inferior */
+.category-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) scaleX(0);
+  width: 60%;
+  height: 3px;
+  background: var(--color-brand, #E04A1A);
+  border-radius: 2px 2px 0 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.category-card:hover::after,
+.category-card.active::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+/* =============================================
+   CARD INFERIOR — Gramática
+   ============================================= */
+
+.card-bottom-row {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+}
+
+.card-bottom {
+  width: 260px;
+}
+
+.card-bottom .card-inner {
+  flex-direction: row;
   text-align: left;
-  border-radius: 10px;
-  overflow: hidden;
-  transition: background-color 0.3s, transform 0.4s;
-  cursor: pointer;
+  gap: 16px;
+  padding: 20px 24px;
 }
 
-.mode-card:hover {
-  background-color: #41b8d5;
-  transform: scale(1.07);
-}
-
-.mode-title {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-.mode-title h2 {
-  font-size: 32px;
-  font-weight: bold;
-  font-family: "ChauPhilomene", sans-serif;
-  margin: 0;
-  display: flex;
-  align-items: center;
-}
-
-.mode-title h2 img {
-  width: 40px;
-  height: auto;
-  vertical-align: middle;
-  margin-right: 10px;
-}
-
-.mode-title p {
-  font-size: 22px;
-  font-family: "ChauPhilomene", sans-serif;
-  margin: 0;
-  color: black;
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.mode-stats {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  gap: 10px;
-  flex-wrap: wrap;
-  text-align: center;
-  gap: 60px;
-}
-
-.stat-box {
-  flex: 1;
-  min-width: 120px;
-  max-width: 140px;
-  height: 100px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.stat-box p {
-  font-family: "ChauPhilomene", sans-serif;
-  font-size: 1.1rem; /* o 18px, 1.3em, etc. */
-}
-
-.stat-box.empty-guide {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-}
-
-.empty-guide {
-  text-align: center;
-  color: black;
-}
-
-.progressTwo {
-  margin-top: 10px;
-  width: 150%;
-  height: 20px;
-  background-color: #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.progress {
-  margin-top: 10px;
-  width: 100%;
-  height: 35px;
-  background-color: #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.progress-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100%;
-  transition: width 0.5s ease-in-out;
-  border-radius: 10px;
-}
-
-.progress-text {
-  color: black;
-  font-size: 16px;
-  font-weight: bold;
-  text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
-  font-family: "ChauPhilomene", sans-serif;
-}
-
-.progress-fill {
-  height: 100%;
-  background-color: #4caf50;
-  transition: width 0.5s ease-in-out;
-}
-
-.level-box p {
-  margin-bottom: 7px;
-}
-
-.level-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-}
-
-.level-circle {
-  display: inline-block;
-  width: 50px;
-  height: 50px;
-  background-color: black;
-  color: white;
+.card-bottom .card-icon {
   font-size: 2rem;
-  font-weight: bold;
-  text-align: center;
-  line-height: 50px;
-  border-radius: 50%;
-  margin-top: 5px;
-  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
 }
 
-.introjs-tooltip {
-  min-width: 350px;
-  max-width: 500px;
-  min-height: 250px;
-  max-height: 400px;
-  overflow-y: auto;
+.card-bottom .card-inner h3 {
+  font-size: 1.15rem;
 }
 
-.progress-ring {
-  width: 80px;
-  height: 80px;
-}
-.progress-ring__background {
-  fill: none;
-  stroke: #ddd;
-  stroke-width: 10;
-}
-.progress-ring__progress {
-  fill: none;
-  stroke: rgb(10, 117, 247);
-  stroke-width: 10;
-  stroke-linecap: round;
-  transition: stroke-dashoffset 0.5s ease;
-}
-.progress-text-explored {
-  font-size: 26px;
-  font-weight: bold;
-  text-anchor: middle;
-  dominant-baseline: middle;
-  fill: black;
-  font-family: "ChauPhilomene", sans-serif;
+/* =============================================
+   CENTRADO DEL CANVAS EN MODOS
+   ============================================= */
+
+/* Forzar que el canvas-container se centre horizontalmente */
+:host ::ng-deep .canvas-container {
+  margin: 0 auto;
 }
 
-@keyframes typing {
-  from {
-    width: 0;
-  }
-  to {
-    width: 100%;
-  }
+:host ::ng-deep .canvas-wrapper {
+  margin: 0 auto;
 }
-
-@keyframes blink-caret {
-  50% {
-    border-color: transparent;
-  }
-}
-
-.animation {
-  font: bold 20px Consolas, Monaco, monospace;
-  font-family: "Lexend", sans-serif;
-  border-right: 0.1em solid black;
-  width: 13.2ch;
-  margin: 0.7em 0.7em;
-  white-space: nowrap;
-  overflow: hidden;
-  animation: typing 5s steps(13, end) infinite,
-    blink-caret 0.5s step-end infinite alternate;
-}
-
-@keyframes blink-star {
-  50% {
-    opacity: 0.3;
-  }
-}
-
-.favorite-category {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.star {
-  font-size: 24px;
-  color: gold;
-}
-
-.texto-desarrollo {
-  font-size: 24px;
-  color: black;
-  margin: 0;
-  font-family: "ChauPhilomene", sans-serif;
-  font-size: 1.5rem;
-}
-
-.stat-ratate {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.bg {
-  padding: 20px;
-  border-radius: 10px;
-  --base-color: #8fd4e3;
-  margin-left: -80px;
-}
-
-.loader {
-  width: 60px;
-  height: 40px;
-  position: relative;
-  display: inline-block;
-  background-color: transparent; 
-}
-
-.loader::before {
-  content: "";
-  left: 0;
-  top: 0;
-  position: absolute;
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background-color: black;
-  background-image: radial-gradient(
-      circle 8px at 18px 18px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 18px 0px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 0px 18px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 36px 18px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 18px 36px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 30px 5px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 30px 5px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 30px 30px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 5px 30px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 4px at 5px 5px,
-      var(--base-color) 100%,
-      transparent 0
-    );
-  background-repeat: no-repeat;
-  box-sizing: border-box;
-  animation: rotationBack 3s linear infinite;
-}
-
-.loader::after {
-  content: "";
-  left: 35px;
-  top: 15px;
-  position: absolute;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background-color: black;
-  background-image: radial-gradient(
-      circle 5px at 12px 12px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 12px 0px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 0px 12px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 24px 12px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 12px 24px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 20px 3px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 20px 3px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 20px 20px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 3px 20px,
-      var(--base-color) 100%,
-      transparent 0
-    ),
-    radial-gradient(
-      circle 2.5px at 3px 3px,
-      var(--base-color) 100%,
-      transparent 0
-    );
-  background-repeat: no-repeat;
-  box-sizing: border-box;
-  animation: rotationBack 4s linear infinite reverse;
-}
-
-@keyframes rotationBack {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(-360deg);
-  }
-}
-
-/* Contenedor para centrar y separar los botones */
-/* Reemplaza el .buttons-group button existente con estos estilos */
-
-/* Contenedor para centrar y separar los botones */
-.buttons-group {
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  margin-top: 1rem;
-  width: 100%;
-}
-
-/* Estilos base compartidos */
-.buttons-group button {
-  padding: 12px 20px;
-  font-size: 1.2rem;
-  font-family: "ChauPhilomene", sans-serif;
-  border: 3px solid black;
-  border-radius: 12px;
-  color: rgb(0, 0, 0);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 180px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-}
-
-/* Botón Modo Individual */
-.buttons-group button:first-child {
-  background-color: #41b8d5;
-}
-
-.buttons-group button:first-child::before {
-  content: "\f007"; /* Icono de usuario individual de FontAwesome */
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
-  margin-right: 10px;
-  font-size: 1.1rem;
-}
-
-.buttons-group button:first-child:hover {
-  background-color: #35a0c7;
-  transform: translateY(-3px);
-}
-
-/* Botón Modo Versus con imagen personalizada */
-.buttons-group button:last-child {
-  background-color: #ff7b54;
-  padding-left: 15px; /* Ajuste para imagen personalizada */
-}
-
-.buttons-group button:last-child::before {
-  content: "";
-  background-image: url('frontend\src\assets\icono_versus2.png');
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
-  display: inline-block;
-  background-color: inherit; /* This will inherit the button's background color */
-}
-
-.buttons-group button:last-child:hover {
-  background-color: #e86642;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(255, 123, 84, 0.4), 
-              0 0 5px 2px rgba(255, 69, 0, 0.3);
-}
-
-/* Efecto al hacer click */
-.buttons-group button:active {
-  transform: translateY(2px);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-/* Efecto de llamas para el botón Versus */
-.buttons-group button:last-child::after {
-  content: "";
-  position: absolute;
-  width: 140%;
-  height: 15px;
-  bottom: -5px;
-  left: -20%;
-  background: linear-gradient(90deg, 
-    transparent 0%,
-    #ff6b0080 20%,
-    #ff4500 30%,
-    #ff7800 40%,
-    #ffce00 50%,
-    #ff7800 60%,
-    #ff4500 70%,
-    #ff6b0080 80%,
-    transparent 100%
-  );
-  clip-path: polygon(
-    0% 100%, 10% 60%, 15% 80%, 20% 40%, 25% 70%, 30% 45%, 
-    35% 75%, 40% 30%, 45% 65%, 50% 15%, 55% 65%, 60% 30%, 
-    65% 75%, 70% 45%, 75% 70%, 80% 40%, 85% 80%, 90% 60%, 100% 100%
-  );
-  animation: flames 1.5s infinite alternate;
-}
-
-@keyframes flames {
-  0% {
-    transform: scaleY(1) translateY(0);
-    filter: brightness(1);
-  }
-  100% {
-    transform: scaleY(1.2) translateY(-2px);
-    filter: brightness(1.2);
-  }
-}
-
-/* Añadir brillo alrededor del botón Versus al hacer hover */
-.buttons-group button:last-child:hover {
-  background-color: #e86642;
-  transform: translateY(-3px);
-  box-shadow: 0 6px 15px rgba(255, 123, 84, 0.4), 
-              0 0 5px 2px rgba(255, 69, 0, 0.3);
-}
-
