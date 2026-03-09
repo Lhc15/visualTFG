@@ -1,26 +1,23 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, AfterViewInit, OnDestroy  } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, AfterViewInit, OnDestroy } from '@angular/core';
 import { LoginComponent } from '../login/login.component';
 import { RegistroComponent } from '../registro/registro.component';
 import { CommonModule } from '@angular/common';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { AnimacionService } from '../services/animacion.service';
 import { environment } from '../../environments/environment';
-import { HeaderComponent } from '../header/header.component';
-
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
-
 
 @Component({
   selector: 'app-landing',
-   standalone: true,
-   templateUrl: './landing.component.html',
-   styleUrls: ['./landing.component.css'],
-   encapsulation: ViewEncapsulation.None,  // Desactiva el encapsulamiento
-  imports: [CommonModule, LoginComponent, RegistroComponent,CanvasComponent, HeaderComponent],
+  standalone: true,
+  templateUrl: './landing.component.html',
+  styleUrls: ['./landing.component.css'],
+  encapsulation: ViewEncapsulation.None,
+  imports: [CommonModule, LoginComponent, RegistroComponent, CanvasComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {
-  @ViewChild(CanvasComponent) canvasRef!: CanvasComponent;
+  @ViewChild('canvas') canvasRef!: CanvasComponent;
 
   isRegisterVisible: boolean = false;
   private gapAfterHello = 3000;
@@ -28,42 +25,37 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   private isPlayingHello = true;
   private animationTimeout!: any;
 
-
-  showRegister() {
-    this.isRegisterVisible = true;
-  }
-
-  showLogin() {
-    this.isRegisterVisible = false;
-  }
+  // ── Efectos visuales ──
+  private lseInterval!: any;
+  private readonly LSE_CHARS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
 
   constructor(private animacionService: AnimacionService) {}
 
-  
+  showRegister() { this.isRegisterVisible = true; }
+  showLogin()    { this.isRegisterVisible = false; }
 
-   ngAfterViewInit() {
-    // tan pronto como el Canvas esté listo, arranca la animación de "hola"
+  ngAfterViewInit() {
     this.playHelloLoop();
+    this.initLseLetters();
+    this.initParallax();
   }
 
   ngOnDestroy() {
-    if (this.animationTimeout) {
-      clearTimeout(this.animationTimeout);
-    }
+    if (this.animationTimeout) clearTimeout(this.animationTimeout);
+    if (this.lseInterval)      clearInterval(this.lseInterval);
   }
 
-   private async playHelloLoop() {
+  // ─────────────────────────────────────────
+  //  ANIMACIONES DEL AVATAR (sin cambios)
+  // ─────────────────────────────────────────
+
+  private async playHelloLoop() {
     this.isPlayingHello = true;
     const url = `${environment.apiUrl}/gltf/animaciones/holaanimation.gltf`;
     await this.canvasRef.loadSkinModel(url);
     const clip = this.canvasRef.availableClips[0];
     if (!clip) return;
-
-    console.log('Iniciando animación "hola"');
-    // Arrancamos "hola" SIN loop
     this.canvasRef.playClip(clip, false);
-    
-    // No programamos timeout aquí - esperamos el evento animationEnded
   }
 
   private async playWelcome() {
@@ -72,101 +64,68 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     await this.canvasRef.loadSkinModel(url);
     const clip = this.canvasRef.availableClips[0];
     if (!clip) return;
-
-    console.log('Iniciando animación "bienvenido"');
-    // Arrancamos "bienvenido" SIN loop
     this.canvasRef.playClip(clip, false);
-    
-    // No programamos timeout aquí - esperamos el evento animationEnded
   }
 
-
-  /** llamado cuando CanvasComponent emite animationEnded */
   onHelloEnded() {
-    console.log('Evento animationEnded recibido, isPlayingHello:', this.isPlayingHello);
-    
-    // Limpiar cualquier timeout previo
-    if (this.animationTimeout) {
-      clearTimeout(this.animationTimeout);
-    }
+    if (this.animationTimeout) clearTimeout(this.animationTimeout);
 
     if (this.isPlayingHello) {
-      // Acabó "hola", espera gapBeforeWelcome y lanza "bienvenido"
-      console.log(`Programando "bienvenido" en ${this.gapBeforeWelcome}ms`);
       this.animationTimeout = setTimeout(() => {
         this.playWelcome();
       }, this.gapBeforeWelcome);
     } else {
-      // Acabó "bienvenido", espera gapAfterHello y repite "hola"
-      console.log(`Programando "hola" en ${this.gapAfterHello}ms`);
       this.animationTimeout = setTimeout(() => {
         this.playHelloLoop();
       }, this.gapAfterHello);
     }
   }
 
+  // ─────────────────────────────────────────
+  //  EFECTOS VISUALES
+  // ─────────────────────────────────────────
 
+  private initLseLetters() {
+    const bg = document.getElementById('lseBg');
+    if (!bg) return;
 
-  private cargarAnimacionHola(): void {
-    // 1er bloque
-    const primerBloque = ['hola_0.gltf','hola_1.gltf','hola_2.gltf'];
-  
-    // 2do bloque
-    const segundoBloque = Array.from({ length: 14 }, (_, i) => `hola_${i+3}.gltf`);
-  
-    // Combinar los dos arrays
-    const bloquesCombinados = [...primerBloque, ...segundoBloque];
-  
-    // Generar URLs
-    const urlsCombinadas = bloquesCombinados.map(a => `${environment.apiUrl}/gltf/animaciones/${a}`);
-  
-    // Enviar todo junto en una sola llamada
-    this.animacionService.cargarAnimaciones(urlsCombinadas, true);
+    const spawn = () => {
+      const el = document.createElement('span');
+      el.className = 'lse-letter';
+      el.textContent = this.LSE_CHARS[Math.floor(Math.random() * this.LSE_CHARS.length)];
+      const size = 48 + Math.random() * 120;
+      el.style.fontSize = size + 'px';
+      el.style.left = (Math.random() * 90) + '%';
+      el.style.bottom = '-150px';
+      el.style.setProperty('--rot', (Math.random() * 40 - 20) + 'deg');
+      const dur = 8 + Math.random() * 10;
+      el.style.animationDuration = dur + 's';
+      bg.appendChild(el);
+      setTimeout(() => el.remove(), dur * 1000);
+    };
+
+    // Spawn inicial denso
+    for (let i = 0; i < 18; i++) {
+      setTimeout(spawn, i * 300);
+    }
+    // Spawn continuo
+    this.lseInterval = setInterval(spawn, 700);
+  }
+
+  private initParallax() {
+    const avatar = document.getElementById('avatarParallax');
+    const left   = document.getElementById('sideLeft');
+    if (!avatar || !left) return;
+
+    left.addEventListener('mousemove', (e: MouseEvent) => {
+      const rect = left.getBoundingClientRect();
+      const dx = (e.clientX - rect.left - rect.width  / 2) / rect.width;
+      const dy = (e.clientY - rect.top  - rect.height / 2) / rect.height;
+      avatar.style.transform = `translate(${dx * 22}px, ${dy * 14}px)`;
+    });
+
+    left.addEventListener('mouseleave', () => {
+      avatar.style.transform = 'translate(0,0)';
+    });
   }
 }
-
-
-// @Component({
-//   selector: 'app-landing',
-//   standalone: true,
-//   templateUrl: './landing.component.html',
-//   styleUrls: ['./landing.component.css'],
-//   encapsulation: ViewEncapsulation.None,  // Desactiva el encapsulamiento
-//   imports: [CommonModule, LoginComponent, RegistroComponent,CanvasComponent],
-//   schemas: [CUSTOM_ELEMENTS_SCHEMA]
-// })
-// export class LandingComponent {
-//   environment = environment;
-//   isRegisterVisible: boolean = false; // Mostrar el login por defecto
-
-//   @ViewChild('registerSection') registerSection!: ElementRef;
-//   @ViewChild('loginSection') loginSection!: ElementRef;
-
-//   // Mostrar la sección de registro y hacer scroll
-//   showRegister(): void {
-//     this.isRegisterVisible = true;
-//     setTimeout(() => {
-//       const container = document.getElementById('container-abajo');
-//       if (container) {
-//         container.scrollIntoView({ behavior: 'smooth' });
-//       }
-//     }, 100);
-//   }
-
-//   // Mostrar la sección de inicio de sesión y hacer scroll
-//   showLogin(): void {
-//     this.isRegisterVisible = false;
-//     setTimeout(() => {
-//       const container = document.getElementById('container-abajo');
-//       if (container) {
-//         container.scrollIntoView({ behavior: 'smooth' });
-//       }
-//     }, 100);
-//   }
-
-//   private scrollToSection(section: ElementRef): void {
-//     if (section) {
-//       section.nativeElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-//     }
-//   }
-// }

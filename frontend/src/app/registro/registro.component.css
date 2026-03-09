@@ -1,137 +1,139 @@
-/* registro.component.css */
+/* =============================================
+   REGISTRO — Visual Voices
+   Diseño integrado en el nuevo landing split
+   ============================================= */
 
-/* Reinicio global */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-  font-family: "Lexend", sans-serif;
-  background-color: #fff8d4;
-  min-height: 100vh;
-}
-
+/* ── Formulario principal ── */
 .registro-form {
   width: 100%;
-  min-width: 320px;
-  max-width: 450px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 40px;
-  background-color: #f9e59f;
-  border-radius: 15px;
-  
+  gap: 12px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
 }
-
 .registro-title {
-  font-family: "ChauPhilomene", sans-serif;
-  font-size: 45px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 15px;
-  color: #000;
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #1C0E0A;
+  margin-bottom: 4px;
+  text-align: left;
 }
 
+/* ── Grupos de campo ── */
+.form-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Inputs ── */
 .input-field {
   width: 100%;
-  padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  font-size: 16px;
-  background-color: white;
+  padding: 13px 16px;
+  border: 1.5px solid rgba(28,14,10,0.1);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #1C0E0A;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
 }
 
-.btn {
-  width: 100%;
-  padding: 16px;
-  background-color: #000;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s ease;
+.input-field:focus {
+  border-color: #E04A1A;
 }
 
-.btn:hover {
-  background-color: #333;
+.form-group.show-error .input-field {
+  border-color: #b71c1c;
 }
 
-.login-box {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-  background-color: #f9e59f;
-  padding: 15px;
-  border-radius: 15px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  height: 70px;
-}
-
-.login {
-  text-align: center;
-  font-size: 16px;
-}
-
-.login a {
-  color: #f4b400;
-  text-decoration: none;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.login a:hover {
-  color: #d19600;
-}
-
-/* Password toggling */
+/* ── Toggle contraseña ── */
 .password-container {
   position: relative;
   width: 100%;
 }
 
 .password-container .input-field {
-  width: 100%;
-  padding-right: 40px;
+  padding-right: 44px;
 }
 
 .toggle-password-btn {
   position: absolute;
-  right: 10px;
+  right: 12px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 18px;
-  color: #666;
+  font-size: 15px;
+  color: rgba(28,14,10,0.35);
   outline: none;
   padding: 0;
+  transition: color 0.2s;
 }
 
-
-.form-group.show-error input {
-  border-color: #b71c1c;
+.toggle-password-btn:hover {
+  color: #E04A1A;
 }
+
+/* ── Mensajes de error ── */
 .form-group .error-message {
   color: #b71c1c;
-  font-size: 0.8rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
   margin-top: 4px;
-  height: 16px;
   opacity: 0;
   max-height: 0;
   overflow: hidden;
   transition: opacity 0.3s ease, max-height 0.3s ease;
-  text-align: left;
-  padding-left: 5px;
+  padding-left: 2px;
 }
+
 .form-group .error-message.visible {
   opacity: 1;
   max-height: 50px;
 }
+
+/* ── Hint contraseña ── */
+.password-hint {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  margin-top: 4px;
+  padding: 8px 12px;
+  background: rgba(28,14,10,0.04);
+  border-radius: 8px;
+  color: rgba(28,14,10,0.5);
+}
+
+/* ── Botón principal ── */
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: #E04A1A;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.15s;
+  margin-top: 4px;
+}
+
+.btn:hover {
+  background: #B83610;
+  transform: translateY(-1px);
+}
+
+/* ── Cajas antiguas — neutralizadas ── */
+.login-box,
+.register-box { display: none; }

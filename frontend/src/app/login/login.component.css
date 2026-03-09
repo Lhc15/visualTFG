@@ -1,392 +1,209 @@
-  /* Reinicio global */
-  * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff8d4; /* Fondo amarillo claro */
-      min-height: 100vh;
-    }
-    
-    .main-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      background-color: #f5f5dc;
-    }
-    
-    .header {
-      background-color: #f4b400; /* Fondo amarillo fuerte */
-      padding: 20px 0;
-      text-align: center;
-      width: 100%;
-    }
-    
-    .header-title {
-      font-size: 2.5rem;
-      font-weight: bold;
-      color: #000;
-      text-transform: uppercase;
-    }
-    
-    .content {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-top: 50px;
-      gap: 20px; /* Espacio entre la imagen y el formulario */
-      
-    }
-    
-    .image-container {
-      flex: 2; /* Aumentado de 1 a 2 para dar más espacio */
-      display: flex;
-      justify-content: flex-start; /* Cambiado de center a flex-start para mover a la izquierda */
-      align-items: center;
-      padding-left: 50px; /* Añadido padding a la izquierda */
-    }
-    
-    .side-image {
-      max-width: 100%; /* Imagen responsiva */
-      height: auto;
-      max-height: 400px; /* Ajusta el tamaño máximo */
-    }
-    
-    .login-container {
-      flex: 1; /* Mantiene el espacio original */
-      max-width: 400px;
-      padding: 30px;
-      text-align: center;
-      background-color: #f2c464; /* Fondo amarillo suave */
-      border-radius: 15px;
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Sombras */
-      margin-left: 20px; /* Añadido margen a la izquierda */
-    }
-    
-    .login-form, .password-reset-form {
-      width: 100%;
-      min-width: 320px;
-      max-width: 450px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      padding: 40px;
-      background-color: #f9e59f;
-      border-radius: 15px;
-      
-    }
-    
-    .registro-title {
-      font-family: "ChauPhilomene", sans-serif; 
-      font-size: 45px;
-      font-weight: bold; 
-      text-align: center;
-      margin-bottom: 15px;
-      color: #000;
-    }
-    
-    .input-field {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-      background-color: white;
-    }
-    
-    .btn {
-      width: 100%;
-      padding: 16px;
-      background-color: #000;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-      transition: background-color 0.3s ease;
-    }
-    
-    .btn:hover {
-      background-color: #333;
-    }
-    
-    .remember-me {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 5px 0;
-      /* font-size: 14px; */
-    }
+/* =============================================
+   LOGIN — Visual Voices
+   Diseño integrado en el nuevo landing split
+   ============================================= */
 
-    .remember-forgot {
-      display: flex;
-      justify-content: space-between; /* Espaciado entre los elementos */
-      align-items: center; /* Centrar verticalmente */
-      margin: 10px 0; /* Espaciado vertical */
-      width: 100%; /* Asegura que el contenedor ocupe todo el ancho disponible */
-      font-size: 14px; /* Tamaño del texto */
-  }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    
-    .forgot-password {
-      color: #666;
-      text-decoration: none;
-      /* font-size: 14px; */
-      transition: color 0.3s ease;
-    }
-    
-    .forgot-password:hover {
-      color: #333;
-    }
+/* ── Formulario principal ── */
+.login-form,
+.password-reset-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+}
+.registro-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #1C0E0A;
+  margin-bottom: 4px;
+  text-align: left;
+}
 
-    .register-box {
-      margin-top: 20px; /* Espacio entre el formulario y el cuadro */
-      padding: 15px; /* Espaciado interno */
-      background-color: #f9e59f; /* Fondo amarillo suave */
-      border-radius: 15px; /* Bordes redondeados */
-      text-align: center; /* Centra el texto */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombras para resaltar */
+/* ── Grupos de campo ── */
+.form-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
-      /* Añadido para centrar completamente el texto */
-      display: flex; /* Activar flexbox */
-      justify-content: center; /* Centrar horizontalmente */
-      align-items: center; /* Centrar verticalmente */
-      height: 70px; /* Ajustar la altura del cuadro según sea necesario */
-  }
+/* ── Inputs ── */
+.input-field {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1.5px solid rgba(28,14,10,0.1);
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  color: #1C0E0A;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.2s;
+}
 
-  .register-box .register {
-      font-size: 16px; /* Tamaño del texto */
-  }
+.input-field:focus {
+  border-color: #E04A1A;
+}
 
-  .register-box .register a {
-      color: #f4b400; /* Color del enlace */
-      font-weight: bold;
-      text-decoration: none;
-      transition: color 0.3s ease;
-  }
+.form-group.show-error .input-field {
+  border-color: #b71c1c;
+}
 
-  .register-box .register a:hover {
-      color: #d19600;
-  }
+/* ── Toggle contraseña ── */
+.password-container {
+  position: relative;
+  width: 100%;
+}
 
-    
-    .register {
-      text-align: center;
-      font-size: 14px;
-    }
-    
-    .register a {
-      color: #f4b400;
-      text-decoration: none;
-      font-weight: bold;
-      transition: color 0.3s ease;
-    }
-    
-    .register a:hover {
-      color: #d19600;
-    }
-    
-    .divider {
-      width: 90%;
-      height: 1px;
-      background-color: #ccc;
-      margin: 15px 0;
-      position: relative;
-    }
-    
-    .divider-text {
-      position: absolute;
-      top: -12px;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #f9e59f;
-      padding: 0 10px;
-      font-size: 0.9rem;
-      color: #666;
-    }
+.password-container .input-field {
+  padding-right: 44px;
+}
 
-    .error-message {
-      color: red;
-      font-size: 0.93rem;
-      margin-top: 10px;
-    }
+.toggle-password-btn {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  color: rgba(28,14,10,0.35);
+  outline: none;
+  padding: 0;
+  transition: color 0.2s;
+}
 
-    .password-container {
-      position: relative;
-      width: 100%; /* Asegura que el contenedor de la contraseña tenga el mismo ancho que los otros inputs */
-    }
-    
-    .password-container .input-field {
-      width: 100%; /* Asegura que el input ocupe todo el ancho del contenedor */
-      padding-right: 40px; /* Añade espacio para el ícono del ojo */
-    }
-    
-    .toggle-password-btn {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 18px;
-      color: #666;
-      outline: none;
-      padding: 0;
+.toggle-password-btn:hover {
+  color: #E04A1A;
+}
 
-    }
-    
-  .toggle-password-btn:hover {
-    background-color: inherit; /* O usa un color específico */
-    color: inherit; /* Mantiene el color original */
-    text-decoration: none; /* Elimina subrayados en enlaces */
-    cursor: default; /* Opcional, si no quieres el puntero de enlace */
+/* ── Mensajes de error ── */
+.form-group .error-message {
+  color: #b71c1c;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.75rem;
+  margin-top: 4px;
+  opacity: 0;
+  max-height: 0;
+  overflow: hidden;
+  transition: opacity 0.3s ease, max-height 0.3s ease;
+  padding-left: 2px;
+}
 
-    /* Añadido para centrar el contenido en pantallas pequeñas */
-  }
+.form-group .error-message.visible {
+  opacity: 1;
+  max-height: 50px;
+}
 
-  /* Asegúrate de que los títulos tengan el mismo tamaño */
-  .password-reset-title {
-    font-family: "ChauPhilomene", sans-serif; 
-    font-size: 45px;
-    font-weight: bold; 
-    text-align: center;
-    margin-bottom: 15px;
-    color: #000;
-  }
+/* ── Remember / forgot ── */
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 2px 0;
+}
 
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(28,14,10,0.5);
+}
 
-  /* Mantén los mismos estilos para los botones en el formulario de reset */
-  .password-reset-form .btn {
-    width: 100%;
-    padding: 16px;
-    background-color: #000;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
-  }
+.remember-me input[type="checkbox"] {
+  accent-color: #E04A1A;
+  width: 14px;
+  height: 14px;
+}
 
-  .password-reset-form .btn:hover {
-    background-color: #333;
-  }
+.forgot-password {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #E04A1A;
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
 
-  /* Si el contenedor exterior también se está redimensionando */
-  .login-container .password-reset-form,
-  .password-reset-container {
-    max-width: 400px; /* Mismo ancho que el contenedor de login */
-  }
+.forgot-password:hover { opacity: 0.7; }
 
-  /* Estilos para el enlace de "Volver al Inicio de Sesión" */
-  .back-to-login {
-    color: #f4b400;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s ease;
-    text-align: center;
-    margin-top: 10px;
-    display: block;
-  }
+/* ── Botón principal ── */
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: #E04A1A;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: background 0.2s, transform 0.15s;
+  margin-top: 4px;
+}
 
-  .back-to-login:hover {
-    color: #d19600;
-  }
+.btn:hover {
+  background: #B83610;
+  transform: translateY(-1px);
+}
 
-  /* Asegurarse de que el mensaje de error/éxito tenga el mismo estilo */
-  .reset-message {
-    color: #41b8d5; /* O el color que prefieras */
-    font-size: 0.93rem;
-    margin-top: 10px;
-    text-align: center;
-  }
+/* ── Botón secundario (recuperar contraseña) ── */
+.btn-secondary {
+  background: transparent !important;
+  color: rgba(28,14,10,0.5) !important;
+  border: 1.5px solid rgba(28,14,10,0.12) !important;
+}
 
-  /* Estilos específicos para el formulario de recuperación de contraseña */
+.btn-secondary:hover {
+  background: rgba(28,14,10,0.04) !important;
+  transform: none !important;
+}
 
-  .password-reset-form .registro-title {
-    font-size: 45px;
-    margin-bottom: 20px;
-  }
-  
+/* ── Mensajes reset ── */
+.reset-message,
+.success-message {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  text-align: center;
+  margin-top: 4px;
+}
 
-  .reset-instructions {
-    color: #666;
-    margin-bottom: 20px;
-    font-size: 14px;
-    text-align: center;
-  }
+.success-message { color: #2e7d32; }
+.error-message   { color: #b71c1c; }
 
-  .btn-secondary {
-    background-color: #f4b400 !important; /* Usamos !important para asegurar que este estilo tenga prioridad */
-    color: white;
-    margin-top: 10px;
-  }
+.reset-instructions {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: rgba(28,14,10,0.45);
+  text-align: center;
+  margin-bottom: 4px;
+}
 
-  .btn-secondary:hover {
-    background-color: #d19600 !important;
-  }
+.back-to-login {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: #E04A1A;
+  text-decoration: none;
+  font-weight: 500;
+  text-align: center;
+  display: block;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
 
-  .success-message {
-    color: #28a745;
-    font-size: 0.93rem;
-    margin-top: 10px;
-    text-align: center;
-  }
+.back-to-login:hover { opacity: 0.7; }
 
-  .password-reset-form .error-message,
-  .password-reset-form .success-message {
-    text-align: center;
-    margin-top: 15px;
-  }
-
-  .password-reset-form .btn.btn-secondary {
-    background-color: #f4b400 !important;
-    color: white;
-    margin-top: 10px; /* O el margen que necesites */
-    /* Sin position absolute */
-  }
-
-
-  .input-field,
-  .password-container .input-field {
-    box-sizing: border-box;
-  }
-  
-  .form-group.show-error input {
-    border-color: #b71c1c;
-  }
-  
-  .form-group {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  
-  .form-group .error-message {
-    color: #b71c1c;
-    font-size: 0.8rem;
-    margin-top: 4px;
-    height: 16px;
-    opacity: 0;
-    max-height: 0;
-    overflow: hidden;
-    transition: opacity 0.3s ease, max-height 0.3s ease;
-    text-align: left;
-    padding-left: 5px;
-  }
-  
-  .form-group .error-message.visible {
-    opacity: 1;
-    max-height: 50px;
-  }
-  
+/* ── Cajas antiguas — neutralizadas ── */
+.register-box,
+.login-box { display: none; }

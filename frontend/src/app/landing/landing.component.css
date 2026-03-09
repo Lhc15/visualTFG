@@ -1,691 +1,352 @@
-/* Importar la fuente personalizada desde la carpeta public */
-@font-face {
-  font-family: "ChauPhilomene";
-  src: url("../../assets/fonts/chauphilomene.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
+/* =============================================
+   LANDING — Visual Voices
+   Split screen · naranja izquierda · bg app derecha
+   ============================================= */
 
-@font-face {
-  font-family: "Lexend";
-  src: url("../../assets/fonts/lexend.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-} 
-
-/* ---------------------------------------------------------------------------
-                               HEADER
---------------------------------------------------------------------------- */
-
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: 0px 40px; 
-  background-color: #f2c464;
-  box-sizing: border-box;
-  position: relative;
-  top: 0;
-  left: 0;
-  border-bottom: none !important;
-}
-
-
-.logo {
-  width: 80px; 
-  height: auto;
-  cursor: pointer;
-} 
-
-/* ---------------------------------------------------------------------------
-                            FIN DEL HEADER
---------------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------------------
-                            BOTONES
---------------------------------------------------------------------------- */
-
-/* Contenedor de los botones */
-/* .buttons {
-  display: flex;
-  align-items: center;
-  gap: 15px; 
-}
-
-.buttons .btn {
-  padding: 12px 20px;
-  font-size: 25px;
-  font-family: "ChauPhilomene", sans-serif; 
-  font-weight: bold;
-  border: 3px solid black; 
-  border-radius: 35px; 
-  cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
-  margin-top: 20px;
-}
-
-.btn.register {
-  background-color:  #41b8d5;
-  color: black;
-}
-.btn.register:hover {
-  transform: scale(1.1); 
-  background-color: #2aafcf;
-}
-
-.btn.login {
-  background-color: #41b8d5;
-  color: black;
-}
-
-.btn.login:hover {
-  transform: scale(1.1);
-  background-color: #2aafcf;
-}  */
-
-.landing-container {
-  display: flex;
-  width: 100%;
+:host {
+  display: block;
+  width: 100vw;
   height: 100vh;
-  flex-direction: row-reverse; /* Invierte el orden de los elementos */
-
+  overflow: hidden;
 }
 
-.landing-left {
-  width: 50%;
-  background-color: #f2c464;
+/* ── Reset heredado ── */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ── Layout principal ── */
+.landing-split {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 40px;
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.header-left {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 20px;
-}
+/* =============================================
+   LADO IZQUIERDO — AVATAR
+   ============================================= */
 
-.header-top-left {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px; /* Ajusta la separación entre la bombilla y el texto */
-
-}
-
-.logo-container {
-  width: 100px;
-  height: auto;
-}
-
-.text-container {
-  display: flex;
-  flex-direction: column; /* Pone "Visual" arriba y "Voices" abajo */
-  text-align: left; /* Asegura alineación a la izquierda */
-  line-height: 1; /* Ajusta el espacio entre líneas */}
-
-/* Form section (contenedor de pestañas) */
-.form-section {
-  width: 100%;
-  max-width: 450px;
-  display: flex;
-  justify-content: center;
-  margin-top: 0;
-  margin-left: 100px;
-}
-.landing-right {
-  width: 50%;
-  background-color: #f2c464;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* Lo mueve hacia abajo */
-  align-items: flex-end; /* Lo mueve hacia   la derecha */
-  padding-right: 50px; /* Ajusta la distancia hacia la derecha */
-}
-
-.canvas-section {
-  width: 100%;
-  max-width: 400px; /* Ajusta el tamaño del avatar si es necesario */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-
-/* Contenedor de ambas pestañas */
-.tabs-container {
-  display: flex;
-  background: #f9e59f;
-  border-radius: 12px 12px 0 0;
-  justify-content: space-evenly;
-  width: 450px;
-}
-
-/* Cada pestaña */
-.tab {
+.side-left {
   flex: 1;
-  background: none;
-  border: none;
-  font-size: 1rem;
-  font-weight: normal;
-  color: #000000;        /* Ajusta a tu color */
-  cursor: pointer;
-  padding: 16px 0;
   position: relative;
-  outline: none;
-  text-align: center;
+  background: var(--color-brand, #E04A1A);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Subrayado rojo cuando está activa */
-.tab.active::after {
-  content: '';
+/* ── Letras LSE flotantes ── */
+.lse-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.lse-letter {
+  position: absolute;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  color: rgba(255,255,255,0.07);
+  line-height: 1;
+  user-select: none;
+  animation: lse-float linear infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes lse-float {
+  0%   { transform: translateY(0px) rotate(var(--rot)); opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { transform: translateY(-110vh) rotate(calc(var(--rot) + 15deg)); opacity: 0; }
+}
+
+/* ── Ondas pulsantes ── */
+.pulse-rings {
   position: absolute;
   bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background-color: #41B8D5;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  pointer-events: none;
 }
 
-/* Contenedor del contenido de la pestaña */
-.tab-content {
-  background: #f9e59f;
-  border-radius: 0 0 12px 12px; 
-  width: 450px;
-  box-shadow: 0 0 8px rgba(0,0,0,0.1); 
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,0.18);
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 40%);
+  animation: ring-expand 3s ease-out infinite;
+  will-change: transform, opacity;
+}
+.ring:nth-child(1) { width: 300px; height: 300px; animation-delay: 0s; }
+.ring:nth-child(2) { width: 500px; height: 500px; animation-delay: 1s; }
+.ring:nth-child(3) { width: 700px; height: 700px; animation-delay: 2s; }
+
+@keyframes ring-expand {
+  0%   { transform: translate(-50%, 40%) scale(0.4); opacity: 0.6; }
+  100% { transform: translate(-50%, 40%) scale(1.1); opacity: 0; }
 }
 
-/* .landing-container {
-  display: flex;
-  width: 100%;
-  height: 100vh;
+/* ── Glow central ── */
+.avatar-glow {
+  position: absolute;
+  bottom: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 80%,
+    rgba(255,255,255,0.22) 0%,
+    rgba(255,130,80,0.15) 35%,
+    transparent 70%
+  );
+  z-index: 2;
+  animation: glow-pulse 2.8s ease-in-out infinite;
+  pointer-events: none;
 }
 
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) scaleX(1); }
+  50%       { opacity: 1;   transform: translateX(-50%) scaleX(1.08); }
+}
 
-.landing-left {
-  width: 50%;
-  background-color: #f2c464;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; 
-  align-items: flex-start; 
-  padding: 40px;
-  text-align: left;
+/* ── Logo ── */
+.logo-over {
+  position: absolute;
+  top: 32px; left: 36px;
+  z-index: 10;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.92);
+  text-shadow: 0 2px 12px rgba(0,0,0,0.15);
+}
+
+/* ── Avatar / parallax ── */
+.avatar-parallax {
   position: relative;
-}
-
-.header-left {
+  z-index: 3;
+  transition: transform 0.12s ease-out;
+  will-change: transform;
+  width: 100%;
+  height: 100%;
   display: flex;
-  align-items: center; 
-  gap: 15px; 
-  margin-bottom: 20px;
-} */
-
-/* .logo-container  {
-  width: 200px; 
-  height: auto;
-  text-align: center;
-}
-
-.text-container {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-} */
-
-.main-title {
-  font-family: "Chauphilomene", sans-serif;
-  font-size: 2.5rem;
-  /* font-weight: bold; */
-  color: black;
-  margin: 0;
-}
-
-.subtitle {
-  font-family: "Lexend", sans-serif;
-  font-size: 1.5rem;
-  color: black;
-  margin: 0;
-}
-
-
-/* .landing-right {
-  width: 50%;
-  background-color: #f2c464; 
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-}
-
-.form-section {
-  width: 100%;
-  max-width: 450px;
-  display: flex;
   justify-content: center;
-} */
+}
 
-/* .canvas-section {
+.canvas-wrap {
   width: 100%;
-  max-width: 500px;
+  height: 100%;
+  position: relative;
   display: flex;
+  align-items: center;
   justify-content: center;
-} */
-
-.landing .canvas {
-  background-color: lightblue;
-}
-
-
-
-/* ---------------------------------------------------------------------------
-                        FIN DE LOS BOTONES
---------------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------------------
-                       LANDING PRINCIPAL
---------------------------------------------------------------------------- */
-
-.text-content {
-  flex: 1; 
-  flex-direction: column; 
-  justify-content: center; 
-  text-align: center; 
-  padding-left: 30px;
-}
-
-.text-content h1 {
-  font-size: 2.5rem; 
-  margin-bottom: 20px;
-}
-
-.text-content p {
-  font-size: 1.5rem; 
-  line-height: 1.8; 
-}
-
-.main-frase{
-  font-family: "Lexend", sans-serif;
-  font-size: 2rem;
-  color: black;
-  font-weight: bold; 
-
-}
-
-.frase-2{
-  font-family: "Lexend", sans-serif;
-  font-size: 2rem;
-  color: black;
-}
-
-.imagen {
-  width: 400px; 
-  max-width: 100%;
-  height: auto;
-  cursor: pointer;
-  display: block; 
-
-} 
-
-/* ---------------------------------------------------------------------------
-                    FIN DEL LANDING PRINCIPAL
---------------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------------------
-                            CONTENEDOR DE LOGIN/REGISTRO
---------------------------------------------------------------------------- */
-.container_abajo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
-    width: 100%;
-    background-color: #fff8d4;
-    
-}
-
-.landing-register, .landing-login {
-    display: flex;
-    width: 100%;
-    max-width: 1200px;
-    justify-content: flex-end;
-    align-items: center;
-    margin: 0 auto;
-    gap: 100px;
-    padding-right: 80px;
-}
-
-.canvas-section {
-    flex: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-width: 0;
-    max-width: 500px;
-}
-
-.form-section {
-    flex: 1;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    min-width: 320px;
-    max-width: 450px;
-}
-
-/* Ocultar el formulario no activo */
-.landing-register:not(.visible),
-.landing-login:not(.visible) {
-    display: none;
 }
 
 app-canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
-app-login, app-registro {
-    width: 100%;
-    display: block;
-}
-
-.main-container {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    background-color: #fff8d4;
-}
-
-.container_arriba {
-    background-color: #f2c464;
-    padding: 40px;
-    margin-bottom: 40px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* ---------------------------------------------------------------------------
-                            FIN DEL CONTENEDOR DE LOGIN/REGISTRO
---------------------------------------------------------------------------- */
-
-/* ---------------------------------------------------------------------------
-                            PARA EL SCROLLBAR
---------------------------------------------------------------------------- */
-
-@supports (scrollbar-width: thin) {
-  * {
-    scrollbar-width: thin;
-    scrollbar-color: #444 #fff8d4;
-  }
-}
-
-/* Para navegadores basados en WebKit como Chrome y Edge */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #444; 
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-track {
-  background-color: #fff8d4; 
-}
-
-/* ---------------------------------------------------------------------------
-                            FIN DEL SCROLLBAR
---------------------------------------------------------------------------- */
-html,
-body {
-  height: 100%;
   width: 100%;
-  margin: 0;
-  padding: 0;
-  overflow-x: hidden;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  background-color: #f2c464;
-  font-family: "Lexend", sans-serif !important;
-}
-.lol{
-  background-color: #f2c464 !important;
-  height: 100vh;
-
-}
-
- body, html {
   height: 100%;
-  background-color:  #f2c464; 
-  overflow-x: hidden
+  display: block;
 }
 
-
-.main-container {
-  display: flex;
-  flex-direction: column; 
-  align-items: center; 
-  justify-content: center; 
-  gap: 20px; 
-  flex: 1;
-  box-sizing: border-box;
-  flex-grow: 1; 
-
+/* Ocultar toolbar del canvas en landing */
+:host ::ng-deep app-canvas .button-container { display: none !important; }
+:host ::ng-deep .canvas-container {
+  margin: 0 auto !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  position: absolute !important;
+}
+:host ::ng-deep .canvas-wrapper {
+  height: 100vh !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
-.container_arriba {
-  display: flex;
-  flex-direction: row; 
-  justify-content: space-between; 
-  align-items: center; 
-  width: 100%;
-  max-width: 100%;
-  min-height: 100vh;
-  padding: 20px;
-  gap: 20px; 
-  margin-top: -70px; 
-
-
-
-}
-
-/* .logo {
+/* ── Subtítulo signado ── */
+.signing-caption {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  bottom: 0; left: 0; right: 0;
+  z-index: 10;
+  padding: 18px 0;
+  text-align: center;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(160,35,8,0.55) 15%,
+    rgba(160,35,8,0.55) 85%,
+    transparent 100%
+  );
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 400;
+  color: rgba(255,255,255,0.70);
+  letter-spacing: 0.08em;
+  animation: caption-fade 4s ease-in-out infinite;
 }
 
-.logo img {
-  height: 80px;
-} */
-
-.graphic {
-  flex: 1; 
-  display: flex;
-  justify-content: center;
-  align-items: center;
+@keyframes caption-fade {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
 }
 
-.graphic .imagen {
-  max-width: 100%;
-  height: auto;
-}
+/* =============================================
+   LADO DERECHO — FORMULARIO
+   ============================================= */
 
-.login-form {
+.side-right {
+  width: 480px;
+  flex-shrink: 0;
+  background: var(--color-bg, #F9F6F3);
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  padding: 40px;
-  margin-top: 20px;
-  font-family: "Lexend", sans-serif;
-
+  padding: 40px 48px;
+  position: relative;
+  overflow: hidden;
 }
 
-.login-form h2 {
-  font-size: 2rem;
+/* Detalle decorativo top-right */
+.side-right::before {
+  content: '';
+  position: absolute;
+  top: -80px; right: -80px;
+  width: 280px; height: 280px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(224,74,26,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Reveals de entrada ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: reveal-up 0.7s cubic-bezier(0.34,1.2,0.64,1) forwards;
+}
+.reveal-1 { animation-delay: 0.15s; }
+.reveal-2 { animation-delay: 0.28s; }
+.reveal-3 { animation-delay: 0.40s; }
+.reveal-4 { animation-delay: 0.52s; }
+.reveal-5 { animation-delay: 0.68s; }
+
+@keyframes reveal-up {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Textos cabecera ── */
+.eyebrow {
+  font-size: 0.68rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-brand, #E04A1A);
+  margin-bottom: 8px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.headline {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.6rem, 2.4vw, 2.4rem);
+  font-weight: 900;
+  color: var(--color-text-dark, #1C0E0A);
+  line-height: 1.08;
+  margin-bottom: 10px;
+}
+.headline em {
+  font-style: italic;
+  color: var(--color-brand, #E04A1A);
+}
+
+.subline {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.85rem;
+  color: rgba(28,14,10,0.45);
+  line-height: 1.6;
+  margin-bottom: 20px;
+  max-width: 360px;
+}
+
+/* ── Bloque formulario ── */
+.form-block {
+  width: 100%;
+}
+
+/* ── Tabs ── */
+.tabs-row {
+  display: flex;
+  border-bottom: 1.5px solid rgba(28,14,10,0.08);
   margin-bottom: 20px;
 }
 
-.login-form p {
-  font-family: "Lexend", sans-serif;
+.tab {
+  flex: 1;
+  padding: 10px 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1.5px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: rgba(28,14,10,0.35);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  outline: none;
 }
 
-.login-form form {
+.tab.active {
+  color: var(--color-text-dark, #1C0E0A);
+  border-bottom-color: var(--color-brand, #E04A1A);
+}
+
+/* ── Contenido pestañas (login/registro heredan sus estilos) ── */
+.tab-content {
+  width: 100%;
+}
+
+/* Override para que login/registro encajen en el nuevo layout */
+:host ::ng-deep app-login,
+:host ::ng-deep app-registro {
+  width: 100%;
+  display: block;
+}
+
+/* ── Stats ── */
+.stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 16px;
+}
+
+.stat-item {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  width: 300px;
+  gap: 2px;
 }
 
-.login-form input {
-  padding: 10px;
-  font-size: 1rem;
-  border: 2px solid #ccc;
-  border-radius: 5px;
+.stat-num {
+  font-family: 'Fraunces', serif;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--color-text-dark, #1C0E0A);
+  line-height: 1;
 }
 
-.login-form button {
-  padding: 12px;
-  font-size: 1.2rem;
-  color: white;
-  background-color: #41b8d5;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.login-form button:hover {
-  background-color: #2aafcf;
-} 
-
-.landing-register{
-  font-family: "Lexend", sans-serif;
-}
-
-
-
-
-/* ---------------------------------------------------------------------------
-                              FOOTER
---------------------------------------------------------------------------- */
-
-
-
-
-.footer {
-  background-color: #f2c464 ; 
-  color: black;
-  text-align: center;
-  padding: 20px;
-  width: 100%;
-  position: relative;
-  font-family: "Lexend" !important;
-  margin-top: 10px;
-  display: flex;
-  justify-content: space-between; 
-  align-items: center; 
-  border-top: none; /* Elimina cualquier borde superior */
-  box-shadow: none; /* Elimina cualquier sombra */
-}
-
-
-
-
-.footer-left, .footer-center, .footer-right {
-  display: flex;
-  align-items: center; 
-}
-
-.footer-left a, .footer-center a, .footer-right a {
-  color: black; 
-  text-decoration: none; 
-  margin: 0 10px; }
-
-.footer-left a:hover, .footer-center a:hover, .footer-right a:hover {
-  text-decoration: underline; 
-}
-
-.footer-center p {
-  margin: 0; 
-}
-
-.footer-right i {
-  font-size: 24px; 
-  margin-left: 2px; 
-  left: -60px;
-  display: flex;
-  align-items: center;
-  position: relative;
-}
-
-.footer-center .button-link {
-  background-color: black; 
-  color: white !important;
-  padding: 10px 20px; 
-  border-radius: 20px; 
-  font-weight: bold; 
+.stat-label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.68rem;
+  color: rgba(28,14,10,0.35);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  display: inline-block; 
-  text-decoration: none !important; 
 }
-
-.footer-center .button-link:hover {
-  background-color: #333 !important; 
-  text-decoration: none !important; 
-}
-
-
-
-
-/* ---------------------------------------------------------------------------
-                            FIN DEL FOOTER
---------------------------------------------------------------------------- */
-
-/*CHATBOT*/
-df-messenger {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 350px;       /* Ajusta lo que prefieras */
-  height: auto;       /* Deja que se ajuste en modo minimizado */
-  z-index: 9999;      /* Para que aparezca por encima de todo */
-}
-
-df-messenger::part(chat-wrapper) {
-  height: auto !important;
-  max-height: 70vh !important;   /* Por ejemplo, para que no ocupe toda la pantalla */
-  overflow-y: auto !important;
-}
-
-df-messenger::part(messages) {
-  max-height: 70vh !important;
-  overflow-y: auto !important;
-}
-
-
-/* 2) Lista de mensajes */
-df-messenger::part(message-list) {
-  overflow-y: auto !important;
-  max-height: 70vh !important;
-}
-
-
-
-
