@@ -5,7 +5,6 @@
   </div>
 
   <div class="avatar-zone">
-    <!-- Glow detrás del avatar -->
     <div class="avatar-glow"></div>
     <div class="avatar-canvas-wrap">
       <app-canvas [animationUrls]="currentAnimationUrls"></app-canvas>
@@ -19,12 +18,12 @@
     (mouseleave)="onLeave()"
     (click)="navigateTo('/abecedario')"
   >
-    <div class="card-inner">
-      <div class="card-icon">🤟</div>
+    <div class="img-area"></div>
+    <div class="body">
       <h3>Abecedario</h3>
       <p>Aprende a deletrear en LSE letra a letra</p>
     </div>
-    <div class="card-glow"></div>
+    <div class="card-fill"></div>
   </div>
 
   <div
@@ -34,12 +33,12 @@
     (mouseleave)="onLeave()"
     (click)="navigateTo('/libre')"
   >
-    <div class="card-inner">
-      <div class="card-icon">📖</div>
+    <div class="img-area"></div>
+    <div class="body">
       <h3>Vocabulario</h3>
       <p>Explora y practica palabras del día a día</p>
     </div>
-    <div class="card-glow"></div>
+    <div class="card-fill"></div>
   </div>
 
   <div
@@ -49,12 +48,12 @@
     (mouseleave)="onLeave()"
     (click)="navigateTo('/guiado')"
   >
-    <div class="card-inner">
-      <div class="card-icon">✋</div>
+    <div class="img-area"></div>
+    <div class="body">
       <h3>Gramática</h3>
       <p>Estructura y reglas de la LSE paso a paso</p>
     </div>
-    <div class="card-glow"></div>
+    <div class="card-fill"></div>
   </div>
 
   <div
@@ -64,12 +63,12 @@
     (mouseleave)="onLeave()"
     (click)="navigateTo('/conversamos')"
   >
-    <div class="card-inner">
-      <div class="card-icon">💬</div>
+    <div class="img-area"></div>
+    <div class="body">
       <h3>¿Conversamos?</h3>
       <p>Practica conversaciones reales en LSE</p>
     </div>
-    <div class="card-glow"></div>
+    <div class="card-fill"></div>
   </div>
 
 </div>
