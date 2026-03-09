@@ -104,28 +104,34 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => el.remove(), dur * 1000);
     };
 
-    // Spawn inicial denso
-    for (let i = 0; i < 18; i++) {
-      setTimeout(spawn, i * 300);
-    }
+    // Spawn inmediato y denso desde el primer frame
+    for (let i = 0; i < 18; i++) spawn();
     // Spawn continuo
     this.lseInterval = setInterval(spawn, 700);
   }
 
   private initParallax() {
-    const avatar = document.getElementById('avatarParallax');
-    const left   = document.getElementById('sideLeft');
-    if (!avatar || !left) return;
+    this.centerCanvas();
+    window.addEventListener('resize', () => this.centerCanvas());
+  }
 
-    left.addEventListener('mousemove', (e: MouseEvent) => {
-      const rect = left.getBoundingClientRect();
-      const dx = (e.clientX - rect.left - rect.width  / 2) / rect.width;
-      const dy = (e.clientY - rect.top  - rect.height / 2) / rect.height;
-      avatar.style.transform = `translate(${dx * 22}px, ${dy * 14}px)`;
-    });
+  private centerCanvas() {
+    const left = document.getElementById('sideLeft');
+    const canvasContainer = left?.querySelector('.canvas-container') as HTMLElement;
+    if (!left || !canvasContainer) return;
 
-    left.addEventListener('mouseleave', () => {
-      avatar.style.transform = 'translate(0,0)';
-    });
+    const leftWidth   = left.getBoundingClientRect().width;
+    const canvasWidth = canvasContainer.offsetWidth;
+
+    // Si el canvas aún no tiene ancho (Three.js no ha renderizado), reintenta
+    if (canvasWidth === 0) {
+      setTimeout(() => this.centerCanvas(), 100);
+      return;
+    }
+
+    const offset = (leftWidth - canvasWidth) / 2;
+    canvasContainer.style.position = 'absolute';
+    canvasContainer.style.left = offset + 'px';
+    canvasContainer.style.transform = 'none';
   }
 }

@@ -136,7 +136,7 @@ app-canvas {
   /* Altura aproximada de la zona de texto */
   height: 50%;
   background: var(--color-brand, #E04A1A);
-  transform: translateY(102%);
+  transform: translateY(0);
   transition: transform 0.4s cubic-bezier(0.76,0,0.24,1);
   z-index: 2;
   border-radius: 0 0 24px 24px;
@@ -176,14 +176,14 @@ app-canvas {
   font-family: 'Fraunces', serif;
   font-size: 1.1rem;
   font-weight: 700;
-  color: var(--color-text-dark, #1C0E0A);
+  color: #fff;
   margin-bottom: 6px;
   transition: color 0.3s;
 }
 
 .body p {
   font-size: 0.78rem;
-  color: rgba(28,14,10,0.5);
+  color: rgba(255,255,255,0.7);
   line-height: 1.5;
   transition: color 0.3s;
 }
@@ -221,4 +221,66 @@ app-canvas {
   right: 4%;
   top: 55%;
   transform: rotate(8deg);
+}
+
+/* =============================================
+   HEADER
+   ============================================= */
+
+.modos-header {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.modos-logo {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-dark, #1C0E0A);
+  pointer-events: auto;
+}
+
+.modos-nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.nav-icon {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(28,14,10,0.06);
+  border: 1.5px solid rgba(28,14,10,0.08);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.nav-icon:hover {
+  background: rgba(224,74,26,0.1);
+  border-color: rgba(224,74,26,0.2);
+}
+
+.nav-icon svg {
+  width: 16px; height: 16px;
+  stroke: rgba(28,14,10,0.5);
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke 0.2s;
+}
+
+.nav-icon:hover svg {
+  stroke: var(--color-brand, #E04A1A);
 }
