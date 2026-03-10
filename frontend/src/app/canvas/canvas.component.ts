@@ -41,7 +41,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   @Input() animationUrls: string[] = [];
   @Input() showResetButton: boolean = false;
-  @Input() cameraZ: number = 3.8;
+  @Input() cameraZ: number = 4.2;
   @Input() cameraY: number = 0;
   @Input() cameraLookAtY: number = 0;
   @Input() containerEl: HTMLElement | null = null;
@@ -146,7 +146,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private initCamera() {
     const aspect = this.renderWidth / this.renderHeight;
-    this.camera = new THREE.PerspectiveCamera(47, aspect, 0.1, 100);
+    this.camera = new THREE.PerspectiveCamera(46, aspect, 0.1, 100);
     this.camera.position.set(0, this.cameraY, this.cameraZ);
     this.camera.lookAt(0, this.cameraLookAtY, 0);
   }

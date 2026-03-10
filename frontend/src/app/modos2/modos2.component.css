@@ -176,10 +176,20 @@
 /* ── AVATAR CANVAS WRAP ───────────────────────────────── */
 .avatar-canvas-wrap {
   position: absolute;
-  inset: 0;
-  overflow: hidden;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
   border-radius: 1.25rem 1.25rem 0 0;
   z-index: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.avatar-canvas-wrap app-canvas {
+  width: 70%;
+  height: 100%;
+  display: block;
 }
 
 .avatar-canvas-wrap ::ng-deep .button-container {
