@@ -18,6 +18,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 })
 export class LandingComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas') canvasRef!: CanvasComponent;
+  @ViewChild('sideLeft') sideLeftRef!: ElementRef<HTMLElement>;
 
   isRegisterVisible: boolean = false;
   private gapAfterHello = 3000;
@@ -39,6 +40,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     this.playHelloLoop();
     this.initLseLetters();
     this.initParallax();
+    this.waitForSkinAndResize();
   }
 
   ngOnDestroy() {
@@ -46,7 +48,6 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     if (this.lseInterval)      clearInterval(this.lseInterval);
     if (this.resizeListener)   window.removeEventListener('resize', this.resizeListener);
   }
-  
 
   // ─────────────────────────────────────────
   //  ANIMACIONES DEL AVATAR (sin cambios)
@@ -119,23 +120,18 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     window.addEventListener('resize', this.resizeListener);
   }
 
-  private centerCanvas() {
-    const left = document.getElementById('sideLeft');
-    const canvasContainer = left?.querySelector('.canvas-container') as HTMLElement;
-    if (!left || !canvasContainer) return;
-
-    const leftWidth   = left.getBoundingClientRect().width;
-    const canvasWidth = canvasContainer.offsetWidth;
-
-    // Si el canvas aún no tiene ancho (Three.js no ha renderizado), reintenta
-    if (canvasWidth === 0) {
-      setTimeout(() => this.centerCanvas(), 100);
+  private waitForSkinAndResize(attempts = 0): void {
+    if (attempts > 50) return;
+    if (!this.canvasRef?.skinReady) {
+      setTimeout(() => this.waitForSkinAndResize(attempts + 1), 100);
       return;
     }
+    const el = document.getElementById('sideLeft');
+    if (!el) return;
+    this.canvasRef.resizeToContainer(el.clientWidth, el.clientHeight);
+  }
 
-    const offset = (leftWidth - canvasWidth) / 2;
-    canvasContainer.style.position = 'absolute';
-    canvasContainer.style.left = offset + 'px';
-    canvasContainer.style.transform = 'none';
+  private centerCanvas() {
+    // max-width removed, canvas fills panel naturally
   }
 }
