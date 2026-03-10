@@ -114,19 +114,18 @@
 }
 
 .canvas-wrap {
-  width: 100%;
-  height: 100%;
-  position: relative;
+  position: absolute;
+  inset: 0;
   overflow: hidden;
 }
 
 app-canvas {
-  position: absolute;
-  inset: 0;
   display: block;
+  width: 100%;
+  height: 100%;
 }
 
-/* Ocultar toolbar del canvas en landing */
+/* Ocultar toolbar */
 :host ::ng-deep .button-container { display: none !important; }
 
 /* ── Subtítulo signado ── */

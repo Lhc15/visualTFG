@@ -108,20 +108,12 @@
   z-index: 0;
 }
 
-.vv-canvas-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
 /* ── CANVAS WRAP ── */
 .vv-canvas-wrap {
   position: absolute;
   inset: 0;
   z-index: 1;
   overflow: hidden;
-  display: flex;
-  align-items: flex-end;
 }
 
 .vv-canvas-wrap ::ng-deep app-canvas {
@@ -131,38 +123,6 @@
   transform: translateY(8%);
 }
 
-/* Neutralize canvas component's own sizing */
-.vv-canvas-wrap ::ng-deep .canvas-container {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
-  margin: 0 !important;
-  position: absolute !important;
-  inset: 0 !important;
-}
-.vv-canvas-wrap ::ng-deep .canvas-wrapper {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  max-height: none !important;
-  position: absolute !important;
-  inset: 0 !important;
-}
-.vv-canvas-wrap ::ng-deep canvas.webgl {
-  width: 100% !important;
-  height: 100% !important;
-  max-width: none !important;
-  position: absolute !important;
-  inset: 0 !important;
-  border-radius: 0 !important;
-}
-.vv-canvas-wrap ::ng-deep canvas.skin-canvas {
-  position: absolute !important;
-  inset: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-}
 .vv-canvas-wrap ::ng-deep .button-container {
   display: none;
 }
