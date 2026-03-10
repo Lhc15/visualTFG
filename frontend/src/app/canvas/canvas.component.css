@@ -1,65 +1,53 @@
 /* src/app/canvas/canvas.component.css */
-/* Tu CSS original */
 .canvas-container {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   position: relative;
   z-index: 0;
-  max-width: 1000px;
-  margin-top: 5px;
 }
 
 .canvas-wrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - 10px);
-  max-width: 1000px;
-  max-height: none;
+  height: 100%;
 }
 
-/* Este era tu estilo original para el único canvas */
 .webgl {
   width: 100%;
   height: 100%;
   display: block;
-  position: relative;    /* importante para que sea "flow" */
+  position: relative;
   z-index: 0;
-  max-width: 1000px;
-  max-height: none;
   box-sizing: border-box;
-  border-radius: 4px;
 }
 
-/* Ahora añadimos SOLO este bloque: el skin-canvas va absolute sobre el threeCanvas */
 .skin-canvas {
   position: absolute;
-  top:    0;
-  left:   0;
-  width:  100%;
+  top: 0;
+  left: 25%;
+  width: 100%;
   height: 100%;
-  z-index: 1;            /* por encima del threeCanvas */
-  pointer-events: auto; /* Permitir eventos del ratón */
-  transition: opacity 0.3s ease-out;  /* Añadimos la transición */
+  z-index: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease-out;
 }
 
 .invisible {
-  visibility: hidden;   /* el canvas sigue ocupando espacio y tamaño */
-  /* o bien */
-  opacity: 0;           /* si prefieres transición suave con css */
+  visibility: hidden;
+  opacity: 0;
 }
 
 .button-container {
   position: absolute;
   bottom: 10px;
   left: 10px;
-  z-index: 2; /* por encima del canvas */
+  z-index: 2;
 }
 
-/* Estilos para el botón */
 .bottom-button {
   background-color: #41b8d5;
   font-family: "Lexend", sans-serif;
