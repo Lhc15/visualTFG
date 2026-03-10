@@ -1,0 +1,307 @@
+/* ── WRAPPER ──────────────────────────────────────────── */
+.modos2-wrapper {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--color-bg, #F9F6F3);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── HEADER ───────────────────────────────────────────── */
+.modos2-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 2rem;
+  background: var(--color-surface, #ffffff);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  flex-shrink: 0;
+}
+
+.modos2-logo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--color-text, #1C2B2A);
+  letter-spacing: -0.02em;
+}
+
+.logo-accent {
+  color: var(--color-brand, #E04A1A);
+}
+
+.modos2-nav {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.modos2-nav a {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--color-text-muted, #6b7280);
+  text-decoration: none;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  transition: background 0.15s, color 0.15s;
+}
+
+.modos2-nav a:hover {
+  background: var(--color-bg, #F9F6F3);
+  color: var(--color-text, #1C2B2A);
+}
+
+.modos2-avatar-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: var(--color-brand, #E04A1A);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: grid;
+  place-items: center;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.modos2-avatar-btn:hover {
+  opacity: 0.85;
+}
+
+/* ── HERO ─────────────────────────────────────────────── */
+.modos2-hero {
+  padding: 1.25rem 2rem 0.75rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.modos2-hero h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.3rem, 3vw, 2.2rem);
+  font-weight: 700;
+  color: var(--color-text, #1C2B2A);
+  line-height: 1.15;
+}
+
+.modos2-hero h1 em {
+  font-style: italic;
+  font-weight: 300;
+  color: var(--color-brand, #E04A1A);
+}
+
+.modos2-hero p {
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  color: var(--color-text-muted, #6b7280);
+}
+
+/* ── GRID — ocupa todo el espacio restante ────────────── */
+.modos2-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1rem;
+  padding: 0 13vw 1rem;
+  min-height: 0;
+  width: 100%;
+}
+
+/* ── CARD ─────────────────────────────────────────────── */
+.modo-card {
+  background: #ffffff;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  cursor: pointer;
+  min-height: 0; /* deja que el grid controle la altura */
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
+}
+
+.modo-card:not(.locked):hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* accent top bar */
+.modo-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--accent);
+  z-index: 2;
+}
+
+/* lock icon */
+.lock-icon {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  font-size: 1rem;
+  opacity: 0.5;
+  z-index: 3;
+}
+
+/* locked state */
+.modo-card.locked {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* ── AVATAR STAGE ─────────────────────────────────────── */
+.avatar-stage {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.avatar-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 70%,
+    color-mix(in srgb, var(--accent) 20%, transparent) 0%,
+    transparent 65%
+  );
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── AVATAR CANVAS WRAP ───────────────────────────────── */
+.avatar-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 1.25rem 1.25rem 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.avatar-canvas-wrap ::ng-deep .canvas-container {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  margin-top: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-canvas-wrap ::ng-deep .canvas-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  position: relative;
+}
+
+.avatar-canvas-wrap ::ng-deep canvas {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  border-radius: 0;
+  display: block;
+}
+
+.avatar-canvas-wrap ::ng-deep .button-container {
+  display: none;
+}
+
+/* ── PROGRESS BAR ─────────────────────────────────────── */
+.progress-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(0, 0, 0, 0.07);
+  flex-shrink: 0;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 0 2px 2px 0;
+  transition: width 0.4s ease;
+  opacity: 0.85;
+}
+
+/* ── CARD FOOTER ──────────────────────────────────────── */
+.card-footer {
+  padding: 0.9rem 1.25rem 1.1rem;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+.card-label {
+  font-family: 'Fraunces', serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1C2B2A;
+  line-height: 1.1;
+}
+
+.card-sub {
+  font-size: 0.75rem;
+  color: #6b7280;
+  margin-top: 0.2rem;
+}
+
+.card-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid;
+  white-space: nowrap;
+  transition: opacity 0.2s;
+}
+
+.modo-card:not(.locked):hover .card-pill {
+  opacity: 0.85;
+}
+
+.card-pill svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* ── BOTTOM STRIP ─────────────────────────────────────── */
+.modos2-bottom {
+  text-align: center;
+  padding: 0.5rem 1.5rem 0.6rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted, #6b7280);
+  flex-shrink: 0;
+}
+
+.modos2-bottom strong {
+  color: var(--color-brand, #E04A1A);
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────── */
+@media (max-width: 640px) {
+  .modos2-wrapper {
+    height: auto;
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .modos2-grid {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(4, 50vw);
+    padding: 0 0.75rem;
+  }
+}

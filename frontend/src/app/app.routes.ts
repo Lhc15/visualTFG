@@ -6,6 +6,7 @@ import { PruebasComponent } from './pruebas/pruebas.component';
 // import { HomeComponent } from './home/home.component';
 import { ModoGuiadoComponent } from './modo-guiado/modo-guiado.component';
 import { ModosComponent } from './modos/modos.component';
+import { Modos2Component } from './modos2/modos2.component';
 import { TestUploadComponent } from './test-upload/test-upload.component';
 import { AdminGuard } from './guards/admin.guard'; // Importa el guardia
 import { AdminComponent } from './admin/admin.component';
@@ -27,6 +28,7 @@ import { LearningObjectComponent } from './learning-object/learning-object.compo
 export const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'modos', component: ModosComponent },
+  { path: 'modos2', component: Modos2Component },
   { path: 'landing', component: LandingComponent },
   {path: 'perfil', component: MiperfilComponent },
   
@@ -50,4 +52,3 @@ export const routes: Routes = [
   { path: '**', redirectTo: 'landing' },
   
 ];
-

@@ -1,0 +1,68 @@
+<div class="modos2-wrapper">
+
+  <!-- HEADER -->
+  <header class="modos2-header">
+    <span class="modos2-logo">Visual<span class="logo-accent">Voices</span></span>
+    <nav class="modos2-nav">
+      <a routerLink="/landing">Inicio</a>
+      <a routerLink="/perfil">Mi progreso</a>
+      <a routerLink="/ajustes">Ayuda</a>
+    </nav>
+    <button class="modos2-avatar-btn" routerLink="/perfil">L</button>
+  </header>
+
+  <!-- HERO -->
+  <div class="modos2-hero">
+    <h1>¿Qué quieres <em>aprender hoy</em>?</h1>
+    <p>Selecciona un modo y comienza a firmar</p>
+  </div>
+
+  <!-- GRID -->
+  <main class="modos2-grid">
+    <div
+      *ngFor="let modo of modos"
+      class="modo-card"
+      [class.locked]="modo.locked"
+      [attr.data-id]="modo.id"
+      [style.--accent]="modo.accentColor"
+      (click)="navigate(modo)"
+    >
+      <!-- Lock icon -->
+      <span *ngIf="modo.locked" class="lock-icon">🔒</span>
+
+      <!-- Avatar stage con canvas real -->
+      <div class="avatar-stage" #avatarStage>
+        <div class="avatar-glow"></div>
+        <div class="avatar-canvas-wrap">
+          <app-canvas [animationUrls]="[]" [cameraZ]="3.7" [cameraLookAtY]="-1.2"></app-canvas>
+        </div>
+      </div>
+
+      <!-- Progress bar — entre avatar y footer -->
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="modo.progress" [style.background]="modo.accentColor"></div>
+      </div>
+
+      <!-- Footer -->
+      <div class="card-footer">
+        <div class="card-text">
+          <div class="card-label">{{ modo.label }}</div>
+          <div class="card-sub">{{ modo.sublabel }}</div>
+        </div>
+        <div class="card-pill" [style.color]="modo.accentColor" [style.borderColor]="modo.accentColor + '66'" [style.background]="modo.accentColor + '1F'">
+          <svg *ngIf="!modo.locked" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polygon points="5 3 19 12 5 21 5 3"/>
+          </svg>
+          {{ modo.ctaLabel }}
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- BOTTOM STRIP -->
+  <div class="modos2-bottom">
+    Racha actual: <strong>🔥 5 días</strong> · Próxima recompensa al completar el Abecedario
+  </div>
+
+</div>
