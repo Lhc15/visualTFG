@@ -42,7 +42,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   @Input() animationUrls: string[] = [];
   @Input() showResetButton: boolean = false;
   @Input() cameraZ: number = 3.8;
+  @Input() cameraY: number = 0;
   @Input() cameraLookAtY: number = 0;
+  @Input() containerEl: HTMLElement | null = null;
 
   // Emisor para avisar de que la animación ha terminado (una sola vez)
   @Output() animationEnded = new EventEmitter<void>();
@@ -135,18 +137,25 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     this.scene = new THREE.Scene();
   }
 
+  private get renderWidth(): number {
+    return this.containerEl ? this.containerEl.clientWidth : window.innerWidth;
+  }
+  private get renderHeight(): number {
+    return this.containerEl ? this.containerEl.clientHeight : window.innerHeight;
+  }
+
   private initCamera() {
-    const aspect = window.innerWidth / window.innerHeight;
+    const aspect = this.renderWidth / this.renderHeight;
     this.camera = new THREE.PerspectiveCamera(47, aspect, 0.1, 100);
-    this.camera.position.set(0, 0, this.cameraZ);
+    this.camera.position.set(0, this.cameraY, this.cameraZ);
     this.camera.lookAt(0, this.cameraLookAtY, 0);
   }
 
   private initThreeRenderer() {
     this.renderer = new THREE.WebGLRenderer({ canvas: this.threeCanvas.nativeElement, alpha: true });
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setSize(this.renderWidth, this.renderHeight);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    this.renderer.setClearColor(0x000000, 0);  // transparente
+    this.renderer.setClearColor(0x000000, 0);
     this.addLights();
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
   }
@@ -310,8 +319,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private handleResize(): void {
     window.addEventListener('resize', () => {
       if (!this.isMainActive) {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
+        const w = this.renderWidth;
+        const h = this.renderHeight;
         if (this.camera instanceof THREE.PerspectiveCamera) {
           this.camera.aspect = w / h;
           this.camera.updateProjectionMatrix();
@@ -486,6 +495,20 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+
+  public resizeToContainer(w: number, h: number): void {
+    if (!w || !h) return;
+    this.renderer.setSize(w, h);
+    if (this.camera instanceof THREE.PerspectiveCamera) {
+      this.camera.aspect = w / h;
+      this.camera.updateProjectionMatrix();
+    }
+    if (this.controls) this.controls.update();
+  }
+
+  public get skinReady(): boolean {
+    return this.skinIsRunning;
+  }
 
   public get availableClips(): string[] {
     return this.engineApi?.clips ?? [];

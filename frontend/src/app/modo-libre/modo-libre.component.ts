@@ -1,9 +1,7 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CanvasComponent } from '../canvas/canvas.component';
-import { HeaderComponent } from '../header/header.component';
 import { FormsModule } from '@angular/forms';
-
 import { Router } from '@angular/router';
 import { CategoriasService } from '../services/categorias.service';
 import { AnimacionService } from '../services/animacion.service';
@@ -11,22 +9,25 @@ import { PalabrasService } from '../services/palabras.service';
 import { UsuariosService } from '../services/usuarios.service';
 import { ExploredWordsService } from '../services/explored_word.service';
 import { StatsService } from '../services/stats.service';
-
 import { environment } from '../../environments/environment';
-import introJs from 'intro.js';
-import { ToolMenuComponent } from '../tool-menu/tool-menu.component'; // ruta correcta
-import { take } from 'rxjs/operators';   // ➍
+import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
+import { take } from 'rxjs/operators';
 
 @Component({
   selector: 'app-modo-libre',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, HeaderComponent, FormsModule,ToolMenuComponent],
+  imports: [CommonModule, CanvasComponent, FormsModule, ToolMenuComponent],
   templateUrl: './modo-libre.component.html',
   styleUrls: ['./modo-libre.component.css']
 })
-export class ModoLibreComponent implements OnInit, OnDestroy {
+export class ModoLibreComponent implements OnInit, OnDestroy, AfterViewInit {
   // Referencia al CanvasComponent
   @ViewChild(CanvasComponent) canvasRef!: CanvasComponent;
+  @ViewChild('avatarPanel') avatarPanel!: ElementRef<HTMLElement>;
+
+  get avatarPanelEl(): HTMLElement | null {
+    return this.avatarPanel?.nativeElement ?? null;
+  }
 
   categorias: any[] = [];
   selectedCategory: any = null;
@@ -71,6 +72,25 @@ export class ModoLibreComponent implements OnInit, OnDestroy {
     private exploredWordsService: ExploredWordsService,
     private statsService: StatsService
   ) {}
+
+  ngAfterViewInit(): void {
+    this.waitForSkinAndResize();
+  }
+
+  private waitForSkinAndResize(attempts = 0): void {
+    if (attempts > 50) return;
+    if (!this.canvasRef?.skinReady) {
+      setTimeout(() => this.waitForSkinAndResize(attempts + 1), 100);
+      return;
+    }
+    this.resizeCanvas();
+  }
+
+  private resizeCanvas(): void {
+    if (!this.avatarPanel || !this.canvasRef) return;
+    const { clientWidth: w, clientHeight: h } = this.avatarPanel.nativeElement;
+    this.canvasRef.resizeToContainer(w, h);
+  }
 
   ngOnInit(): void {
     this.cargarCategorias();

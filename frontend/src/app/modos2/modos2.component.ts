@@ -72,13 +72,20 @@ export class Modos2Component implements AfterViewInit {
   constructor(private router: Router) {}
 
   ngAfterViewInit(): void {
-    // Solo ajustar tamaño del renderer al contenedor
-    setTimeout(() => this.resizeDimensionsOnly(), 200);
+    this.canvasComponents.changes.subscribe(() => this.waitForSkinAndResize());
+    setTimeout(() => this.waitForSkinAndResize(), 0);
     const observer = new ResizeObserver(() => this.resizeDimensionsOnly());
     this.avatarStages.forEach(stage => observer.observe(stage.nativeElement));
   }
 
-  private resizeAllCanvases(): void {
+  private waitForSkinAndResize(attempts = 0): void {
+    if (attempts > 50) return;
+    const allReady = this.canvasComponents.length > 0 &&
+      this.canvasComponents.toArray().every(c => c.skinReady);
+    if (!allReady) {
+      setTimeout(() => this.waitForSkinAndResize(attempts + 1), 100);
+      return;
+    }
     this.resizeDimensionsOnly();
   }
 
@@ -87,14 +94,7 @@ export class Modos2Component implements AfterViewInit {
       const stage = this.avatarStages.get(i);
       if (!stage) return;
       const { clientWidth: w, clientHeight: h } = stage.nativeElement;
-      if (!w || !h) return;
-      const comp = canvasComp as any;
-      if (comp.renderer && comp.camera) {
-        comp.renderer.setSize(w, h);
-        comp.camera.aspect = w / h;
-        comp.camera.updateProjectionMatrix();
-        if (comp.controls) comp.controls.update();
-      }
+      canvasComp.resizeToContainer(w, h);
     });
   }
 

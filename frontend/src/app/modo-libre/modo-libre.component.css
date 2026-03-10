@@ -1,995 +1,478 @@
-@font-face {
-  font-family: 'lexend';
-  src: url('../../assets/fonts/lexend.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
+/* ═══════════════════════════════════════
+   MODO LIBRE — Vocabulario
+   Variables heredadas de styles.css
+═══════════════════════════════════════ */
 
-@font-face {
-  font-family: "ChauPhilomene";
-  src: url("../../assets/fonts/chauphilomene.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 80vh;
-  background-color: #fff8d4;
-  max-width: 100% !important;
-  width: 100% !important;
-}
-.h3{
-  font-family: "ChauPhilomene";
-  color:#000;
-}
-/* Asegurar que .content ocupe toda la pantalla */
-.content {
-  width: 100vw;
+:host {
+  display: block;
+  width: 100%;
   height: 100vh;
-  background-color: #fff8d4;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-}
-
-.instructions {
-  margin-top: 25px;
-  font-size: 1.2rem;
-  text-align: center;
-  margin-bottom: -27px;
-  font-family: 'lexend';
-}
-
-.layout {
-  display: flex;
-  /* justify-content: space-between; */
-  align-items: stretch;
-  width: 100vw;
-  height: 100vh;
-}
-
-.image-container, .camera-container {
-  flex: 0 0 35%; 
-}
-
-.button-grid {
-  flex: 0 0 35%;
-  background-color: #f4a940;
-  padding: 20px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  overflow-y: auto;
-  box-sizing: border-box;
-}
-
-.image-container {
-  position: relative; /* Muy importante para anclar el menú */
-  flex-grow: 1;
-  width: calc(100% - 5%);
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
   overflow: hidden;
 }
 
-.canvas-container {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* El "estilo azul con borde negro" SÍ se aplica a estos botones: */
-button,
-.small-disable-webcam-btn,
-.small-webcam-btn,
-.tutorial-btn {
-  background-color: #41b8d5;
-  font-family: "Lexend", sans-serif;
-  padding: 0.6em 1.3em;
-  font-weight: 900;
-  font-size: 18px;
-  border: 3px solid black;
-  border-radius: 0.4em;
-  box-shadow: 0.1em 0.1em;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: black;
-}
-
-button:hover,
-.small-disable-webcam-btn:hover,
-.small-webcam-btn:hover,
-.tutorial-btn:hover {
-  background-color: #35a0c7;
-  transform: translate(-0.05em, -0.05em);
-  box-shadow: 0.2em 0.2em;
-}
-
-button:active,
-.small-disable-webcam-btn:active,
-.small-webcam-btn:active,
-.tutorial-btn:active {
-  transform: translate(0.05em, 0.05em);
-  box-shadow: 0.05em 0.05em;
-}
-
-/* -------------------------
-   Estilo INDIVIDUAL para el botón de VOLVER:
-   (Le quitamos la apariencia del resto)
---------------------------*/
-.back-button {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  margin-bottom: 15px;
-  cursor: pointer;
-
-  /* Mantener el tamaño pero hacer líneas más gruesas */
-  font-size: 1.1rem;
-  font-weight: bold; /* Hace que el icono y el texto se vean más gruesos */
-  /* border: 4px solid black;  */
-  padding: 6px 12px; 
-  /* border-radius: 8px; */
-
-  /* Mantener estilos */
-  width: fit-content;
-  background-color: transparent;
-  transition: background-color 0.3s ease;
-}
-.back-button:hover {
-  transform: scale(1.03); /* Efecto ligero al pasar el mouse */
-}
-
-.back-button i {
-  font-size: 1.1rem; /* Mantener tamaño */
-  font-weight: 1300; /* Hace que el icono sea más grueso */
-  transform: scale(1.5); /* Aumenta grosor sin cambiar el tamaño */
-}
-
-
-
-
-/* Botones dinámicos para categorías (blancos) */
-.main-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: nowrap;
-}
-
-.main-button {
-  padding: 10px 20px;
-  font-size: 1.3rem;
-  background-color: white;
-  border-radius: 8px;
-  font-family: "ChauPhilomene", sans-serif;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.main-button.active {
-  border: #000 3px solid;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.8); /* Sombra para resaltar */
-}
-
-/* Logo y menú derecho */
-.logo-fixed {
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  text-align: left;
-  z-index: 100;
-}
-
-.logo {
-  width: 50px;
-  height: auto;
-  margin-right: 10px;
-}
-
-.logo-text {
-  font-family: "ChauPhilomene", sans-serif;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #000;
+/* ── LAYOUT WRAPPER ── */
+.vv-layout {
   display: flex;
   flex-direction: column;
-  line-height: 1;
+  width: 100%;
+  height: 100vh;
+  background: var(--color-bg, #F9F6F3);
+  overflow: hidden;
 }
 
-.visual {
-  font-size: 1.5rem;
-  font-weight: bold;
-}
-
-.voices {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-top: 2px;
-}
-
-/* MENÚ DERECHO */
-.icon-menu-fixed {
-  position: fixed;
-  top: 20px;
-  right: 20px;
+/* ── TOPNAV ── */
+.vv-topnav {
   display: flex;
-  gap: 15px;
-  font-size: 30px;
-  z-index: 1000;
+  align-items: center;
+  gap: .75rem;
+  padding: 0.75rem 2rem;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.vv-back-btn {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  font-weight: 500;
+  color: #4a5568;
   background: none;
-  padding: 0;
-}
-
-.icon-menu-fixed a {
-  color: black;
-  text-decoration: none;
-  transition: transform 0.2s ease;
+  border: none;
   cursor: pointer;
+  padding: .35rem .75rem;
+  border-radius: 999px;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: background .15s;
 }
+.vv-back-btn:hover { background: var(--color-bg, #F9F6F3); }
+.vv-back-btn svg { width: 13px; height: 13px; }
 
-.icon-menu-fixed a:hover {
-  transform: scale(1.1);
-}
-
-/* Add this to ensure the search bar layout isn't affected */
-.search-wrapper {
-  margin-top: 50px; /* Add some spacing at the top */
-  position: relative;
-  width: 100%;
-}
-
-.modo-guiado {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-}
-.title-row {
-  color:black;
+.vv-breadcrumb {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* 👈 Esto separa el botón y el título */
-  margin-left: 6px;
-  margin-right: 6px; /* 👈 Opcional, para que el h3 no pegue del todo al borde */
-  margin-bottom: 15px;
+  gap: .35rem;
+  font-size: .85rem;
+  color: #9ca3af;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
 }
+.vv-breadcrumb span:last-child { color: #1C2B2A; font-weight: 500; }
+.vv-bc-dim { cursor: pointer; }
+.vv-bc-dim:hover { color: #1C2B2A; }
+.vv-bc-sep { color: #9ca3af; }
 
+.vv-nav-right { margin-left: auto; }
 
-.title-row h3 {
-  font-family: "ChauPhilomene", sans-serif;
-  text-transform: uppercase;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin: 0;
-  
-}
-
-
-
-
-
-
-/* Estilos para la cámara */
-/* .half-width {
-  width: 50% !important;
-} */
-  /* Contenedor de la cámara */
-  .camera-container {
-    width: 35vw; /* Ocupa el 35% del ancho de la pantalla */
-    height: 100vh; /* Ocupa toda la altura */
-    display: flex;
-    justify-content: center; /* Centra el video dentro del contenedor */
-    align-items: center; /* Asegura que el video se mantenga bien centrado */
-    background-color: #fff8d4;
-  }
-  
-  /* VIDEO */
-  .mirror-video {
-    width: 100%; /* Que ocupe todo el contenedor de la cámara */
-    height: 100%; /* Que ocupe toda la altura */
-    object-fit: cover; /* Se ajusta sin deformarse */
-    transform: scaleX(1); 
-    border: none; /* Sin bordes */
-    border-radius: 0; /* Sin bordes redondeados */
-
-  }
-
-.selected-word-container {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: auto; /* Se adapta al contenido */
-  max-width: 80%; /* Evita que sea demasiado ancho */
-  font-weight: bold;
-  text-transform: uppercase;
+.vv-avatar-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: #E04A1A;
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  display: grid;
+  place-items: center;
+  border: none;
   cursor: pointer;
-  font-family: "Lexend", sans-serif;
-  background-color: #41b8d5; /* Azul llamativo */
-  color: black;
-  border: 3px solid black;
-  border-radius: 12px;
-  box-shadow: 0.1em 0.1em;
-  transition: all 0.2s ease-in-out;
-  font-size: 1.5rem; 
-  padding: 0.5em 1em; /* Ajustamos el padding */
-  text-align: center;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
 }
 
-.search-wrapper {
-  position: relative;
-  width: 100%;
-  margin-bottom: 10px;
-  z-index: 1000; /* nuevo */
-}
-
-.search-bar {
-  display: flex;
-  align-items: center;
-  background-color: transparent;
-  border: 3px solid black;
-  border-radius: 15px;
-  padding: 0.5rem 1rem;
-  box-sizing: border-box;
-  position: relative;
-}
-
-.search-bar input {
+/* ── SPLIT ── */
+.vv-split {
+  display: grid;
+  grid-template-columns: 58% 42%;
   flex: 1;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-size: 1rem;
-  color: #000;
-  font-family: "Lexend", sans-serif;
-}
-
-.search-bar input::placeholder {
-  color: rgba(0, 0, 0, 0.5);
-}
-
-.search-icon {
-  font-size: 1.2rem;
-  color: black;
-  margin-left: 0.5rem;
-}
-
-/* El desplegable oculto por defecto, aparece cuando isOpen = true */
-.multi-select-dropdown {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%; /* ocupa lo mismo que el buscador */
-  background-color: white;
-  border: none;
-  border-radius: 0 0 10px 10px;
-  z-index: 9999 !important;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  max-height: 0;
+  min-height: 0;
   overflow: hidden;
-  transition: max-height 0.3s ease;
-}
-
-.multi-select-dropdown.open {
-  max-height: 500px;
-  overflow-y: auto;
-}
-
-.multi-select-dropdown .dropdown-content {
-  padding: 0.5rem 1rem;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  font-family: sans-serif;
-  font-size: 1rem;
-  padding: 0.3rem 0;
-}
-
-/* Panel derecho */
-.right-panel {
-  position: relative;
-  overflow: visible;
-  flex: 0 0 35%;
-  background-color: #f4a940;
-  padding: 20px;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  overflow-y: auto;
-  box-sizing: border-box;
-  z-index:1;
-}
-
-/* VISTA 1 DE CATEGORÍAS */
-.category-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  justify-items: center;
-  align-items: center;
-  margin: 10px auto;
-}
-
-.card {
-  width: 190px;
-  height: 170px;
-  border-radius: 20px;
-  background: #f5f5f5;
-  position: relative;
-  padding: 2.3rem;
-  border: 2px solid #c3c6ce;
-  transition: 0.5s ease-out;
-  overflow: visible;
-  cursor: pointer;
-  font-family: "Lexend", sans-serif;
-}
-
-.card-details {
-  color: black;
   height: 100%;
+}
+
+/* ── AVATAR PANEL ── */
+.vv-avatar-panel {
+  background: var(--color-bg, #F9F6F3);
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* 💡 Esto centra verticalmente */
-  align-items: center;     /* 💡 Esto centra horizontalmente */
-  text-align: center;
-  gap: 0.5em;
+  height: 100%;
 }
 
-
-
-.text-title {
-  font-size: 1.5em;
-  font-weight: bold;
-  margin-top: 1rem;
-}
-
-.text-body {
-  color: rgb(134, 134, 134);
-  font-family: "Lexend", sans-serif;
-  margin-bottom: 1.9rem
-}
-
-
-
-/* Hover en la Card */
-.card:hover {
-  border-color: #008bf8;
-  box-shadow: 0 4px 18px 0 rgba(0, 0, 0, 0.25);
-}
-.card:hover .card-button {
-  transform: translate(-50%, 50%);
-  opacity: 1;
-}
-.word-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 30px;
-  margin-top: 20px;
-}
-
-
-/* VISTA 2 DE PALABRAS */
-.word-list {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  
-  margin-top: 30px;
-}
-
-/* Botones de palabras: #41b8d5 + borde negro */
-.word-item {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 6px 12px;
-   font-weight: 900;
-   font-size: 24px;
-   font-family: "Lexend", sans-serif;
-  background-color: #41b8d5;
-  color: black;
-  border: 3px solid black; /* Igual que el otro botón */
-  border-radius: 0.4em; /* Ajustado para coincidir */
-  box-shadow: 0.1em 0.1em;
-  cursor: pointer;
-  text-transform: uppercase;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-width: 50px;
-  min-height: 90px;
-}
-
-.word-item:hover,
-.word-item:focus {
-  transform: translate(-0.05em, -0.05em);
-  box-shadow: 0.2em 0.2em;
-}
-
-.word-item:active {
-  transform: translate(0.05em, 0.05em);
-  box-shadow: 0.05em 0.05em;
-}
-
-/* Estado seleccionado */
-.word-item.selected-word {
-  transform: scale(1.10);
-  background-color: #b19cd9;
-  border-color: black;
-}
-
-
-.word-title {
-  font-weight: bold;
-}
-
-
-
-.dropdown-button {
-  width: 100%;
-  background-color: #41b8d5;
-  border: 2px solid #000;
-  border-radius: 8px;
-  padding: 8px 12px;
-  cursor: pointer;
-  text-align: left;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-family: "ChauPhilomene", sans-serif;
-}
-
-.arrow {
-  transition: transform 0.3s ease;
-  margin-left: 8px;
-}
-
-.arrow.rotate {
-  transform: rotate(180deg);
-}
-
-.dropdown-content {
+.vv-avatar-glow {
   position: absolute;
-  top: 110%;
-  left: 0;
-  z-index: 9999 !important;
-  background-color: #fff;
-  width: 100%;
-  border: 2px solid #000;
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-  max-height: 0;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 75%, rgba(224,74,26,.07) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.vv-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* ── CANVAS WRAP ── */
+.vv-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
   overflow: hidden;
-  transition: max-height 0.3s ease;
-  font-family: "ChauPhilomene", sans-serif;
-}
-
-.multi-select-dropdown.open .dropdown-content {
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.dropdown-item {
   display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  cursor: pointer;
-  font-family: sans-serif;
+  align-items: flex-end;
 }
 
-.dropdown-item input {
-  margin-right: 8px;
-  cursor: pointer;
+.vv-canvas-wrap ::ng-deep app-canvas {
+  display: block;
+  width: 100%;
+  height: 120%;
+  transform: translateY(8%);
 }
 
-/* Radio-botones flotantes (menú de la izquierda) */
-.radio-input {
+/* Neutralize canvas component's own sizing */
+.vv-canvas-wrap ::ng-deep .canvas-container {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  position: absolute !important;
+  inset: 0 !important;
+}
+.vv-canvas-wrap ::ng-deep .canvas-wrapper {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  position: absolute !important;
+  inset: 0 !important;
+}
+.vv-canvas-wrap ::ng-deep canvas.webgl {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  position: absolute !important;
+  inset: 0 !important;
+  border-radius: 0 !important;
+}
+.vv-canvas-wrap ::ng-deep canvas.skin-canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.vv-canvas-wrap ::ng-deep .button-container {
+  display: none;
+}
+
+/* ── SUBTITLE ── */
+.vv-subtitle {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  padding: 14px 0;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(249,246,243,0.65) 12%,
+    rgba(249,246,243,0.65) 88%,
+    transparent 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1C0E0A;
+  text-align: center;
+  z-index: 20;
+  pointer-events: none;
+}
+
+/* ── TOOL MENU positioning ── */
+:host ::ng-deep app-tool-menu {
   position: absolute;
   right: 0;
   top: 50%;
-  transform: translateY(-50%) translateX(100%);
-  transition: transform 0.4s ease;
-  width: 100px;
-  min-height: 300px;
-  padding: 10px;
-  border-radius: 10px 0px 0px 10px;
-  background-color: black;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  transform: translateY(-50%);
+  z-index: 30;
+}
+:host ::ng-deep .radio-input {
+  position: static !important;
+  transform: none !important;
+  border-radius: 8px 0 0 8px !important;
 }
 
-.radio-input.open {
-  transform: translateY(-50%) translateX(0);
-}
-
-.radio-input input {
-  display: none;
-}
-
-.radio-input .label {
-  width: 83px;
-  height: 80px;
-  background: linear-gradient(to bottom, #333333, rgb(36, 35, 35));
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  transition: all 0.1s linear;
-  border-top: 1px solid #4e4d4d;
-  background-color: #333333;
-  position: relative;
-  cursor: pointer;
-  box-shadow: none;
-}
-
-.label:first-child {
-  border-top-left-radius: 6px;
-  border-top-right-radius: 6px;
-}
-.label:last-child {
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
-}
-
-/* Si el radio está checked, fondo especial */
-.label:has(input[type="radio"]:checked) {
-  box-shadow: none;
-  background: linear-gradient(to bottom, #1d1d1d, #1d1d1d);
-  border-top: none;
-}
-
-.label::before {
-  content: "";
+/* ── WEBCAM ── */
+.vv-webcam-wrap {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 103%;
+  inset: 0;
+  z-index: 25;
+}
+.vv-webcam-video {
+  width: 100%;
   height: 100%;
-  border-radius: 10px;
-  background: linear-gradient(
-    to bottom,
-    transparent 10%,
-    transparent,
-    transparent 90%
-  );
-  transition: all 0.1s linear;
-  z-index: -1;
+  object-fit: cover;
 }
 
-.label:has(input[type="radio"]:checked)::before {
-  background: linear-gradient(
-    to bottom,
-    transparent 10%,
-    #cae2fd63,
-    transparent 90%
-  );
+/* ── ACTION PANEL ── */
+.vv-action-panel {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(0,0,0,.07);
+  min-height: 0;
+  overflow: hidden;
 }
 
-.label .text {
-  color: white;
-  font-size: 15px;
-  line-height: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  transition: all 0.1s linear;
-  text-shadow: -1px -1px 1px rgba(224, 224, 224, 0.1),
-    0px 2px 3px rgba(0, 0, 0, 0.3);
-}
-.label input[type="radio"]:checked + .text {
-  color: rgb(202, 226, 253);
-  text-shadow: 0px 0px 12px #cae2fd;
+.vv-action-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.75rem 2rem 1rem;
+  min-height: 0;
 }
 
-/* Para todos tus .label con un icon dentro */
-.label .icon {
-  width: 32px;
-  height: 32px;
-  fill: #ffffff;
-  transition: fill 0.2s, filter 0.2s;
+/* ── TITLES ── */
+.vv-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1C2B2A;
+  line-height: 1.2;
+  margin-bottom: 1.25rem;
 }
-/* Cuando el radio está checked => iluminado */
-.label:has(input[type="radio"]:checked) .icon {
-  fill: rgb(202, 226, 253);
-  filter: drop-shadow(0 0 6px #cae2fd);
+.vv-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: #E04A1A;
 }
 
-/* Icono de play-bucle */
-.icon-play2 {
-  fill: #fff;
-  transition: fill 0.2s, filter 0.2s;
-  width: 38px;
-  height: 38px;
+/* ── CATEGORY GRID ── */
+.vv-cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .9rem;
+}
+
+.vv-cat-card {
+  background: var(--color-bg, #F9F6F3);
+  border-radius: .9rem;
+  padding: 1.1rem 1.1rem .9rem;
   cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .18s;
+}
+.vv-cat-card:hover {
+  border-color: #E04A1A;
+  box-shadow: 0 4px 20px rgba(224,74,26,.1);
+  transform: translateY(-2px);
 }
 
-/* STOP dentro del PLAY2 */
-.label-play2 {
-  position: relative;
+.vv-cat-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: .95rem;
+  font-weight: 700;
+  color: #1C2B2A;
+  margin-bottom: .2rem;
 }
-.label-stop {
-  position: absolute;
-  bottom: 0px;
-  right: 0px;
-  width: 27px;
-  height: 27px;
-  background-color: #444;
-  border-radius: 3px;
+.vv-cat-sub {
+  font-size: .72rem;
+  color: #6b7280;
+  margin-bottom: .7rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-cat-progress-track {
+  height: 3px;
+  background: rgba(0,0,0,.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.vv-cat-progress-fill {
+  height: 100%;
+  background: #E04A1A;
+  border-radius: 99px;
+}
+
+/* ── WORD LIST ── */
+.vv-section-label {
+  font-size: .67rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: .6rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.vv-word-list {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  margin-bottom: 1.5rem;
+}
+
+.vv-word-row {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: .65rem;
+  padding: .6rem .85rem;
+  border-radius: .65rem;
   cursor: pointer;
+  border: 1.5px solid transparent;
+  background: var(--color-bg, #F9F6F3);
+  transition: all .14s;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
 }
-.label-stop input[type="radio"] {
-  display: none;
+.vv-word-row:hover {
+  border-color: rgba(224,74,26,.3);
+  background: #fdf0eb;
 }
-.stop-text {
-  color: white;
-  font-size: 10px;
+.vv-word-active {
+  border-color: #E04A1A !important;
+  background: #fdf0eb !important;
+}
+
+.vv-word-status {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: .6rem;
+  background: rgba(0,0,0,.07);
+  color: #9ca3af;
+}
+.vv-status-signing {
+  background: #E04A1A !important;
+  color: #fff !important;
+  font-size: .55rem !important;
+}
+
+.vv-word-name {
+  font-size: .88rem;
+  font-weight: 500;
+  color: #1C2B2A;
+  flex: 1;
+}
+.vv-word-active .vv-word-name {
+  font-weight: 600;
+  color: #E04A1A;
+}
+
+.vv-sign-cta {
+  display: flex;
+  align-items: center;
+  gap: .25rem;
+  font-size: .68rem;
+  font-weight: 600;
+  color: #E04A1A;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  opacity: 0;
+  transition: opacity .14s;
+  padding: 0;
+}
+.vv-sign-cta svg { width: 10px; height: 10px; }
+.vv-word-row:hover .vv-sign-cta,
+.vv-word-active .vv-sign-cta { opacity: 1; }
+
+/* ── EXERCISES ── */
+.vv-exercises-divider {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  margin: .25rem 0 .9rem;
+}
+.vv-exercises-divider::before,
+.vv-exercises-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(0,0,0,.07);
+}
+.vv-exercises-divider span {
+  font-size: .67rem;
+  font-weight: 600;
+  letter-spacing: .1em;
   text-transform: uppercase;
-  pointer-events: none;
-}
-/* Efecto al estar marcado STOP */
-.label-stop:has(input[type="radio"]:checked) {
-  background-color: #222;
+  color: #9ca3af;
+  white-space: nowrap;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
 }
 
-/* Efecto “iluminado” al estar checkeado PLAY2 */
-.label-play2:has(input[type="radio"]:checked) .icon-play2 {
-  fill: rgb(202, 226, 253);
-  filter: drop-shadow(0 0 5px #cae2fd);
-}
-
-/* Efecto “iluminado” al checkear STOP */
-.label-stop:has(input[type="radio"]:checked) .icon-stop {
-  fill: #ff0000;
-  filter: drop-shadow(0 0 5px #cae2fd);
-}
-
-/* Icono STOP */
-.icon-stop {
-  fill: #ff0000;
-  transition: fill 0.2s, filter 0.2s;
+.vv-exercises-banner {
+  background: #E04A1A;
+  border-radius: .9rem;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: .9rem;
   cursor: pointer;
+  transition: background .15s, transform .15s;
+}
+.vv-exercises-banner:hover {
+  background: #c53d12;
+  transform: translateY(-1px);
 }
 
-/* Caja general de la webcam */
-.label-webcam {
-  width: 130px;
-  height: 80px;
-  position: relative;
-  background: linear-gradient(to bottom, #333, #242323);
+.vv-exercises-text { flex: 1; }
+.vv-exercises-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: .95rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
 }
-.label-webcam input[type="radio"] {
-  display: none;
-}
-.icon-webcam {
-  display: block;
-  width: 40px;
-  height: auto;
-  margin: 0 auto;
-  transition: filter 0.2s;
-}
-.label-webcam:has(input[type="checkbox"]:checked) .icon-webcam {
-  filter: drop-shadow(0 0 5px #cae2fd);
-}
-/* From Uiverse.io by Pradeepsaranbishnoi */ 
-.voltage-button {
-  position: relative;
+.vv-exercises-sub {
+  font-size: .72rem;
+  color: rgba(255,255,255,.7);
+  margin-top: .15rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
 }
 
-.voltage-button button {
-  color: white;
-  background: #008bf8;
-  padding: 1rem 3rem 1rem 3rem;
-  border-radius: 5rem;
-  border: 5px solid #5978F3;
-  font-size: 1.2rem;
-  line-height: 1em;
-  letter-spacing: 0.075em;
-  transition: background 0.3s;
-}
-
-.voltage-button button:hover {
+.vv-exercises-cta {
+  background: #fff;
+  color: #E04A1A;
+  border: none;
+  border-radius: .55rem;
+  padding: .4rem .9rem;
+  font-size: .72rem;
+  font-weight: 700;
   cursor: pointer;
-  background: #0F1C53;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
-.card:hover .voltage-button svg,
-.card:hover .voltage-button .dots {
-  opacity: 1;
+/* ── FOOTER ── */
+.vv-footer {
+  border-top: 1px solid rgba(0,0,0,.07);
+  padding: .65rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  background: var(--color-bg, #F9F6F3);
+  flex-shrink: 0;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
 }
 
-
-.voltage-button svg {
-  display: block;
-  position: absolute;
-  top: -0.75em;
-  left: -0.25em;
-  width: calc(100% + 0.5em);
-  height: calc(100% + 1.5em);
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.4s;
-  transition-delay: 0.1s;
+.vv-footer-stat {
+  font-size: .75rem;
+  color: #6b7280;
 }
-
-.voltage-button svg path {
-  stroke-dasharray: 100;
-  filter: url("#glow");
+.vv-footer-val {
+  font-weight: 600;
+  color: #1C2B2A;
 }
-
-.voltage-button svg path.line-1 {
-  stroke: #f6de8d;
-  stroke-dashoffset: 0;
-  animation: spark-1 3s linear infinite;
-}
-
-.voltage-button svg path.line-2 {
-  stroke: #6bfeff;
-  stroke-dashoffset: 500;
-  animation: spark-2 3s linear infinite;
-}
-
-.voltage-button .dots {
-  opacity: 0;
-  transition: opacity 0.3s;
-  transition-delay: 0.4s;
-}
-
-.voltage-button .dots .dot {
-  width: 1rem;
+.vv-footer-sep {
+  width: 1px;
   height: 1rem;
-  background: white;
-  border-radius: 100%;
-  position: absolute;
-  opacity: 0;
-}
-
-.voltage-button .dots .dot-1 {
-  top: 0;
-  left: 20%;
-  animation: fly-up 3s linear infinite;
-}
-
-.voltage-button .dots .dot-2 {
-  top: 0;
-  left: 55%;
-  animation: fly-up 3s linear infinite;
-  animation-delay: 0.5s;
-}
-
-.voltage-button .dots .dot-3 {
-  top: 0;
-  left: 80%;
-  animation: fly-up 3s linear infinite;
-  animation-delay: 1s;
-}
-
-.voltage-button .dots .dot-4 {
-  bottom: 0;
-  left: 30%;
-  animation: fly-down 3s linear infinite;
-  animation-delay: 2.5s;
-}
-
-.voltage-button .dots .dot-5 {
-  bottom: 0;
-  left: 65%;
-  animation: fly-down 3s linear infinite;
-  animation-delay: 1.5s;
-}
-
-@keyframes spark-1 {
-  to {
-    stroke-dashoffset: -1000;
-  }
-}
-
-@keyframes spark-2 {
-  to {
-    stroke-dashoffset: -500;
-  }
-}
-
-@keyframes fly-up {
-  0% {
-    opacity: 0;
-    transform: translateY(0) scale(0.2);
-  }
-
-  5% {
-    opacity: 1;
-    transform: translateY(-1.5rem) scale(0.4);
-  }
-
-  10%, 100% {
-    opacity: 0;
-    transform: translateY(-3rem) scale(0.2);
-  }
-}
-
-@keyframes fly-down {
-  0% {
-    opacity: 0;
-    transform: translateY(0) scale(0.2);
-  }
-
-  5% {
-    opacity: 1;
-    transform: translateY(1.5rem) scale(0.4);
-  }
-
-  10%, 100% {
-    opacity: 0;
-    transform: translateY(3rem) scale(0.2);
-  }
-}
-/* Ajuste para que el botón esté más pequeño y centrado en la card */
-.small-explora-btn {
-  position: absolute;
-  bottom: -20px; /* bajamos más el botón */
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: auto;
-  z-index: 2;
-}
-
-
-.small-explora-btn button {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  border-width: 3px;
-}
-
-/* Opcional: reducir un poco las animaciones para que no sobresalga tanto */
-.small-explora-btn svg {
-  top: -0.5em;
-  left: -0.3em;
-  width: calc(100% + 0.6em);
-  height: calc(100% + 1.2em);
-}
-
-/* 🔒 Oculto por defecto */
-.hidden-hover-button {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
-}
-
-/* 👁️ Visible al hacer hover sobre la card */
-.card:hover .hidden-hover-button {
-  opacity: 1;
-  pointer-events: all;
-}
-
-:host ::ng-deep canvas.skin-canvas {
-  position: absolute !important;
-  top: 0 !important;
-  left: -18% !important;      /* 1 contenedor hacia la izquierda */
-  width: 300%  !important;
-  height: 100% !important;
-  pointer-events: auto;
-  transition: opacity 0.3s ease-out;
+  background: rgba(0,0,0,.1);
+  flex-shrink: 0;
 }

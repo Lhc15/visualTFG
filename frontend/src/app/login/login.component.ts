@@ -65,7 +65,7 @@ export class LoginComponent {
     this.usuariosService.login(loginPayload).subscribe({
       next: (response) => {
         console.log('[DEBUG] Login exitoso, respuesta del servidor:', response);
-        this.router.navigate(['/modos']);
+        this.router.navigate(['/modos2']);
       },
       error: (error) => {
         this.errorField = 'general'; // Siempre marcamos general

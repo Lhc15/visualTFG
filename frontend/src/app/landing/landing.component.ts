@@ -28,6 +28,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   // ── Efectos visuales ──
   private lseInterval!: any;
   private readonly LSE_CHARS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
+  private resizeListener!: () => void;
 
   constructor(private animacionService: AnimacionService) {}
 
@@ -43,7 +44,9 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     if (this.animationTimeout) clearTimeout(this.animationTimeout);
     if (this.lseInterval)      clearInterval(this.lseInterval);
+    if (this.resizeListener)   window.removeEventListener('resize', this.resizeListener);
   }
+  
 
   // ─────────────────────────────────────────
   //  ANIMACIONES DEL AVATAR (sin cambios)
@@ -112,7 +115,8 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   private initParallax() {
     this.centerCanvas();
-    window.addEventListener('resize', () => this.centerCanvas());
+    this.resizeListener = () => this.centerCanvas();
+    window.addEventListener('resize', this.resizeListener);
   }
 
   private centerCanvas() {

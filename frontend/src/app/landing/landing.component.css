@@ -132,8 +132,12 @@ app-canvas {
 :host ::ng-deep app-canvas .button-container { display: none !important; }
 :host ::ng-deep .canvas-wrapper { height: 100vh !important; }
 :host ::ng-deep .canvas-container {
-  max-width: 100% !important;
+  max-width: none !important;
   width: 100% !important;
+}
+:host ::ng-deep canvas.webgl,
+:host ::ng-deep canvas.skin-canvas {
+  max-width: none !important;
 }
 
 /* ── Subtítulo signado ── */
