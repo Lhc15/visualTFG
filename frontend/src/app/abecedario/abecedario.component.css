@@ -335,6 +335,36 @@
   padding: 1.75rem 2rem 1rem;
   min-height: 0;
 }
+/* En pantalla aprende el scroll no hace falta — el layout interno gestiona el espacio */
+.vv-action-scroll:has(.vv-aprende-layout) {
+  padding: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.vv-aprende-layout {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.vv-aprende-top {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.25rem 2rem .75rem;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+.vv-aprende-top::-webkit-scrollbar { width: 4px; }
+.vv-aprende-top::-webkit-scrollbar-track { background: transparent; }
+.vv-aprende-top::-webkit-scrollbar-thumb { background: var(--color-border, #E8DDD6); border-radius: 2px; }
+.vv-aprende-bottom {
+  flex-shrink: 0;
+  padding: 0 2rem 0;
+  border-top: 1px solid var(--color-border, #E8DDD6);
+}
 .vv-action-scroll::-webkit-scrollbar { width: 4px; }
 .vv-action-scroll::-webkit-scrollbar-track { background: transparent; }
 .vv-action-scroll::-webkit-scrollbar-thumb { background: var(--color-border, #E8DDD6); border-radius: 2px; }
@@ -363,19 +393,20 @@
 /* ── LETTER GRID ── */
 .vv-letter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(3.4rem, 1fr));
-  gap: .5rem;
-  margin-bottom: 1.25rem;
+  grid-template-columns: repeat(8, 1fr);
+  grid-template-rows: repeat(4, var(--cell-size, 1fr));
+  gap: .4rem;
+  margin-bottom: 0;
+  flex: 0 0 auto;
 }
 
 .vv-letter-cell {
-  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 10px;
   font-family: var(--font-display, 'Fraunces', serif);
-  font-size: 1.35rem;
+  font-size: var(--cell-fs, clamp(.85rem, 1.8vw, 1.6rem));
   font-weight: 700;
   cursor: pointer;
   transition: all .15s;
@@ -383,6 +414,12 @@
   background: var(--color-surface, #fff);
   color: var(--color-text-muted, #5C4438);
   position: relative;
+  /* Llenar toda la celda del grid */
+  width: 100%;
+  height: 100%;
+  /* Si la celda es más ancha que alta, centrar horizontalmente con ancho = alto */
+  max-width: var(--cell-size, 100%);
+  justify-self: center;
 }
 .vv-letter-cell:hover {
   border-color: var(--abc);
@@ -408,7 +445,11 @@
   transform: scale(1.08);
 }
 
-/* ── INFO STRIP ── */
+/* Info-strip pegada justo debajo del grid */
+.vv-aprende-top .vv-info-strip {
+  margin-top: .75rem;
+  margin-bottom: 0;
+}
 .vv-info-strip {
   display: flex;
   gap: .75rem;
@@ -433,7 +474,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: .75rem;
-  margin-top: .25rem;
+  margin-top: 0;
+  padding: .75rem 0;
 }
 
 /* Card base */
@@ -441,14 +483,13 @@
 .vv-card-practica {
   position: relative;
   border-radius: 16px;
-  padding: 1.25rem 1.1rem 1rem;
+  padding: 1.1rem 1.1rem .9rem;
   cursor: pointer;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: .35rem;
+  gap: .3rem;
   transition: transform .18s, box-shadow .18s;
-  min-height: 160px;
 }
 .vv-card-nombre:hover,
 .vv-card-practica:hover {

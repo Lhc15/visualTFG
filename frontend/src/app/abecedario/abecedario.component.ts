@@ -38,6 +38,7 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
   @ViewChild('mainCanvas') mainCanvasRef!: CanvasComponent;
   @ViewChild('avatarPanel') avatarPanel!: ElementRef<HTMLElement>;
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
+  @ViewChild('letterGrid') letterGrid!: ElementRef<HTMLElement>;
 
   // 4 canvas para Quiz B
   @ViewChildren('quizBCanvas') quizBCanvases!: QueryList<CanvasComponent>;
@@ -48,6 +49,8 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
   readonly letras = LETRAS;
   letrasvistas = new Set<string>();
   letraActiva: LetraInfo | null = null;
+  cellSize = 0; // tamaño cuadrado calculado para cada celda de letra
+  private gridRo?: ResizeObserver;
 
   // Tool-menu
   isPlaying = false;
@@ -113,12 +116,19 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.waitForMainCanvas();
+    // Calcular tamaño de celda cuadrada al montar y al redimensionar
+    setTimeout(() => this.calcCellSize(), 50);
+    this.gridRo = new ResizeObserver(() => this.calcCellSize());
+    // Observamos el action-panel (padre del grid)
+    const panel = this.letterGrid?.nativeElement?.closest('.vv-action-panel') as HTMLElement;
+    if (panel) this.gridRo.observe(panel);
   }
 
   ngOnDestroy(): void {
     clearInterval(this.lseInterval);
     clearTimeout(this.nombreTimeout);
     this.stopWebcamStream();
+    this.gridRo?.disconnect();
     if (this.currentStatsId) {
       this.statsService.endMode(this.currentStatsId).subscribe();
     }
@@ -127,6 +137,15 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
   // ══════════════════════════════════════════════════════════════════════════
   // Canvas resize
   // ══════════════════════════════════════════════════════════════════════════
+
+  private calcCellSize(): void {
+    const grid = this.letterGrid?.nativeElement;
+    if (!grid) return;
+    const size = 77;
+    grid.style.setProperty('--cell-size', `${size}px`);
+    const fs = Math.max(12, Math.round(size * 0.42));
+    grid.style.setProperty('--cell-fs', `${fs}px`);
+  }
 
   private waitForMainCanvas(attempts = 0): void {
     if (attempts > 50) return;

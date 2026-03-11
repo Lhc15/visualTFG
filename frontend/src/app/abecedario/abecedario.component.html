@@ -127,52 +127,61 @@
 
         <!-- ─── PANTALLA 1: APRENDE A–Z ─── -->
         <ng-container *ngIf="pantalla === 'aprende'">
-          <div class="vv-section-label">Abecedario LSE</div>
-          <div class="vv-title">Elige una <em>letra</em><br>para practicarla</div>
+          <div class="vv-aprende-layout">
 
-          <div class="vv-letter-grid">
-            <div
-              *ngFor="let l of letras; trackBy: trackByLetra"
-              class="vv-letter-cell"
-              [class.vv-letter-done]="letrasvistas.has(l.letra)"
-              [class.vv-letter-active]="letraActiva?.letra === l.letra"
-              (click)="seleccionarLetra(l)">
-              {{ l.letra }}
-            </div>
-          </div>
+            <!-- Sección superior: letras + info -->
+            <div class="vv-aprende-top">
+              <div class="vv-section-label">Abecedario LSE</div>
+              <div class="vv-title">Elige una <em>letra</em><br>para practicarla</div>
 
-          <div class="vv-info-strip" *ngIf="letraActiva">
-            <div class="vv-info-icon">💡</div>
-            <div class="vv-info-text">
-              <strong>Letra {{ letraActivaTexto }}</strong>
-              <span>Usa la barra de herramientas para controlar la velocidad, activar bucle o comparar con tu cámara.</span>
-            </div>
-          </div>
-          <div class="vv-info-strip vv-info-hint" *ngIf="!letraActiva">
-            <div class="vv-info-icon">👆</div>
-            <div class="vv-info-text">
-              <strong>Selecciona una letra</strong>
-              <span>Haz clic en cualquier letra del abecedario para ver cómo se signa.</span>
-            </div>
-          </div>
+              <div class="vv-letter-grid" #letterGrid>
+                <div
+                  *ngFor="let l of letras; trackBy: trackByLetra"
+                  class="vv-letter-cell"
+                  [class.vv-letter-done]="letrasvistas.has(l.letra)"
+                  [class.vv-letter-active]="letraActiva?.letra === l.letra"
+                  (click)="seleccionarLetra(l)">
+                  {{ l.letra }}
+                </div>
+              </div>
 
-          <!-- 2 cards con personalidad -->
-          <div class="vv-main-actions">
-
-            <div class="vv-card-nombre" (click)="irA('nombre')">
-              <div class="vv-card-tag">Actividad</div>
-              <div class="vv-card-headline">Signa tu<br>nombre</div>
-              <div class="vv-card-body">El avatar deletrea tu nombre en LSE letra a letra</div>
-              <div class="vv-card-cta">Empezar <span>→</span></div>
-              <div class="vv-card-deco">✍</div>
+              <div class="vv-info-strip" *ngIf="letraActiva">
+                <div class="vv-info-icon">💡</div>
+                <div class="vv-info-text">
+                  <strong>Letra {{ letraActivaTexto }}</strong>
+                  <span>Usa la barra de herramientas para controlar la velocidad, activar bucle o comparar con tu cámara.</span>
+                </div>
+              </div>
+              <div class="vv-info-strip vv-info-hint" *ngIf="!letraActiva">
+                <div class="vv-info-icon">👆</div>
+                <div class="vv-info-text">
+                  <strong>Selecciona una letra</strong>
+                  <span>Haz clic en cualquier letra del abecedario para ver cómo se signa.</span>
+                </div>
+              </div>
             </div>
 
-            <div class="vv-card-practica" (click)="irA('practica')">
-              <div class="vv-card-tag">Quiz</div>
-              <div class="vv-card-headline">Practicar</div>
-              <div class="vv-card-body">Pon a prueba lo que has aprendido con dos modos</div>
-              <div class="vv-card-cta">Ver modos <span>→</span></div>
-              <div class="vv-card-deco">◈</div>
+            <!-- Sección inferior: cards pegados al footer -->
+            <div class="vv-aprende-bottom">
+              <div class="vv-main-actions">
+
+                <div class="vv-card-nombre" (click)="irA('nombre')">
+                  <div class="vv-card-tag">Actividad</div>
+                  <div class="vv-card-headline">Signa tu<br>nombre</div>
+                  <div class="vv-card-body">El avatar deletrea tu nombre en LSE letra a letra</div>
+                  <div class="vv-card-cta">Empezar <span>→</span></div>
+                  <div class="vv-card-deco">✍</div>
+                </div>
+
+                <div class="vv-card-practica" (click)="irA('practica')">
+                  <div class="vv-card-tag">Quiz</div>
+                  <div class="vv-card-headline">Practicar</div>
+                  <div class="vv-card-body">Pon a prueba lo que has aprendido con dos modos</div>
+                  <div class="vv-card-cta">Ver modos <span>→</span></div>
+                  <div class="vv-card-deco">◈</div>
+                </div>
+
+              </div>
             </div>
 
           </div>
