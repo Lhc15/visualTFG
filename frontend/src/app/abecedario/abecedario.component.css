@@ -363,8 +363,8 @@
 /* ── LETTER GRID ── */
 .vv-letter-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(2.9rem, 1fr));
-  gap: .45rem;
+  grid-template-columns: repeat(auto-fill, minmax(3.4rem, 1fr));
+  gap: .5rem;
   margin-bottom: 1.25rem;
 }
 
@@ -373,9 +373,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 9px;
+  border-radius: 10px;
   font-family: var(--font-display, 'Fraunces', serif);
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   font-weight: 700;
   cursor: pointer;
   transition: all .15s;
@@ -428,35 +428,187 @@
 .vv-info-strip.vv-info-hint .vv-info-text strong { color: var(--color-text, #1C0E0A); }
 .vv-info-text span { font-size: .78rem; color: var(--color-text-muted, #5C4438); line-height: 1.4; }
 
-/* ── SUB ACTIONS ── */
-.vv-sub-actions { display: flex; flex-direction: column; gap: .65rem; }
-.vv-sub-action-btn {
+/* ── MAIN ACTIONS (2 botones en aprende) ── */
+.vv-main-actions { display: flex; flex-direction: column; gap: .65rem; margin-top: .25rem; }
+.vv-main-action-btn {
   display: flex;
   align-items: center;
   gap: .85rem;
-  padding: .9rem 1rem;
-  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  border-radius: 14px;
   border: 2px solid var(--color-border, #E8DDD6);
   background: var(--color-surface, #fff);
   cursor: pointer;
   transition: all .15s;
 }
-.vv-sub-action-btn:hover {
+.vv-main-action-btn:hover {
   border-color: var(--abc);
   background: var(--abc-pale);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0,180,216,.1);
 }
-.vv-sub-icon {
-  width: 2.4rem; height: 2.4rem;
-  border-radius: 9px;
+.vv-main-action-icon {
+  width: 2.6rem; height: 2.6rem;
+  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   background: var(--abc-light);
   flex-shrink: 0;
 }
-.vv-sub-text { flex: 1; }
-.vv-sub-text strong { display: block; font-size: .88rem; font-weight: 700; color: var(--color-text, #1C0E0A); }
-.vv-sub-text span { font-size: .75rem; color: var(--color-text-muted, #5C4438); }
-.vv-sub-arrow { color: var(--color-text-muted, #5C4438); font-size: 1rem; }
+.vv-action-practica .vv-main-action-icon { background: var(--color-brand-light, #FAD9CC); }
+.vv-main-action-text { flex: 1; }
+.vv-main-action-text strong { display: block; font-size: .92rem; font-weight: 700; color: var(--color-text, #1C0E0A); }
+.vv-main-action-text span { font-size: .78rem; color: var(--color-text-muted, #5C4438); }
+
+/* ── PANTALLA PRACTICA ── */
+.vv-practice-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .85rem;
+  margin-bottom: 1.5rem;
+}
+
+.vv-practice-card {
+  background: var(--color-surface, #fff);
+  border: 2px solid var(--color-border, #E8DDD6);
+  border-radius: 16px;
+  padding: 1.2rem 1.1rem 1rem;
+  cursor: pointer;
+  transition: all .18s;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+.vv-practice-card:hover {
+  border-color: var(--abc);
+  background: var(--abc-pale);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0,180,216,.12);
+}
+.vv-practice-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: .2rem;
+}
+.vv-practice-badge {
+  padding: .2rem .65rem;
+  border-radius: 999px;
+  background: var(--abc-light);
+  color: var(--abc-dark);
+  font-size: .7rem;
+  font-weight: 700;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  letter-spacing: .06em;
+}
+.vv-practice-emoji { font-size: 1.4rem; }
+.vv-practice-card-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text, #1C0E0A);
+  line-height: 1.2;
+}
+.vv-practice-card-desc {
+  font-size: .75rem;
+  color: var(--color-text-muted, #5C4438);
+  line-height: 1.4;
+  flex: 1;
+}
+.vv-practice-card-cta {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--abc);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  margin-top: .25rem;
+}
+
+/* ── STATS BLOCK (pantalla practica) ── */
+.vv-stats-block {
+  background: var(--color-surface, #fff);
+  border: 1.5px solid var(--color-border, #E8DDD6);
+  border-radius: 16px;
+  padding: 1.25rem 1.25rem 1rem;
+}
+.vv-stats-block-title {
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted, #5C4438);
+  margin-bottom: 1rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin-bottom: 1rem;
+}
+.vv-stat-big {
+  background: var(--color-bg, #F9F6F3);
+  border-radius: 12px;
+  padding: .85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.vv-stat-big-val {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 2rem;
+  font-weight: 900;
+  color: var(--abc);
+  line-height: 1;
+}
+.vv-stat-big-lbl {
+  font-size: .72rem;
+  color: var(--color-text-muted, #5C4438);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  line-height: 1.3;
+}
+
+/* Barra de precisión */
+.vv-stats-accuracy {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding-top: .75rem;
+  border-top: 1px solid var(--color-border, #E8DDD6);
+}
+.vv-accuracy-label {
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #5C4438);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  white-space: nowrap;
+}
+.vv-accuracy-bar-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--color-border, #E8DDD6);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.vv-accuracy-bar {
+  height: 100%;
+  background: var(--abc);
+  border-radius: 3px;
+  transition: width .5s ease;
+}
+.vv-accuracy-pct {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--abc-dark);
+  white-space: nowrap;
+}
+.vv-stats-empty {
+  font-size: .82rem;
+  color: var(--color-text-muted, #5C4438);
+  text-align: center;
+  padding: .5rem 0;
+  font-style: italic;
+}
 
 /* ── SIGNA TU NOMBRE ── */
 .vv-name-input-wrap {

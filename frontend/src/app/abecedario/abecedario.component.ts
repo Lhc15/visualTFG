@@ -11,7 +11,7 @@ import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
 
-type Pantalla = 'aprende' | 'nombre' | 'quizA' | 'quizB';
+type Pantalla = 'aprende' | 'nombre' | 'practica' | 'quizA' | 'quizB';
 
 interface LetraInfo {
   letra: string;
@@ -232,6 +232,9 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
       setTimeout(() => this.waitForQuizBCanvases(), 100);
     }
     if (p === 'nombre') {
+      setTimeout(() => this.waitForMainCanvas(), 50);
+    }
+    if (p === 'practica') {
       setTimeout(() => this.waitForMainCanvas(), 50);
     }
   }

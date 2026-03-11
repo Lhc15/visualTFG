@@ -2,16 +2,17 @@
 
   <!-- ═══ TOPNAV ═══ -->
   <div class="vv-topnav">
-    <button class="vv-back-btn" (click)="pantalla !== 'aprende' ? irA('aprende') : volverAModos()">
+    <button class="vv-back-btn" (click)="pantalla !== 'aprende' ? irA(pantalla === 'quizA' || pantalla === 'quizB' ? 'practica' : 'aprende') : volverAModos()">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      {{ pantalla !== 'aprende' ? 'Abecedario' : 'Inicio' }}
+      {{ pantalla === 'quizA' || pantalla === 'quizB' ? 'Practicar' : pantalla !== 'aprende' ? 'Abecedario' : 'Inicio' }}
     </button>
     <div class="vv-breadcrumb">
       <span [class.vv-bc-dim]="pantalla !== 'aprende'" (click)="pantalla !== 'aprende' && irA('aprende')">Abecedario</span>
       <span class="vv-bc-sep" *ngIf="pantalla !== 'aprende'">›</span>
       <span *ngIf="pantalla === 'nombre'">Signa tu nombre</span>
-      <span *ngIf="pantalla === 'quizA'">Practicar · Modo A</span>
-      <span *ngIf="pantalla === 'quizB'">Practicar · Modo B</span>
+      <span *ngIf="pantalla === 'practica'">Practicar</span>
+      <span *ngIf="pantalla === 'quizA'">Modo A</span>
+      <span *ngIf="pantalla === 'quizB'">Modo B</span>
     </div>
     <div class="vv-nav-right">
       <button class="vv-avatar-btn" (click)="navigateTo('perfil')">L</button>
@@ -155,30 +156,91 @@
             </div>
           </div>
 
-          <div class="vv-sub-actions">
-            <div class="vv-sub-action-btn" (click)="irA('nombre')">
-              <div class="vv-sub-icon">✍️</div>
-              <div class="vv-sub-text">
+          <!-- Solo 2 botones principales -->
+          <div class="vv-main-actions">
+            <div class="vv-main-action-btn vv-action-nombre" (click)="irA('nombre')">
+              <div class="vv-main-action-icon">✍️</div>
+              <div class="vv-main-action-text">
                 <strong>Signa tu nombre</strong>
                 <span>El avatar deletrea tu nombre letra a letra</span>
               </div>
               <span class="vv-sub-arrow">→</span>
             </div>
-            <div class="vv-sub-action-btn" (click)="irA('quizA')">
-              <div class="vv-sub-icon">🎯</div>
-              <div class="vv-sub-text">
-                <strong>Practicar · Modo A</strong>
-                <span>El avatar signa — tú adivinas la letra</span>
+            <div class="vv-main-action-btn vv-action-practica" (click)="irA('practica')">
+              <div class="vv-main-action-icon">🎯</div>
+              <div class="vv-main-action-text">
+                <strong>Practicar</strong>
+                <span>Pon a prueba lo que has aprendido</span>
               </div>
               <span class="vv-sub-arrow">→</span>
             </div>
-            <div class="vv-sub-action-btn" (click)="irA('quizB')">
-              <div class="vv-sub-icon">🔍</div>
-              <div class="vv-sub-text">
-                <strong>Practicar · Modo B</strong>
-                <span>4 avatares — ¿cuál signa la letra correcta?</span>
+          </div>
+        </ng-container>
+
+        <!-- ─── PANTALLA PRACTICA: selector de modo ─── -->
+        <ng-container *ngIf="pantalla === 'practica'">
+          <div class="vv-section-label">Practica</div>
+          <div class="vv-title">¿Cómo quieres<br><em>practicar</em>?</div>
+
+          <!-- Cards de modo -->
+          <div class="vv-practice-cards">
+
+            <div class="vv-practice-card" (click)="irA('quizA')">
+              <div class="vv-practice-card-top">
+                <div class="vv-practice-badge">Modo A</div>
+                <div class="vv-practice-emoji">👁️</div>
               </div>
-              <span class="vv-sub-arrow">→</span>
+              <div class="vv-practice-card-title">Adivina la letra</div>
+              <div class="vv-practice-card-desc">El avatar signa una letra y tú eliges cuál es entre 4 opciones.</div>
+              <div class="vv-practice-card-cta">Empezar →</div>
+            </div>
+
+            <div class="vv-practice-card" (click)="irA('quizB')">
+              <div class="vv-practice-card-top">
+                <div class="vv-practice-badge">Modo B</div>
+                <div class="vv-practice-emoji">🔍</div>
+              </div>
+              <div class="vv-practice-card-title">Encuentra el signo</div>
+              <div class="vv-practice-card-desc">4 avatares signan letras distintas. Identifica cuál está signando la letra indicada.</div>
+              <div class="vv-practice-card-cta">Empezar →</div>
+            </div>
+
+          </div>
+
+          <!-- Stats bloque grande -->
+          <div class="vv-stats-block">
+            <div class="vv-stats-block-title">Tu progreso en práctica</div>
+            <div class="vv-stats-grid">
+              <div class="vv-stat-big">
+                <div class="vv-stat-big-val">{{ quizACorrectas + quizBCorrectas }}</div>
+                <div class="vv-stat-big-lbl">Respuestas correctas</div>
+              </div>
+              <div class="vv-stat-big">
+                <div class="vv-stat-big-val">{{ quizAErrores + quizBErrores }}</div>
+                <div class="vv-stat-big-lbl">Errores cometidos</div>
+              </div>
+              <div class="vv-stat-big">
+                <div class="vv-stat-big-val">{{ quizAPreguntaNum + quizBPreguntaNum - 2 }}</div>
+                <div class="vv-stat-big-lbl">Preguntas respondidas</div>
+              </div>
+              <div class="vv-stat-big">
+                <div class="vv-stat-big-val">{{ letrasvistas.size }}</div>
+                <div class="vv-stat-big-lbl">Letras estudiadas</div>
+              </div>
+            </div>
+            <div class="vv-stats-accuracy" *ngIf="(quizACorrectas + quizBCorrectas + quizAErrores + quizBErrores) > 0">
+              <div class="vv-accuracy-label">Precisión global</div>
+              <div class="vv-accuracy-bar-wrap">
+                <div class="vv-accuracy-bar"
+                  [style.width.%]="((quizACorrectas + quizBCorrectas) / (quizACorrectas + quizBCorrectas + quizAErrores + quizBErrores)) * 100">
+                </div>
+              </div>
+              <div class="vv-accuracy-pct">
+                {{ ((quizACorrectas + quizBCorrectas) / (quizACorrectas + quizBCorrectas + quizAErrores + quizBErrores) * 100) | number:'1.0-0' }}%
+              </div>
+            </div>
+            <div class="vv-stats-empty" *ngIf="(quizACorrectas + quizBCorrectas + quizAErrores + quizBErrores) === 0">
+              Aún no has practicado nada. ¡Elige un modo para empezar!
             </div>
           </div>
         </ng-container>
@@ -312,6 +374,13 @@
           <div class="vv-footer-stat"><span class="vv-footer-val">{{ letrasvistas.size }}</span> / {{ letras.length }} letras</div>
           <div class="vv-footer-sep"></div>
           <div class="vv-footer-stat">Progreso: <span class="vv-footer-val">{{ progresoLetrasPct }}%</span></div>
+        </ng-container>
+        <ng-container *ngIf="pantalla === 'practica'">
+          <div class="vv-footer-stat">Correctas: <span class="vv-footer-val">{{ quizACorrectas + quizBCorrectas }}</span></div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat">Errores: <span class="vv-footer-val">{{ quizAErrores + quizBErrores }}</span></div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat">Letras vistas: <span class="vv-footer-val">{{ letrasvistas.size }}</span></div>
         </ng-container>
         <ng-container *ngIf="pantalla === 'nombre'">
           <div class="vv-footer-stat">Letras: <span class="vv-footer-val">{{ letrasNombreValidas.length }}</span></div>
