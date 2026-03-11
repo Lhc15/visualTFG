@@ -428,100 +428,215 @@
 .vv-info-strip.vv-info-hint .vv-info-text strong { color: var(--color-text, #1C0E0A); }
 .vv-info-text span { font-size: .78rem; color: var(--color-text-muted, #5C4438); line-height: 1.4; }
 
-/* ── MAIN ACTIONS (2 botones en aprende) ── */
-.vv-main-actions { display: flex; flex-direction: column; gap: .65rem; margin-top: .25rem; }
-.vv-main-action-btn {
-  display: flex;
-  align-items: center;
-  gap: .85rem;
-  padding: 1rem 1.1rem;
-  border-radius: 14px;
-  border: 2px solid var(--color-border, #E8DDD6);
-  background: var(--color-surface, #fff);
-  cursor: pointer;
-  transition: all .15s;
-}
-.vv-main-action-btn:hover {
-  border-color: var(--abc);
-  background: var(--abc-pale);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 16px rgba(0,180,216,.1);
-}
-.vv-main-action-icon {
-  width: 2.6rem; height: 2.6rem;
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.2rem;
-  background: var(--abc-light);
-  flex-shrink: 0;
-}
-.vv-action-practica .vv-main-action-icon { background: var(--color-brand-light, #FAD9CC); }
-.vv-main-action-text { flex: 1; }
-.vv-main-action-text strong { display: block; font-size: .92rem; font-weight: 700; color: var(--color-text, #1C0E0A); }
-.vv-main-action-text span { font-size: .78rem; color: var(--color-text-muted, #5C4438); }
-
-/* ── PANTALLA PRACTICA ── */
-.vv-practice-cards {
+/* ── CARDS APRENDE (Signa tu nombre + Practicar) ── */
+.vv-main-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: .85rem;
-  margin-bottom: 1.5rem;
+  gap: .75rem;
+  margin-top: .25rem;
 }
 
-.vv-practice-card {
-  background: var(--color-surface, #fff);
-  border: 2px solid var(--color-border, #E8DDD6);
+/* Card base */
+.vv-card-nombre,
+.vv-card-practica {
+  position: relative;
   border-radius: 16px;
-  padding: 1.2rem 1.1rem 1rem;
+  padding: 1.25rem 1.1rem 1rem;
   cursor: pointer;
-  transition: all .18s;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: .5rem;
+  gap: .35rem;
+  transition: transform .18s, box-shadow .18s;
+  min-height: 160px;
 }
-.vv-practice-card:hover {
-  border-color: var(--abc);
-  background: var(--abc-pale);
+.vv-card-nombre:hover,
+.vv-card-practica:hover {
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,180,216,.12);
+  box-shadow: 0 12px 32px rgba(0,0,0,.1);
 }
-.vv-practice-card-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: .2rem;
+
+/* Card "Signa tu nombre" — fondo oscuro azul-pizarra con acento cyan */
+.vv-card-nombre {
+  background: #1C2B2A;
+  border: none;
 }
-.vv-practice-badge {
-  padding: .2rem .65rem;
-  border-radius: 999px;
-  background: var(--abc-light);
-  color: var(--abc-dark);
-  font-size: .7rem;
+.vv-card-nombre .vv-card-tag {
+  font-size: .62rem;
   font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--abc);
   font-family: var(--font-body, 'DM Sans', sans-serif);
-  letter-spacing: .06em;
 }
-.vv-practice-emoji { font-size: 1.4rem; }
-.vv-practice-card-title {
+.vv-card-nombre .vv-card-headline {
   font-family: var(--font-display, 'Fraunces', serif);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--color-text, #1C0E0A);
-  line-height: 1.2;
-}
-.vv-practice-card-desc {
-  font-size: .75rem;
-  color: var(--color-text-muted, #5C4438);
-  line-height: 1.4;
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.1;
   flex: 1;
 }
-.vv-practice-card-cta {
+.vv-card-nombre .vv-card-body {
+  font-size: .73rem;
+  color: rgba(255,255,255,.5);
+  line-height: 1.4;
+  margin-top: auto;
+}
+.vv-card-nombre .vv-card-cta {
   font-size: .78rem;
   font-weight: 700;
   color: var(--abc);
   font-family: var(--font-body, 'DM Sans', sans-serif);
-  margin-top: .25rem;
+  margin-top: .5rem;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
 }
+.vv-card-nombre .vv-card-deco {
+  position: absolute;
+  bottom: -6px;
+  right: .75rem;
+  font-size: 4.5rem;
+  opacity: .07;
+  pointer-events: none;
+  line-height: 1;
+  color: var(--abc);
+}
+
+/* Card "Practicar" — fondo calido crema con acento naranja-brand */
+.vv-card-practica {
+  background: var(--color-bg, #F9F6F3);
+  border: 2px solid var(--color-border, #E8DDD6);
+}
+.vv-card-practica .vv-card-tag {
+  font-size: .62rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--color-brand, #E04A1A);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-card-practica .vv-card-headline {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: var(--color-text, #1C0E0A);
+  line-height: 1.1;
+  flex: 1;
+}
+.vv-card-practica .vv-card-body {
+  font-size: .73rem;
+  color: var(--color-text-muted, #5C4438);
+  line-height: 1.4;
+  margin-top: auto;
+}
+.vv-card-practica .vv-card-cta {
+  font-size: .78rem;
+  font-weight: 700;
+  color: var(--color-brand, #E04A1A);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  margin-top: .5rem;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+.vv-card-practica .vv-card-deco {
+  position: absolute;
+  bottom: -10px;
+  right: .75rem;
+  font-size: 5rem;
+  opacity: .06;
+  pointer-events: none;
+  line-height: 1;
+  color: var(--color-brand, #E04A1A);
+}
+
+/* ── CARDS DE MODO (Quiz A / Quiz B) ── */
+.vv-practice-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+  margin-bottom: 1.25rem;
+}
+
+.vv-mode-card {
+  border-radius: 16px;
+  padding: 1.1rem 1rem 1rem;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  transition: transform .18s, box-shadow .18s;
+  min-height: 180px;
+}
+.vv-mode-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.1);
+}
+
+/* Modo A — fondo cyan muy oscuro */
+.vv-mode-a {
+  background: #003D4D;
+  border: none;
+}
+/* Modo B — fondo naranja muy oscuro */
+.vv-mode-b {
+  background: #2E1206;
+  border: none;
+}
+
+.vv-mode-eyebrow {
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-mode-a .vv-mode-eyebrow { color: var(--abc); }
+.vv-mode-b .vv-mode-eyebrow { color: var(--color-brand, #E04A1A); }
+
+.vv-mode-num {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  opacity: .12;
+  color: #ffffff;
+  position: absolute;
+  top: .7rem;
+  right: .85rem;
+  pointer-events: none;
+}
+
+.vv-mode-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-top: .25rem;
+  flex: 1;
+}
+
+.vv-mode-desc {
+  font-size: .72rem;
+  line-height: 1.4;
+  margin-top: auto;
+}
+.vv-mode-a .vv-mode-desc { color: rgba(255,255,255,.45); }
+.vv-mode-b .vv-mode-desc { color: rgba(255,255,255,.45); }
+
+.vv-mode-go {
+  font-size: .75rem;
+  font-weight: 700;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  margin-top: .6rem;
+}
+.vv-mode-a .vv-mode-go { color: var(--abc); }
+.vv-mode-b .vv-mode-go { color: var(--color-brand, #E04A1A); }
 
 /* ── STATS BLOCK (pantalla practica) ── */
 .vv-stats-block {

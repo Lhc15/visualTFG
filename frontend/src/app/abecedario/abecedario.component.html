@@ -156,24 +156,25 @@
             </div>
           </div>
 
-          <!-- Solo 2 botones principales -->
+          <!-- 2 cards con personalidad -->
           <div class="vv-main-actions">
-            <div class="vv-main-action-btn vv-action-nombre" (click)="irA('nombre')">
-              <div class="vv-main-action-icon">✍️</div>
-              <div class="vv-main-action-text">
-                <strong>Signa tu nombre</strong>
-                <span>El avatar deletrea tu nombre letra a letra</span>
-              </div>
-              <span class="vv-sub-arrow">→</span>
+
+            <div class="vv-card-nombre" (click)="irA('nombre')">
+              <div class="vv-card-tag">Actividad</div>
+              <div class="vv-card-headline">Signa tu<br>nombre</div>
+              <div class="vv-card-body">El avatar deletrea tu nombre en LSE letra a letra</div>
+              <div class="vv-card-cta">Empezar <span>→</span></div>
+              <div class="vv-card-deco">✍</div>
             </div>
-            <div class="vv-main-action-btn vv-action-practica" (click)="irA('practica')">
-              <div class="vv-main-action-icon">🎯</div>
-              <div class="vv-main-action-text">
-                <strong>Practicar</strong>
-                <span>Pon a prueba lo que has aprendido</span>
-              </div>
-              <span class="vv-sub-arrow">→</span>
+
+            <div class="vv-card-practica" (click)="irA('practica')">
+              <div class="vv-card-tag">Quiz</div>
+              <div class="vv-card-headline">Practicar</div>
+              <div class="vv-card-body">Pon a prueba lo que has aprendido con dos modos</div>
+              <div class="vv-card-cta">Ver modos <span>→</span></div>
+              <div class="vv-card-deco">◈</div>
             </div>
+
           </div>
         </ng-container>
 
@@ -185,24 +186,20 @@
           <!-- Cards de modo -->
           <div class="vv-practice-cards">
 
-            <div class="vv-practice-card" (click)="irA('quizA')">
-              <div class="vv-practice-card-top">
-                <div class="vv-practice-badge">Modo A</div>
-                <div class="vv-practice-emoji">👁️</div>
-              </div>
-              <div class="vv-practice-card-title">Adivina la letra</div>
-              <div class="vv-practice-card-desc">El avatar signa una letra y tú eliges cuál es entre 4 opciones.</div>
-              <div class="vv-practice-card-cta">Empezar →</div>
+            <div class="vv-mode-card vv-mode-a" (click)="irA('quizA')">
+              <div class="vv-mode-eyebrow">Modo A</div>
+              <div class="vv-mode-num">01</div>
+              <div class="vv-mode-title">Adivina<br>la letra</div>
+              <div class="vv-mode-desc">El avatar signa — tú eliges entre 4 opciones.</div>
+              <div class="vv-mode-go">Empezar →</div>
             </div>
 
-            <div class="vv-practice-card" (click)="irA('quizB')">
-              <div class="vv-practice-card-top">
-                <div class="vv-practice-badge">Modo B</div>
-                <div class="vv-practice-emoji">🔍</div>
-              </div>
-              <div class="vv-practice-card-title">Encuentra el signo</div>
-              <div class="vv-practice-card-desc">4 avatares signan letras distintas. Identifica cuál está signando la letra indicada.</div>
-              <div class="vv-practice-card-cta">Empezar →</div>
+            <div class="vv-mode-card vv-mode-b" (click)="irA('quizB')">
+              <div class="vv-mode-eyebrow">Modo B</div>
+              <div class="vv-mode-num">02</div>
+              <div class="vv-mode-title">Encuentra<br>el signo</div>
+              <div class="vv-mode-desc">4 avatares — ¿cuál está signando la letra correcta?</div>
+              <div class="vv-mode-go">Empezar →</div>
             </div>
 
           </div>
