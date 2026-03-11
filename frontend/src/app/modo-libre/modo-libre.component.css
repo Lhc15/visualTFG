@@ -69,7 +69,7 @@
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 50%;
-  background: #22C55E;
+  background: #8B00A8;
   color: #fff;
   font-weight: 700;
   font-size: .85rem;
@@ -103,7 +103,7 @@
 .vv-avatar-glow {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 75%, rgba(34,197,94,.07) 0%, transparent 65%);
+  background: radial-gradient(ellipse at 50% 75%, rgba(244,169,64,.10) 0%, transparent 65%);
   pointer-events: none;
   z-index: 0;
 }
@@ -208,7 +208,7 @@
 .vv-title em {
   font-style: italic;
   font-weight: 300;
-  color: #22C55E;
+  color: #F4A940;
 }
 
 /* ── CATEGORY GRID ── */
@@ -227,8 +227,8 @@
   transition: all .18s;
 }
 .vv-cat-card:hover {
-  border-color: #22C55E;
-  box-shadow: 0 4px 20px rgba(34,197,94,.1);
+  border-color: #F4A940;
+  box-shadow: 0 4px 20px rgba(244,169,64,.15);
   transform: translateY(-2px);
 }
 
@@ -253,7 +253,7 @@
 }
 .vv-cat-progress-fill {
   height: 100%;
-  background: #22C55E;
+  background: #F4A940;
   border-radius: 99px;
 }
 
@@ -288,11 +288,11 @@
   font-family: var(--font-body, 'DM Sans', sans-serif);
 }
 .vv-word-row:hover {
-  border-color: rgba(34,197,94,.3);
+  border-color: rgba(244,169,64,.35);
   background: #f0fdf4;
 }
 .vv-word-active {
-  border-color: #22C55E !important;
+  border-color: #F4A940 !important;
   background: #f0fdf4 !important;
 }
 
@@ -308,7 +308,7 @@
   color: #9ca3af;
 }
 .vv-status-signing {
-  background: #22C55E !important;
+  background: #F4A940 !important;
   color: #fff !important;
   font-size: .55rem !important;
 }
@@ -321,7 +321,7 @@
 }
 .vv-word-active .vv-word-name {
   font-weight: 600;
-  color: #22C55E;
+  color: #F4A940;
 }
 
 .vv-sign-cta {
@@ -330,7 +330,7 @@
   gap: .25rem;
   font-size: .68rem;
   font-weight: 600;
-  color: #22C55E;
+  color: #F4A940;
   background: none;
   border: none;
   cursor: pointer;
@@ -368,7 +368,7 @@
 }
 
 .vv-exercises-banner {
-  background: #22C55E;
+  background: #F4A940;
   border-radius: .9rem;
   padding: 1rem 1.25rem;
   display: flex;
@@ -378,7 +378,7 @@
   transition: background .15s, transform .15s;
 }
 .vv-exercises-banner:hover {
-  background: #16a34a;
+  background: #C4841A;
   transform: translateY(-1px);
 }
 
@@ -399,7 +399,7 @@
 
 .vv-exercises-cta {
   background: #fff;
-  color: #22C55E;
+  color: #F4A940;
   border: none;
   border-radius: .55rem;
   padding: .4rem .9rem;
