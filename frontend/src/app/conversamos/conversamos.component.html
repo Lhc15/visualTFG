@@ -1,1 +1,281 @@
-<p>conversamos works!</p>
+<div class="vv-layout">
+
+  <!-- === TOPNAV === -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="pantalla === 'selector' ? volverAModos() : volverAlSelector()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      {{ pantalla === 'selector' ? 'Inicio' : '¿Conversamos?' }}
+    </button>
+    <div class="vv-breadcrumb">
+      <span *ngIf="pantalla === 'selector'">¿Conversamos?</span>
+      <ng-container *ngIf="pantalla === 'conversacion'">
+        <span class="vv-bc-sep">›</span>
+        <span>{{ situacionActiva?.nombre }}</span>
+      </ng-container>
+    </div>
+    <div class="vv-nav-right">
+      <button class="vv-avatar-btn">L</button>
+    </div>
+  </div>
+
+  <!-- === SPLIT === -->
+  <div class="vv-split">
+
+    <!-- ======================================
+         AVATAR PANEL (izquierda)
+    ====================================== -->
+    <div class="vv-avatar-panel" #avatarPanel>
+
+      <!-- Glow morado suave -->
+      <div class="vv-avatar-glow"></div>
+
+      <!-- Canvas -->
+      <div class="vv-canvas-wrap">
+        <app-canvas #mainCanvas [cameraZ]="4.3"></app-canvas>
+      </div>
+
+      <!-- Subtítulo (solo mientras el avatar signa) -->
+      <div class="vv-subtitle" *ngIf="subtituloVisible">
+        {{ subtituloTexto }}
+      </div>
+
+    </div>
+
+    <!-- ======================================
+         PANEL DERECHO
+    ====================================== -->
+
+    <!-- ----------- PANTALLA 1: SELECTOR ----------- -->
+    <div class="vv-action-panel" *ngIf="pantalla === 'selector'">
+
+      <!-- Cabecera -->
+      <div class="vv-sel-head">
+        <div class="vv-sel-eyebrow">Modo conversación</div>
+        <div class="vv-sel-title">Elige tu <em>situación</em></div>
+      </div>
+
+      <!-- Lista de situaciones -->
+      <div class="vv-stations-list">
+
+        <div
+          *ngFor="let sit of situaciones; let i = index; trackBy: trackByIdx"
+          class="vv-station"
+          [class.vv-st-done]="sit.estado === 'completada'"
+          [class.vv-st-active]="sit.estado === 'disponible'"
+          [class.vv-st-locked]="sit.estado === 'bloqueada'"
+          (click)="iniciarSituacion(sit)">
+
+          <!-- Número de fondo -->
+          <div class="vv-st-bg-num">0{{ sit.id }}</div>
+
+          <!-- Carril -->
+          <div class="vv-st-rail"></div>
+
+          <!-- Contenido -->
+          <div class="vv-st-content">
+            <div class="vv-st-text">
+              <div class="vv-st-label">
+                Situación 0{{ sit.id }} ·
+                {{ sit.estado === 'completada' ? 'Completada' : sit.estado === 'disponible' ? 'Disponible' : 'Bloqueada' }}
+              </div>
+              <div class="vv-st-name">{{ sit.nombre }}</div>
+              <div class="vv-st-tags">
+                <span class="vv-st-tag" *ngFor="let tag of sit.tags">{{ tag }}</span>
+              </div>
+            </div>
+            <div class="vv-st-right">
+              <button class="vv-st-cta" *ngIf="sit.estado !== 'bloqueada'">
+                {{ sit.estado === 'completada' ? 'Repetir →' : 'Empezar →' }}
+              </button>
+              <div class="vv-st-badge">
+                <span *ngIf="sit.estado === 'completada'">✓</span>
+                <span *ngIf="sit.estado === 'disponible'">▶</span>
+                <span *ngIf="sit.estado === 'bloqueada'">🔒</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- Footer stats -->
+      <div class="vv-footer">
+        <div class="vv-footer-stat">
+          <div class="vv-footer-val">{{ totalSituacionesCompletadas }}/{{ situaciones.length }}</div>
+          <div class="vv-footer-lbl">Situaciones</div>
+        </div>
+        <div class="vv-footer-sep"></div>
+        <div class="vv-footer-stat">
+          <div class="vv-footer-val">—</div>
+          <div class="vv-footer-lbl">Precisión global</div>
+        </div>
+        <div class="vv-footer-sep"></div>
+        <div class="vv-footer-stat">
+          <div class="vv-footer-val">—</div>
+          <div class="vv-footer-lbl">Respuestas correctas</div>
+        </div>
+      </div>
+
+    </div>
+
+
+    <!-- ----------- PANTALLA 2: CONVERSACIÓN ----------- -->
+    <div class="vv-action-panel vv-conv-panel" *ngIf="pantalla === 'conversacion'">
+
+      <!-- Cabecera de progreso -->
+      <div class="vv-conv-head">
+        <div class="vv-conv-sit-badge">
+          <div class="vv-conv-sit-dot"></div>
+          <span class="vv-conv-sit-name">{{ situacionActiva?.nombre }}</span>
+        </div>
+        <div class="vv-conv-progress-wrap">
+          <div class="vv-conv-progress-label">
+            {{ estado !== 'fin' ? 'Turno ' + preguntaActual + ' de ' + totalPreguntas : '¡Completada!' }}
+          </div>
+          <div class="vv-conv-progress-bar">
+            <div class="vv-conv-progress-fill"
+              [style.width.%]="estado === 'fin' ? 100 : progresoPorc">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Historial de chat -->
+      <div class="vv-chat-scroll" #chatScroll>
+
+        <div class="vv-chat-intro" *ngIf="chat.length === 0 && estado === 'avatar-signando'">
+          <div class="vv-chat-intro-icon">💬</div>
+          <div class="vv-chat-intro-text">Observa al avatar…</div>
+        </div>
+
+        <ng-container *ngFor="let msg of chat; let i = index; trackBy: trackByIdx">
+
+          <div class="vv-msg-avatar" *ngIf="msg.de === 'avatar'">
+            <div class="vv-av-icon"><div class="vv-av-icon-inner"></div></div>
+            <div class="vv-bubble-avatar">{{ msg.texto }}</div>
+          </div>
+
+          <div class="vv-msg-user" *ngIf="msg.de === 'usuario'">
+            <div class="vv-bubble-user"
+              [class.vv-bubble-correct]="msg.estado === 'correcto'"
+              [class.vv-bubble-wrong]="msg.estado === 'incorrecto'">
+              {{ msg.texto }}
+            </div>
+            <div class="vv-msg-check" [class.vv-check-wrong]="msg.estado === 'incorrecto'">
+              {{ msg.estado === 'correcto' ? '✓ Correcto' : '✗ Incorrecto' }}
+            </div>
+          </div>
+
+          <div class="vv-msg-correction" *ngIf="msg.de === 'correccion'">
+            <div class="vv-av-icon"><div class="vv-av-icon-inner"></div></div>
+            <div class="vv-bubble-correction">
+              <div class="vv-correction-label">Respuesta correcta</div>
+              {{ msg.texto }}
+            </div>
+          </div>
+
+        </ng-container>
+
+        <div class="vv-msg-signing" *ngIf="estado === 'avatar-signando' && chat.length > 0">
+          <div class="vv-av-icon"><div class="vv-av-icon-inner"></div></div>
+          <div class="vv-signing-bubble">
+            <div class="vv-signing-dots">
+              <div class="vv-signing-dot"></div>
+              <div class="vv-signing-dot"></div>
+              <div class="vv-signing-dot"></div>
+            </div>
+            <span class="vv-signing-text">Signando…</span>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- Zona de opciones -->
+      <div class="vv-options-area" *ngIf="estado !== 'fin'">
+
+        <ng-container *ngIf="estado === 'esperando-respuesta'">
+          <div class="vv-options-label">Elige tu respuesta</div>
+          <div class="vv-options-grid">
+            <button
+              *ngFor="let op of turnoActual?.opciones; let i = index; trackBy: trackByIdx"
+              class="vv-option-btn"
+              (click)="elegirOpcion(i)">
+              <span>{{ op }}</span>
+              <span class="vv-opt-arrow">→</span>
+            </button>
+          </div>
+        </ng-container>
+
+        <div class="vv-waiting" *ngIf="estado === 'avatar-signando'">
+          <div class="vv-waiting-pulse"></div>
+          <span>Observa al avatar…</span>
+        </div>
+
+        <ng-container *ngIf="estado === 'correcto'">
+          <div class="vv-feedback vv-feedback-ok">
+            <span class="vv-feedback-icon">✅</span>
+            <div><strong>¡Correcto!</strong><span>Esa era la respuesta adecuada.</span></div>
+          </div>
+          <button class="vv-next-btn" (click)="siguienteTurno()">
+            {{ turnoIdx + 1 < totalPreguntas ? 'Continuar →' : 'Ver resultado →' }}
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="estado === 'incorrecto'">
+          <div class="vv-feedback vv-feedback-ko">
+            <span class="vv-feedback-icon">❌</span>
+            <div>
+              <strong>No era esa.</strong>
+              <span>La correcta era: <em>{{ turnoActual?.respuestaTexto }}</em></span>
+            </div>
+          </div>
+          <button class="vv-next-btn" (click)="siguienteTurno()">
+            {{ turnoIdx + 1 < totalPreguntas ? 'Continuar de todas formas →' : 'Ver resultado →' }}
+          </button>
+        </ng-container>
+
+      </div>
+
+
+      <!-- Resultado final -->
+      <div class="vv-result" *ngIf="estado === 'fin'">
+        <div class="vv-result-icon">🎉</div>
+        <div class="vv-result-title">¡<em>Conversación</em> completada!</div>
+        <div class="vv-result-sub">Has completado "{{ situacionActiva?.nombre }}"</div>
+        <div class="vv-result-score">
+          <div class="vv-score-val">{{ aciertos }}/{{ totalPreguntas }}</div>
+          <div class="vv-score-lbl">respuestas correctas</div>
+        </div>
+        <div class="vv-result-btns">
+          <button class="vv-btn-secondary" (click)="volverAlSelector()">← Volver</button>
+          <button class="vv-btn-primary" (click)="reiniciarConversacion()">Repetir →</button>
+        </div>
+      </div>
+
+
+      <!-- Footer stats conversación -->
+      <div class="vv-footer">
+        <div class="vv-footer-stat">
+          <div class="vv-footer-val">{{ aciertos }}</div>
+          <div class="vv-footer-lbl">Correctas</div>
+        </div>
+        <div class="vv-footer-sep"></div>
+        <div class="vv-footer-stat">
+          <div class="vv-footer-val">{{ errores }}</div>
+          <div class="vv-footer-lbl">Incorrectas</div>
+        </div>
+        <div class="vv-footer-sep" *ngIf="aciertos + errores > 0"></div>
+        <div class="vv-footer-stat" *ngIf="aciertos + errores > 0">
+          <div class="vv-footer-val">{{ precision }}%</div>
+          <div class="vv-footer-lbl">Precisión</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

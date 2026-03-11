@@ -21,8 +21,7 @@ import { ModoExamenComponent } from './modo-examen/modo-examen.component';
 import { ModoVersusComponent } from './modo-versus/modo-versus.component';
 import { LearningObjectComponent } from './learning-object/learning-object.component';
 import { AbecedarioComponent } from './abecedario/abecedario.component';
-
-
+import { ConversamosComponent } from './conversamos/conversamos.component';
 
 
 export const routes: Routes = [
@@ -49,6 +48,7 @@ export const routes: Routes = [
   { path: 'test-upload', component: TestUploadComponent, canActivate: [AdminRoleGuard] },
   { path: 'learning', component: LearningObjectComponent },
   { path: 'abecedario', component: AbecedarioComponent },
+  { path: 'conversamos', component: ConversamosComponent },
 
   { path: '**', redirectTo: 'landing' },
   
