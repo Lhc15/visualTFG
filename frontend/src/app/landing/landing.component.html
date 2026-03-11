@@ -15,7 +15,7 @@
     <!-- Avatar con parallax -->
     <div class="avatar-parallax" id="avatarParallax">
       <div class="canvas-wrap">
-        <app-canvas #canvas (animationEnded)="onHelloEnded()" ></app-canvas>
+        <app-canvas #canvas [standalone]="true" (animationEnded)="onHelloEnded()" ></app-canvas>
       </div>
     </div>
 

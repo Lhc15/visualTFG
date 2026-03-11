@@ -41,6 +41,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   @Input() animationUrls: string[] = [];
   @Input() showResetButton: boolean = false;
+  @Input() standalone: boolean = false;  // true = no escuchar animacionService (usado en landing)
   @Input() cameraZ: number = 4.2;
   @Input() cameraY: number = 0;
   @Input() cameraLookAtY: number = 0;
@@ -78,9 +79,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   ) {
     this.animacionSubscription = this.animacionService.animaciones$.subscribe(
       (data: AnimationData) => {
-        // data.animaciones => array de URLs
-        // data.loop => true (repetir) / false (una sola vez)
-        
+        // En modo standalone (landing) ignoramos el servicio completamente
+        if (this.standalone) return;
+
         if (data.animaciones.length > 0) {
           const permitido = this.animacionService.permitirReproduccion();
           console.log('Recibida petición de animación:', data, '¿permitido?', permitido);
@@ -426,12 +427,21 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
       console.log('El modelo ya está cargado, no es necesario recargar');
       return; 
     }
+
+    const previousModel = this.currentModel;
     
     try {
-      // Detenemos el motor si está activo
+      // Fade out suave antes de detener el motor
+      const canvas = this.skinCanvas?.nativeElement;
+      if (canvas && this.skinIsRunning) {
+        canvas.style.transition = 'opacity 0.15s ease-out';
+        canvas.style.opacity = '0';
+        await new Promise(r => setTimeout(r, 150));
+      }
+
       if (this.engineApi) {
-        console.log('Deteniendo motor de skin existente');
         this.engineApi.stop();
+        this.skinIsRunning = false;
       }
       
       // Iniciamos el motor con el nuevo URL
@@ -447,13 +457,20 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         }
       );
       this.currentModel = url;
+
+      // Fade in tras cargar
+      if (canvas) {
+        canvas.style.opacity = '1';
+      }
+
       console.log('Modelo cargado exitosamente');
     } catch (error) {
       console.error(`Error al cargar el modelo ${url}:`, error);
-      // Si falla cargar el modelo específico, intentamos con uno predeterminado
-      if (url !== '/assets/hola_0.gltf') {
-        console.log('Intentando cargar el modelo predeterminado como fallback');
-        await this.loadSkinModel('/assets/hola_0.gltf');
+      // Si falla, restaurar modelo anterior o pose neutral local
+      const fallback = (previousModel && previousModel !== url) ? previousModel : '/assets/hola_0.gltf';
+      if (url !== fallback) {
+        console.log(`Restaurando modelo: ${fallback}`);
+        await this.loadSkinModel(fallback);
       }
     }
   }

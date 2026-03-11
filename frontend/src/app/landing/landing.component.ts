@@ -50,25 +50,40 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   }
 
   // ─────────────────────────────────────────
-  //  ANIMACIONES DEL AVATAR (sin cambios)
+  //  ANIMACIONES DEL AVATAR
   // ─────────────────────────────────────────
 
   private async playHelloLoop() {
     this.isPlayingHello = true;
     const url = `${environment.apiUrl}/gltf/animaciones/holaanimation.gltf`;
-    await this.canvasRef.loadSkinModel(url);
-    const clip = this.canvasRef.availableClips[0];
-    if (!clip) return;
-    this.canvasRef.playClip(clip, false);
+    try {
+      await this.canvasRef.loadSkinModel(url);
+      const clip = this.canvasRef.availableClips[0];
+      if (!clip) { this.fallbackNeutralPose(); return; }
+      this.canvasRef.playClip(clip, false);
+    } catch {
+      this.fallbackNeutralPose();
+    }
   }
 
   private async playWelcome() {
     this.isPlayingHello = false;
     const url = `${environment.apiUrl}/gltf/animaciones/bienvenidoanimation.gltf`;
-    await this.canvasRef.loadSkinModel(url);
-    const clip = this.canvasRef.availableClips[0];
-    if (!clip) return;
-    this.canvasRef.playClip(clip, false);
+    try {
+      await this.canvasRef.loadSkinModel(url);
+      const clip = this.canvasRef.availableClips[0];
+      if (!clip) { this.fallbackNeutralPose(); return; }
+      this.canvasRef.playClip(clip, false);
+    } catch {
+      this.fallbackNeutralPose();
+    }
+  }
+
+  /** Carga la pose neutral local — no depende del backend */
+  private async fallbackNeutralPose() {
+    try {
+      await this.canvasRef.loadSkinModel('/assets/hola_0.gltf');
+    } catch { /* si ni el asset local carga, no hacemos nada */ }
   }
 
   onHelloEnded() {
