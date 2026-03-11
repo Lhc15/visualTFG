@@ -120,10 +120,10 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     };
 
     // Letras ya flotando al cargar distribuidas por toda la pantalla
-    for (let i = 0; i < 22; i++) spawn(true);
+    for (let i = 0; i < 45; i++) spawn(true);
 
     // Spawn continuo desde abajo
-    this.lseInterval = setInterval(() => spawn(false), 700);
+    this.lseInterval = setInterval(() => spawn(false), 400);
   }
 
   private initParallax() {
