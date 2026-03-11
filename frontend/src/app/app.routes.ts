@@ -20,6 +20,7 @@ import { ModoLibreComponent } from './modo-libre/modo-libre.component';
 import { ModoExamenComponent } from './modo-examen/modo-examen.component';
 import { ModoVersusComponent } from './modo-versus/modo-versus.component';
 import { LearningObjectComponent } from './learning-object/learning-object.component';
+import { AbecedarioComponent } from './abecedario/abecedario.component';
 
 
 
@@ -47,6 +48,7 @@ export const routes: Routes = [
   { path: 'versus', component: ModoVersusComponent },
   { path: 'test-upload', component: TestUploadComponent, canActivate: [AdminRoleGuard] },
   { path: 'learning', component: LearningObjectComponent },
+  { path: 'abecedario', component: AbecedarioComponent },
 
   { path: '**', redirectTo: 'landing' },
   

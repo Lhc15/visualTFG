@@ -1,1 +1,340 @@
-<p>abecedario works!</p>
+<div class="vv-layout">
+
+  <!-- ═══ TOPNAV ═══ -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="pantalla !== 'aprende' ? irA('aprende') : volverAModos()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      {{ pantalla !== 'aprende' ? 'Abecedario' : 'Inicio' }}
+    </button>
+    <div class="vv-breadcrumb">
+      <span [class.vv-bc-dim]="pantalla !== 'aprende'" (click)="pantalla !== 'aprende' && irA('aprende')">Abecedario</span>
+      <span class="vv-bc-sep" *ngIf="pantalla !== 'aprende'">›</span>
+      <span *ngIf="pantalla === 'nombre'">Signa tu nombre</span>
+      <span *ngIf="pantalla === 'quizA'">Practicar · Modo A</span>
+      <span *ngIf="pantalla === 'quizB'">Practicar · Modo B</span>
+    </div>
+    <div class="vv-nav-right">
+      <button class="vv-avatar-btn" (click)="navigateTo('perfil')">L</button>
+    </div>
+  </div>
+
+  <!-- ═══ SPLIT ═══ -->
+  <div class="vv-split" [class.vv-four-grid]="pantalla === 'quizB'">
+
+    <!-- ══════════════════════════════════════
+         AVATAR PANEL — pantallas 1, 2, 3
+         (oculto en quizB que tiene su propio grid)
+    ══════════════════════════════════════ -->
+    <ng-container *ngIf="pantalla !== 'quizB'">
+      <div class="vv-avatar-panel" #avatarPanel>
+
+        <!-- Glow azul -->
+        <div class="vv-avatar-glow"></div>
+
+        <!-- Letras flotantes (solo pantalla aprende) -->
+        <div id="lseBgAbc" class="vv-letters-bg" *ngIf="pantalla === 'aprende'"></div>
+
+        <!-- Letra grande de fondo: letra activa en aprende, nombre en "signa tu nombre" -->
+        <div class="vv-letter-bg-big" *ngIf="pantalla === 'aprende' && letraActivaTexto">
+          {{ letraActivaTexto }}
+        </div>
+        <div class="vv-letter-bg-big vv-name-bg" *ngIf="pantalla === 'nombre' && nombreParaMostrar">
+          {{ nombreParaMostrar }}
+        </div>
+
+        <!-- Subtitle: letra activa signando -->
+        <div class="vv-subtitle"
+          *ngIf="pantalla === 'aprende' && letraActiva && (isPlaying || isLooping)">
+          Letra {{ letraActivaTexto }}
+        </div>
+
+        <!-- Subtitle: letra del nombre siendo signada -->
+        <div class="vv-subtitle"
+          *ngIf="pantalla === 'nombre' && signandoNombre && letraSignandoIdx >= 0">
+          {{ letrasNombre[letraSignandoIdx] }}
+        </div>
+
+        <!-- Tool menu (solo en aprende con letra seleccionada) -->
+        <app-tool-menu
+          *ngIf="pantalla === 'aprende' && letraActiva"
+          [isPlaying]="isPlaying"
+          [currentPlaybackRate]="currentPlaybackRate"
+          (rateChange)="setPlaybackRate($event)"
+          [isLooping]="isLooping"
+          [showWebcam]="showWebcam"
+          [disabled]="!letraActiva"
+          (playClicked)="onPlayClicked()"
+          (loopToggled)="handleLoop($event)"
+          (webcamToggled)="toggleWebcam()">
+        </app-tool-menu>
+
+        <!-- Canvas -->
+        <div class="vv-canvas-wrap">
+          <app-canvas
+            #mainCanvas
+            [cameraZ]="4.3"
+            (animationEnded)="onAnimationEnded()">
+          </app-canvas>
+        </div>
+
+        <!-- Webcam overlay -->
+        <div class="vv-webcam-wrap" *ngIf="showWebcam">
+          <video #videoElement class="vv-webcam-video" autoplay></video>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <!-- ══════════════════════════════════════
+         QUIZ B: 4 canvas reales (izquierda)
+    ══════════════════════════════════════ -->
+    <ng-container *ngIf="pantalla === 'quizB'">
+      <div class="vv-four-grid-panel">
+        <div
+          *ngFor="let i of [0,1,2,3]"
+          #quizBCell
+          class="vv-mini-cell"
+          [class.vv-cell-correct]="quizBCeldaEsCorrecta(i)"
+          [class.vv-cell-wrong]="quizBCeldaEsIncorrecta(i)"
+          (click)="elegirCeldaQuizB(i)">
+
+          <!-- Glow de color según la celda -->
+          <div class="vv-mini-glow" [style.background]="'radial-gradient(ellipse at 50% 75%, ' + quizBColorManos(i) + '22 0%, transparent 65%)'"></div>
+          <div class="vv-mini-num">{{ i + 1 }}</div>
+
+          <!-- Canvas real -->
+          <div class="vv-mini-canvas-wrap">
+            <app-canvas
+              #quizBCanvas
+              [cameraZ]="4.3"
+              [standalone]="true">
+            </app-canvas>
+          </div>
+
+          <!-- Overlay resultado -->
+          <div class="vv-cell-overlay correct" *ngIf="quizBCeldaEsCorrecta(i)">✓</div>
+          <div class="vv-cell-overlay wrong" *ngIf="quizBCeldaEsIncorrecta(i)">✗</div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ══════════════════════════════════════
+         ACTION PANEL (derecha — todas las pantallas)
+    ══════════════════════════════════════ -->
+    <div class="vv-action-panel">
+      <div class="vv-action-scroll">
+
+        <!-- ─── PANTALLA 1: APRENDE A–Z ─── -->
+        <ng-container *ngIf="pantalla === 'aprende'">
+          <div class="vv-section-label">Abecedario LSE</div>
+          <div class="vv-title">Elige una <em>letra</em><br>para practicarla</div>
+
+          <div class="vv-letter-grid">
+            <div
+              *ngFor="let l of letras; trackBy: trackByLetra"
+              class="vv-letter-cell"
+              [class.vv-letter-done]="letrasvistas.has(l.letra)"
+              [class.vv-letter-active]="letraActiva?.letra === l.letra"
+              (click)="seleccionarLetra(l)">
+              {{ l.letra }}
+            </div>
+          </div>
+
+          <div class="vv-info-strip" *ngIf="letraActiva">
+            <div class="vv-info-icon">💡</div>
+            <div class="vv-info-text">
+              <strong>Letra {{ letraActivaTexto }}</strong>
+              <span>Usa la barra de herramientas para controlar la velocidad, activar bucle o comparar con tu cámara.</span>
+            </div>
+          </div>
+          <div class="vv-info-strip vv-info-hint" *ngIf="!letraActiva">
+            <div class="vv-info-icon">👆</div>
+            <div class="vv-info-text">
+              <strong>Selecciona una letra</strong>
+              <span>Haz clic en cualquier letra del abecedario para ver cómo se signa.</span>
+            </div>
+          </div>
+
+          <div class="vv-sub-actions">
+            <div class="vv-sub-action-btn" (click)="irA('nombre')">
+              <div class="vv-sub-icon">✍️</div>
+              <div class="vv-sub-text">
+                <strong>Signa tu nombre</strong>
+                <span>El avatar deletrea tu nombre letra a letra</span>
+              </div>
+              <span class="vv-sub-arrow">→</span>
+            </div>
+            <div class="vv-sub-action-btn" (click)="irA('quizA')">
+              <div class="vv-sub-icon">🎯</div>
+              <div class="vv-sub-text">
+                <strong>Practicar · Modo A</strong>
+                <span>El avatar signa — tú adivinas la letra</span>
+              </div>
+              <span class="vv-sub-arrow">→</span>
+            </div>
+            <div class="vv-sub-action-btn" (click)="irA('quizB')">
+              <div class="vv-sub-icon">🔍</div>
+              <div class="vv-sub-text">
+                <strong>Practicar · Modo B</strong>
+                <span>4 avatares — ¿cuál signa la letra correcta?</span>
+              </div>
+              <span class="vv-sub-arrow">→</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ─── PANTALLA 2: SIGNA TU NOMBRE ─── -->
+        <ng-container *ngIf="pantalla === 'nombre'">
+          <div class="vv-section-label">Actividad especial</div>
+          <div class="vv-title">¿Cómo se <em>signa</em><br>tu nombre?</div>
+
+          <div class="vv-name-input-wrap">
+            <input
+              class="vv-name-input"
+              type="text"
+              placeholder="Escribe tu nombre…"
+              [(ngModel)]="nombreInput"
+              maxlength="20"
+              [disabled]="signandoNombre">
+            <button class="vv-sign-btn"
+              (click)="signandoNombre ? pararSignadoNombre() : iniciarSignadoNombre()"
+              [class.vv-sign-btn-stop]="signandoNombre">
+              {{ signandoNombre ? '⏹ Parar' : '▶ Signar' }}
+            </button>
+          </div>
+
+          <!-- Secuencia de letras -->
+          <div class="vv-letter-sequence" *ngIf="letrasNombreValidas.length">
+            <div
+              *ngFor="let l of letrasNombreValidas; let i = index"
+              class="vv-seq-letter"
+              [class.vv-seq-done]="signandoNombre && i < letraSignandoIdx"
+              [class.vv-seq-active]="signandoNombre && i === letraSignandoIdx"
+              [class.vv-seq-pending]="!signandoNombre || i > letraSignandoIdx">
+              {{ l }}
+            </div>
+          </div>
+
+          <!-- Preview secuencia completa -->
+          <div class="vv-name-preview" *ngIf="letrasNombreValidas.length">
+            <div class="vv-preview-label">Secuencia completa · {{ nombreParaMostrar }}</div>
+            <div class="vv-name-chips">
+              <ng-container *ngFor="let l of letrasNombreValidas; let i = index; let last = last">
+                <div class="vv-chip" [class.vv-chip-active]="signandoNombre && i === letraSignandoIdx">
+                  {{ l }}
+                </div>
+                <span class="vv-chip-arrow" *ngIf="!last">›</span>
+              </ng-container>
+            </div>
+          </div>
+
+          <div class="vv-info-strip" style="margin-top: 1rem">
+            <div class="vv-info-icon">🔁</div>
+            <div class="vv-info-text">
+              <strong>Tip: guárdalo en tu perfil</strong>
+              <span>Una vez conozcas tu nombre en LSE, podrás guardarlo para que el avatar lo reproduzca en tu perfil.</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ─── PANTALLA 3: QUIZ A ─── -->
+        <ng-container *ngIf="pantalla === 'quizA'">
+          <div class="vv-badge-strip">
+            <div class="vv-badge vv-badge-abc">Modo A · Adivina</div>
+            <div class="vv-badge vv-badge-score">{{ quizACorrectas }} pts</div>
+          </div>
+
+          <div class="vv-quiz-progress">
+            <div class="vv-quiz-progress-fill" [style.width.%]="(quizAPreguntaNum / 10) * 100"></div>
+          </div>
+
+          <div class="vv-section-label">Pregunta {{ quizAPreguntaNum }}</div>
+          <div class="vv-title">¿Qué letra está<br>signando el avatar?</div>
+
+          <div class="vv-quiz-choices">
+            <div
+              *ngFor="let opcion of quizAOpciones"
+              class="vv-quiz-choice"
+              [class.vv-choice-correct]="quizAEsCorrecta(opcion)"
+              [class.vv-choice-wrong]="quizAEsIncorrecta(opcion)"
+              (click)="elegirLetraQuizA(opcion)">
+              {{ opcion.letra }}
+            </div>
+          </div>
+
+          <div class="vv-quiz-hint" *ngIf="!quizASeleccion">
+            ¿No ves bien? Usa el botón 🐢 en la barra de herramientas para ralentizar
+          </div>
+
+          <button class="vv-next-btn" *ngIf="quizASeleccion !== null" (click)="siguientePreguntaQuizA()">
+            Siguiente pregunta →
+          </button>
+        </ng-container>
+
+        <!-- ─── PANTALLA 4: QUIZ B ─── -->
+        <ng-container *ngIf="pantalla === 'quizB'">
+          <div class="vv-badge-strip">
+            <div class="vv-badge vv-badge-abc">Modo B · Identifica</div>
+            <div class="vv-badge vv-badge-score">{{ quizBCorrectas }} pts</div>
+          </div>
+
+          <div class="vv-quiz-progress">
+            <div class="vv-quiz-progress-fill" [style.width.%]="(quizBPreguntaNum / 10) * 100"></div>
+          </div>
+
+          <div class="vv-question-chip">🔍 Observa los 4 avatares</div>
+
+          <div class="vv-question-big">{{ quizBLetraPregunta?.letra }}</div>
+          <div class="vv-question-sub">¿Cuál de los cuatro avatares está signando esta letra?</div>
+
+          <div class="vv-select-hint" *ngIf="quizBSeleccion === null">
+            Haz clic en el avatar que creas correcto.<br>
+            <strong>Consejo:</strong> observa la forma y posición de los brazos.
+          </div>
+
+          <div class="vv-result-banner correct" *ngIf="quizBSeleccion !== null && quizBCeldaEsCorrecta(quizBSeleccion)">
+            <span>✅</span> ¡Correcto! El avatar {{ quizBCorrectoEnCelda + 1 }} estaba signando la <strong>{{ quizBLetraPregunta?.letra }}</strong>.
+          </div>
+          <div class="vv-result-banner wrong" *ngIf="quizBSeleccion !== null && quizBCeldaEsIncorrecta(quizBSeleccion)">
+            <span>❌</span> No era ese. El correcto era el <strong>avatar {{ quizBCorrectoEnCelda + 1 }}</strong>.
+          </div>
+
+          <button class="vv-next-btn" *ngIf="quizBSeleccion !== null" (click)="siguientePreguntaQuizB()">
+            Siguiente pregunta →
+          </button>
+        </ng-container>
+
+      </div><!-- /vv-action-scroll -->
+
+      <!-- ── FOOTER STATS ── -->
+      <div class="vv-footer">
+        <ng-container *ngIf="pantalla === 'aprende'">
+          <div class="vv-footer-stat"><span class="vv-footer-val">{{ letrasvistas.size }}</span> / {{ letras.length }} letras</div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat">Progreso: <span class="vv-footer-val">{{ progresoLetrasPct }}%</span></div>
+        </ng-container>
+        <ng-container *ngIf="pantalla === 'nombre'">
+          <div class="vv-footer-stat">Letras: <span class="vv-footer-val">{{ letrasNombreValidas.length }}</span></div>
+          <div class="vv-footer-sep" *ngIf="signandoNombre"></div>
+          <div class="vv-footer-stat" *ngIf="signandoNombre">Signando: <span class="vv-footer-val">{{ letraSignandoIdx + 1 }} / {{ letrasNombreValidas.length }}</span></div>
+        </ng-container>
+        <ng-container *ngIf="pantalla === 'quizA'">
+          <div class="vv-footer-stat">Correctas: <span class="vv-footer-val">{{ quizACorrectas }}</span></div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat">Errores: <span class="vv-footer-val">{{ quizAErrores }}</span></div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat vv-switch-mode" (click)="irA('quizB')">⇄ Modo B</div>
+        </ng-container>
+        <ng-container *ngIf="pantalla === 'quizB'">
+          <div class="vv-footer-stat">Correctas: <span class="vv-footer-val">{{ quizBCorrectas }}</span></div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat">Errores: <span class="vv-footer-val">{{ quizBErrores }}</span></div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat vv-switch-mode" (click)="irA('quizA')">⇄ Modo A</div>
+        </ng-container>
+      </div>
+
+    </div><!-- /vv-action-panel -->
+
+  </div><!-- /vv-split -->
+</div>
