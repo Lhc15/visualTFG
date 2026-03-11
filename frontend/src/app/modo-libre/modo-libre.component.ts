@@ -468,15 +468,15 @@ onToggleVeloc(event: Event) {
       this.statsService.endMode(this.currentStatsId).subscribe({
         next: (resp) => {
           console.log('Sesión libre cerrada. Duración(ms):', resp.durationMs);
-          this.router.navigate(['/modos']);
+          this.router.navigate(['/modos2']);
         },
         error: (err) => {
           console.error('Error al cerrar sesion libre:', err);
-          this.router.navigate(['/modos']);
+          this.router.navigate(['/modos2']);
         }
       });
     } else {
-      this.router.navigate(['/modos']);
+      this.router.navigate(['/modos2']);
     }
   }
 

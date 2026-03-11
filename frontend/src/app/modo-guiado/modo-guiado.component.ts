@@ -568,7 +568,7 @@ if (loopCheckbox) loopCheckbox.checked = false;
   }
 
   volverAModos(): void {
-    this.router.navigate(['/modos']);
+    this.router.navigate(['/modos2']);
   }
 
   /* =======================================================

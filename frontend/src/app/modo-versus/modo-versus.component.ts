@@ -439,7 +439,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
 
   volverAModos(): void {
     this.usedWords = [];
-    this.router.navigate(['/modos']);
+    this.router.navigate(['/modos2']);
   }
 
   nextTurn(): void {
@@ -605,7 +605,7 @@ export class ModoVersusComponent implements OnInit, OnDestroy {
     // Si quieres reiniciar, hazlo aquí
     // this.resetScores(); // si deseas
     // O redirigir a la pantalla de modos:
-    this.router.navigate(['/modos']);
+    this.router.navigate(['/modos2']);
   }
 
   onToggleLoop(event: Event): void {

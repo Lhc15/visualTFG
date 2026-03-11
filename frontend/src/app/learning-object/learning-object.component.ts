@@ -20,6 +20,6 @@ export class LearningObjectComponent {
   }
 
   close() {
-    this.router.navigate(['/modos']);
+    this.router.navigate(['/modos2']);
   }
 }

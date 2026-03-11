@@ -63,7 +63,7 @@ errorMessage: string | null = null; // mensaje general de error
       next: (response) => {
         console.log('Registro exitoso:', response);
         this.toastr.success('Usuario registrado con éxito', 'Éxito');
-        this.router.navigate(['/modos']); // Redirigir a la página 'home'
+        this.router.navigate(['/modos2']); // Redirigir a la página 'home'
       },
       error: (error) => {
         console.log('Error en registro:', error); // Añade este log para depuración

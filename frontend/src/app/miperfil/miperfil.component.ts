@@ -258,7 +258,7 @@ export class MiperfilComponent implements OnInit {
   }
 
   volverAModos(): void {
-    this.router.navigate(['/modos']);
+    this.router.navigate(['/modos2']);
   }
 
   updatePassword() {

@@ -119,6 +119,7 @@
   left: 50%;
   transform: translateX(-50%);
   width: 70%;
+  overflow: hidden;
 }
 
 app-canvas {
@@ -172,7 +173,8 @@ app-canvas {
   justify-content: center;
   padding: 40px 48px;
   position: relative;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Detalle decorativo top-right */

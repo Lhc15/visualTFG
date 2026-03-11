@@ -259,7 +259,7 @@ export class ModoExamenComponent implements OnInit, OnDestroy {
   }
 
   volverAModos(): void {
-    this.router.navigate(['/modos']);
+    this.router.navigate(['/modos2']);
   }
   private reproducirAnimacion(loop: boolean): void {
     const animacionesUrls = this.animaciones.map(a =>
