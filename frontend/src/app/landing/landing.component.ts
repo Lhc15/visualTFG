@@ -93,25 +93,37 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
     const bg = document.getElementById('lseBg');
     if (!bg) return;
 
-    const spawn = () => {
+    const spawn = (prePositioned = false) => {
       const el = document.createElement('span');
       el.className = 'lse-letter';
       el.textContent = this.LSE_CHARS[Math.floor(Math.random() * this.LSE_CHARS.length)];
       const size = 48 + Math.random() * 120;
       el.style.fontSize = size + 'px';
       el.style.left = (Math.random() * 90) + '%';
-      el.style.bottom = '-150px';
       el.style.setProperty('--rot', (Math.random() * 40 - 20) + 'deg');
       const dur = 8 + Math.random() * 10;
       el.style.animationDuration = dur + 's';
+
+      if (prePositioned) {
+        // Ya visible en pantalla: position aleatoria en Y, delay negativo para simular mid-flight
+        const progress = 0.1 + Math.random() * 0.8;
+        el.style.bottom = (progress * 110) + 'vh';
+        el.style.animationDelay = -(progress * dur) + 's';
+      } else {
+        el.style.bottom = '-150px';
+        el.style.animationDelay = '0s';
+      }
+
       bg.appendChild(el);
-      setTimeout(() => el.remove(), dur * 1000);
+      const lifetime = (dur + Math.abs(parseFloat(el.style.animationDelay))) * 1000 + 500;
+      setTimeout(() => el.remove(), lifetime);
     };
 
-    // Spawn inmediato y denso desde el primer frame
-    for (let i = 0; i < 18; i++) spawn();
-    // Spawn continuo
-    this.lseInterval = setInterval(spawn, 700);
+    // Letras ya flotando al cargar distribuidas por toda la pantalla
+    for (let i = 0; i < 22; i++) spawn(true);
+
+    // Spawn continuo desde abajo
+    this.lseInterval = setInterval(() => spawn(false), 700);
   }
 
   private initParallax() {

@@ -41,7 +41,7 @@ export class Modos2Component implements AfterViewInit {
       id: 'conv',
       label: '¿Conversamos?',
       sublabel: 'Diálogo libre · Nivel A1',
-      accentColor: '#E04A1A',
+      accentColor: '#8B00A8',
       progress: 32,
       locked: false,
       ctaLabel: 'Empezar',

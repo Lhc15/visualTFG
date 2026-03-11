@@ -28,7 +28,7 @@
 }
 
 .logo-accent {
-  color: var(--color-brand, #E04A1A);
+  color: var(--color-brand, #8B00A8);
 }
 
 .modos2-nav {
@@ -55,7 +55,7 @@
   width: 2.2rem;
   height: 2.2rem;
   border-radius: 50%;
-  background: var(--color-brand, #E04A1A);
+  background: var(--color-brand, #8B00A8);
   color: #fff;
   font-weight: 700;
   font-size: 0.85rem;
@@ -88,7 +88,7 @@
 .modos2-hero h1 em {
   font-style: italic;
   font-weight: 300;
-  color: var(--color-brand, #E04A1A);
+  color: var(--color-brand, #8B00A8);
 }
 
 .modos2-hero p {
@@ -268,7 +268,7 @@
 }
 
 .modos2-bottom strong {
-  color: var(--color-brand, #E04A1A);
+  color: var(--color-brand, #8B00A8);
 }
 
 /* ── RESPONSIVE ───────────────────────────────────────── */

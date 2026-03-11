@@ -28,7 +28,7 @@
 .side-left {
   flex: 1;
   position: relative;
-  background: var(--color-brand, #E04A1A);
+  background: var(--color-brand, #8B00A8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,7 +72,7 @@
   border-radius: 50%;
   background: radial-gradient(ellipse at 50% 80%,
     rgba(255,255,255,0.22) 0%,
-    rgba(255,130,80,0.15) 35%,
+    rgba(180,0,220,0.15) 35%,
     transparent 70%
   );
   z-index: 2;
@@ -139,8 +139,8 @@ app-canvas {
   text-align: center;
   background: linear-gradient(to right,
     transparent 0%,
-    rgba(160,35,8,0.55) 15%,
-    rgba(160,35,8,0.55) 85%,
+    rgba(90,0,110,0.55) 15%,
+    rgba(90,0,110,0.55) 85%,
     transparent 100%
   );
   backdrop-filter: blur(8px);
@@ -182,7 +182,7 @@ app-canvas {
   top: -80px; right: -80px;
   width: 280px; height: 280px;
   border-radius: 50%;
-  background: radial-gradient(ellipse, rgba(224,74,26,0.07) 0%, transparent 70%);
+  background: radial-gradient(ellipse, rgba(139,0,168,0.07) 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -208,7 +208,7 @@ app-canvas {
   letter-spacing: 0.22em;
   text-transform: uppercase;
   font-weight: 600;
-  color: var(--color-brand, #E04A1A);
+  color: var(--color-brand, #8B00A8);
   margin-bottom: 8px;
   font-family: 'DM Sans', sans-serif;
 }
@@ -223,7 +223,7 @@ app-canvas {
 }
 .headline em {
   font-style: italic;
-  color: var(--color-brand, #E04A1A);
+  color: var(--color-brand, #8B00A8);
 }
 
 .subline {
@@ -265,7 +265,7 @@ app-canvas {
 
 .tab.active {
   color: var(--color-text-dark, #1C0E0A);
-  border-bottom-color: var(--color-brand, #E04A1A);
+  border-bottom-color: var(--color-brand, #8B00A8);
 }
 
 /* ── Contenido pestañas (login/registro heredan sus estilos) ── */

@@ -46,7 +46,7 @@
 }
 
 .input-field:focus {
-  border-color: #E04A1A;
+  border-color: #8B00A8;
 }
 
 .form-group.show-error .input-field {
@@ -79,7 +79,7 @@
 }
 
 .toggle-password-btn:hover {
-  color: #E04A1A;
+  color: #8B00A8;
 }
 
 /* ── Mensajes de error ── */
@@ -116,7 +116,7 @@
 .btn {
   width: 100%;
   padding: 14px;
-  background: #E04A1A;
+  background: #8B00A8;
   color: #fff;
   border: none;
   border-radius: 10px;
