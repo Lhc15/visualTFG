@@ -41,9 +41,9 @@ const obtenerPalabra = async (req, res) => {
 // 4. Devuelve un estado 201 junto con la nueva palabra creada.
 const crearPalabra = async (req, res) => {
   try {
-    const { palabra, explicacion, categoria, gltf, clipName, nivel, orden } = req.body;
+    const { palabra, explicacion, categoria, gltf, clipName, nivel, orden, tiposLexicos, enMotor } = req.body;
 
-    const nueva = new Palabra({ palabra, explicacion, categoria, gltf, clipName, nivel, orden });
+    const nueva = new Palabra({ palabra, explicacion, categoria, gltf, clipName, nivel, orden, tiposLexicos, enMotor });
     await nueva.save();
     await nueva.populate('categoria', 'nombre');
 
@@ -68,17 +68,18 @@ const editarPalabra = async (req, res) => {
   console.log('[editarPalabra] req.body:', req.body);
   console.log('Recibiendo petición para actualizar palabra:', id);
   console.log('Datos recibidos:', req.body);
-  const { palabra, explicacion, categoria, gltf, clipName, nivel, orden } = req.body;
+  const { palabra, explicacion, categoria, gltf, clipName, nivel, orden, tiposLexicos, enMotor } = req.body;
 
-  // 1) Construye el objeto sólo con lo que venga en el body
   const update = {};
-  if (palabra     !== undefined) update.palabra     = palabra;
-  if (explicacion !== undefined) update.explicacion = explicacion;
-  if (categoria   !== undefined) update.categoria   = categoria;
-  if (gltf        !== undefined) update.gltf        = gltf;
-  if (clipName    !== undefined) update.clipName    = clipName;
-  if (nivel       !== undefined) update.nivel       = nivel;
-  if (orden       !== undefined) update.orden       = orden;
+  if (palabra       !== undefined) update.palabra       = palabra;
+  if (explicacion   !== undefined) update.explicacion   = explicacion;
+  if (categoria     !== undefined) update.categoria     = categoria;
+  if (gltf          !== undefined) update.gltf          = gltf;
+  if (clipName      !== undefined) update.clipName      = clipName;
+  if (nivel         !== undefined) update.nivel         = nivel;
+  if (orden         !== undefined) update.orden         = orden;
+  if (tiposLexicos  !== undefined) update.tiposLexicos  = tiposLexicos;
+  if (enMotor       !== undefined) update.enMotor       = enMotor;
 
   // (Opcional) si no hay nada que actualizar, cortas:
   if (Object.keys(update).length === 0) {
@@ -238,4 +239,3 @@ module.exports = {
     obtenerPalabrasPorNivel,
     editarAnimacion
 };
-

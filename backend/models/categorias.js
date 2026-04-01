@@ -11,6 +11,14 @@ const CategoriaSchema = Schema({
         type: String,
         required: true,
     },
+    // Indica a qué sección de la app pertenece esta categoría.
+    // Permite separar qué categorías van a Aprende/vocabulario,
+    // Aprende/gramatica o Abecedario.
+    modulo: {
+        type: String,
+        enum: ['abecedario', 'vocabulario', 'gramatica'],
+        required: false
+    }
 });
 
 module.exports = model('Categoria', CategoriaSchema);

@@ -34,7 +34,22 @@ const PalabraSchema = Schema({
         type: Number,
         default: 0,
         required: true
-      }      
+    },
+    // Roles gramaticales que puede desempenar esta palabra.
+    // Array porque una misma seña puede tener varios roles segun contexto.
+    // Valores: "S" (sujeto) | "O" (objeto) | "V" (verbo) |
+    //          "ADJ" (adjetivo) | "INT" (particula interrogativa) | "FX" (formula fija)
+    tiposLexicos: {
+        type: [String],
+        enum: ['S', 'O', 'V', 'ADJ', 'INT', 'FX'],
+        default: []
+    },
+    // Flag operativo: true solo cuando la animacion Blender esta lista
+    // y la palabra puede entrar en el motor de generacion de frases.
+    enMotor: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = model('Palabra', PalabraSchema);

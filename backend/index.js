@@ -12,12 +12,12 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 require('dotenv').config();
 const { dbConnection } = require('./database/configdb');
-const usuariosRoute = require('./routes/usuarios');
-const loginRoute = require('./routes/auth');
-const palabrasRoutes = require('./routes/palabras');
+const usuariosRoute    = require('./routes/usuarios');
+const loginRoute       = require('./routes/auth');
+const palabrasRoutes   = require('./routes/palabras');
 const categoriasRoutes = require('./routes/categorias');
-const gltfRoutes = require('./routes/gltf');
-const examenRoutes = require('./routes/examen');
+const gltfRoutes       = require('./routes/gltf');
+const practicaRoutes   = require('./routes/practica');
 
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -66,18 +66,15 @@ app.get('/api', (req, res) => {
     res.json({ message: 'API funcionando correctamente' });
 });
 
-app.use('/api/usuarios', usuariosRoute);
-app.use('/api/login', loginRoute);
+app.use('/api/usuarios',   usuariosRoute);
+app.use('/api/login',      loginRoute);
 app.use('/api/categorias', categoriasRoutes);
-app.use('/api/palabras', palabrasRoutes);
-app.use('/api/gltf', gltfRoutes);
-app.use('/api/stats', require('./routes/stats'));
-app.use('/api/examen', examenRoutes);
+app.use('/api/palabras',   palabrasRoutes);
+app.use('/api/gltf',       gltfRoutes);
+app.use('/api/practica',   practicaRoutes);
 
 
 // Abrir la aplicacíon en el puerto 3000
 app.listen(process.env.PORT, () => {
     console.log('Servidor corriendo en el puerto ', process.env.PORT);
 });
-
-
