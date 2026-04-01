@@ -49,12 +49,16 @@ const crearCategoria = async (req, res) => {
 // 3. Retorna la categoría actualizada o un error 404 si no existe.
 const editarCategoria = async (req, res) => {
     const { id } = req.params;
-    const { nombre } = req.body;
+    const { nombre, modulo } = req.body;
+
+    const update = {};
+    if (nombre !== undefined) update.nombre = nombre;
+    if (modulo !== undefined) update.modulo = modulo;
 
     try {
         const categoriaEditada = await Categoria.findByIdAndUpdate(
             id,
-            { nombre },
+            update,
             { new: true } // 'new: true' para obtener el documento actualizado
         );
         if (!categoriaEditada) {
@@ -99,4 +103,3 @@ module.exports = {
     editarCategoria,
     eliminarCategoria,
 };
-

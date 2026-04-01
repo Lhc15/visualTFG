@@ -19,6 +19,7 @@ import { ModoVersusComponent } from './modo-versus/modo-versus.component';
 import { LearningObjectComponent } from './learning-object/learning-object.component';
 import { AbecedarioComponent } from './abecedario/abecedario.component';
 import { ConversamosComponent } from './conversamos/conversamos.component';
+import { ComunicacionComponent } from './comunicacion/comunicacion.component';
 import { AprendeComponent } from './aprende/aprende.component';
 
 export const routes: Routes = [
@@ -30,6 +31,7 @@ export const routes: Routes = [
 
   // Aprende
   { path: 'aprende',              component: AprendeComponent },
+  { path: 'aprende/comunicacion', component: ComunicacionComponent },
 
   // Admin
   { path: 'admin', component: AdminComponent, canActivate: [AdminRoleGuard],

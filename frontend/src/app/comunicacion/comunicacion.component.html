@@ -1,1 +1,212 @@
-<p>comunicacion works!</p>
+<div class="vv-layout">
+
+  <!-- TOPNAV -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="volver()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      {{ breadcrumbBack }}
+    </button>
+    <div class="vv-breadcrumb">
+      <span [class.vv-bc-dim]="vista !== 'indice'" (click)="vista !== 'indice' && volverAIndice()">Comunicación</span>
+      <ng-container *ngIf="vista === 'subindice' && bloqueActivo">
+        <span class="vv-bc-sep">›</span>
+        <span>{{ bloqueActivo.titulo }}</span>
+      </ng-container>
+      <ng-container *ngIf="vista === 'bloque' && bloqueActivo">
+        <span class="vv-bc-sep">›</span>
+        <span *ngIf="bloqueActivo.subBloques?.length" class="vv-bc-dim" (click)="volverASubIndice()">{{ bloqueActivo.titulo }}</span>
+        <span *ngIf="!bloqueActivo.subBloques?.length">{{ bloqueActivo.titulo }}</span>
+        <ng-container *ngIf="subBloqueActivo">
+          <span class="vv-bc-sep">›</span>
+          <span>{{ subBloqueActivo.titulo }}</span>
+        </ng-container>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- SPLIT -->
+  <div class="vv-split">
+
+    <!-- ══ PANEL IZQUIERDO ══ -->
+    <ng-container *ngIf="vista === 'indice' || vista === 'subindice' || diapositiva?.tipo === 'layout-a'">
+      <div class="vv-avatar-panel" #avatarPanel>
+        <div class="vv-avatar-glow"></div>
+        <div class="vv-subtitle" *ngIf="diapositiva?.schema && tokenActivo >= 0">
+          {{ diapositiva!.schema!.tokens[tokenActivo].texto }}
+        </div>
+        <app-tool-menu
+          *ngIf="vista === 'bloque' && diapositiva?.schema"
+          [isPlaying]="isPlaying"
+          [currentPlaybackRate]="currentPlaybackRate"
+          (rateChange)="setPlaybackRate($event)"
+          [isLooping]="isLooping"
+          [showWebcam]="showWebcam"
+          [disabled]="false"
+          (playClicked)="onPlayClicked()"
+          (loopToggled)="handleLoop($event)"
+          (webcamToggled)="toggleWebcam()">
+        </app-tool-menu>
+        <div class="vv-canvas-wrap">
+          <app-canvas [cameraZ]="4.3" (animationEnded)="onAnimationEnded()"></app-canvas>
+        </div>
+        <div class="vv-webcam-wrap" *ngIf="showWebcam">
+          <video #videoElement class="vv-webcam-video" autoplay></video>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="vista === 'bloque' && diapositiva?.tipo === 'layout-b'">
+      <div class="com-img-panel">
+        <div class="com-img-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+          </svg>
+          <span>Imagen ilustrativa</span>
+        </div>
+        <div class="com-img-caption">
+          <div class="com-caption-title">{{ diapositiva!.captionIzq }}</div>
+          <div class="com-caption-sub">{{ diapositiva!.subtituloIzq }}</div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ══ PANEL DERECHO ══ -->
+    <div class="vv-action-panel">
+      <div class="vv-action-scroll">
+
+        <!-- ── ÍNDICE PRINCIPAL ── -->
+        <ng-container *ngIf="vista === 'indice'">
+          <div class="com-indice">
+            <div class="com-eyebrow">Comunicación · LSE</div>
+            <div class="com-title">Elige un <em>bloque</em></div>
+            <div class="com-list">
+              <div class="com-item" *ngFor="let bloque of bloques" (click)="abrirBloque(bloque)">
+                <div class="com-item-num">{{ bloque.numero }}</div>
+                <div class="com-item-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#E04A1A" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                </div>
+                <div class="com-item-body">
+                  <div class="com-item-name">{{ bloque.titulo }}</div>
+                  <div class="com-item-sub">{{ bloque.subtitulo }}</div>
+                </div>
+                <div class="com-item-arrow">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ── SUBÍNDICE (ENM / Preguntas) ── -->
+        <ng-container *ngIf="vista === 'subindice' && bloqueActivo">
+          <div class="com-indice">
+            <div class="com-eyebrow">{{ bloqueActivo.titulo }}</div>
+            <div class="com-title">Elige una <em>sección</em></div>
+            <div class="com-list">
+              <div class="com-item" *ngFor="let sub of bloqueActivo.subBloques" (click)="abrirSubBloque(sub)">
+                <div class="com-item-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#E04A1A" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div class="com-item-body">
+                  <div class="com-item-name">{{ sub.titulo }}</div>
+                  <div class="com-item-sub">{{ sub.subtitulo }}</div>
+                </div>
+                <div class="com-item-arrow">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ── BLOQUE / DIAPOSITIVA ── -->
+        <ng-container *ngIf="vista === 'bloque' && diapositiva">
+          <div class="com-topnav">
+            <button class="com-nav-btn com-nav-prev" [disabled]="esPrimeraDiapositiva" (click)="anterior()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              Anterior
+            </button>
+            <div class="com-dots-wrap">
+              <div class="com-dots">
+                <div class="com-dot" *ngFor="let d of diapositivasActivas; let i = index" [class.active]="i === diapositivaIdx"></div>
+              </div>
+              <div class="com-count">{{ diapositivaIdx + 1 }} de {{ totalDiapositivas }}</div>
+            </div>
+            <button class="com-nav-btn com-nav-next" [disabled]="esUltimaDiapositiva" (click)="siguiente()">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+          </div>
+
+          <div class="com-body">
+            <div class="com-breadcrumb">
+              Comunicación ›
+              <span *ngIf="!subBloqueActivo">{{ bloqueActivo!.titulo }}</span>
+              <span *ngIf="subBloqueActivo">{{ subBloqueActivo.titulo }}</span>
+            </div>
+
+            <div class="com-bloque-title">
+              {{ diapositiva.titulo }} <em *ngIf="diapositiva.tituloItalica">{{ diapositiva.tituloItalica }}</em>
+            </div>
+            <div class="com-lead">{{ diapositiva.lead }}</div>
+
+            <div class="com-rule" *ngIf="diapositiva.regla">
+              <div class="com-rule-label">{{ diapositiva.regla.label }}</div>
+              <div class="com-rule-text">{{ diapositiva.regla.texto }}</div>
+            </div>
+
+            <div class="com-schema-wrap" *ngIf="diapositiva.schema">
+              <div class="com-schema-label">{{ diapositiva.schema.label || 'Ejemplo' }}</div>
+              <div class="com-schema">
+                <ng-container *ngFor="let token of diapositiva.schema.tokens; let i = index; let last = last">
+                  <div class="com-token" [ngClass]="'rol-' + token.rol" [class.active]="tokenActivo === i">{{ token.texto }}</div>
+                  <span class="com-plus" *ngIf="!last">+</span>
+                </ng-container>
+              </div>
+              <div class="com-schema-legend">
+                <div class="com-leg"><div class="com-leg-dot s"></div>Sujeto</div>
+                <div class="com-leg"><div class="com-leg-dot o"></div>Objeto</div>
+                <div class="com-leg"><div class="com-leg-dot v"></div>Verbo</div>
+                <div class="com-leg"><div class="com-leg-dot int"></div>Partícula</div>
+                <div class="com-leg"><div class="com-leg-dot enm"></div>ENM</div>
+              </div>
+            </div>
+
+            <div class="com-lead" *ngIf="diapositiva.textoExtra">{{ diapositiva.textoExtra }}</div>
+
+            <ng-container *ngIf="diapositiva.derechoTipo === 'lista' || diapositiva.derechoTipo === 'reglas'">
+              <div class="com-rule-list">
+                <div class="com-rule-item" *ngFor="let item of diapositiva.items">
+                  <div class="com-rule-icon" [class.ok]="item.tipo === 'ok'" [class.no]="item.tipo === 'no'">
+                    <svg *ngIf="item.tipo === 'ok'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+                    <svg *ngIf="item.tipo === 'no'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </div>
+                  <div class="com-rule-text">{{ item.texto }}</div>
+                </div>
+              </div>
+            </ng-container>
+
+            <div class="com-highlight" *ngIf="diapositiva.highlight">
+              <div class="com-hl-title">{{ diapositiva.highlight.titulo }}</div>
+              <div class="com-hl-text">{{ diapositiva.highlight.texto }}</div>
+            </div>
+            <div class="com-nota" *ngIf="diapositiva.nota">{{ diapositiva.nota }}</div>
+            <div class="com-tip" *ngIf="diapositiva.tip">
+              <div class="com-tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+              <div class="com-tip-text">{{ diapositiva.tip }}</div>
+            </div>
+          </div>
+
+          <div class="com-footer" *ngIf="esUltimaDiapositiva && siguienteBloque" (click)="irASiguienteBloque()">
+            <div>
+              <div class="com-footer-label">Siguiente bloque</div>
+              <div class="com-footer-title">{{ siguienteBloque!.titulo }}</div>
+            </div>
+            <svg viewBox="0 0 24 24" fill="none" stroke="#E04A1A" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+  </div>
+</div>

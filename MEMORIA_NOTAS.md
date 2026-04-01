@@ -304,5 +304,11 @@ Todos estos datos se pueden calcular a partir de `PracticaEntry` (que registra c
 - Implementación del algoritmo de priorización en el frontend (servicio Angular que ordena las palabras antes de pasarlas al motor de ejercicios)
 
 ---
+
+## [CONTENIDO_ESTATICO] Decisión sobre el contenido de la sección Comunicación
+
+Para la memoria del TFG esto es perfectamente válido y defendible — el contenido de comunicación es curricular y estable, no necesita gestión dinámica. Es una decisión de diseño consciente, no una limitación.
+
+---
 <!-- Añadir nuevas secciones aquí siguiendo el mismo formato -->
 <!-- Palabra clave: [NOMBRE_SECCION] en mayúsculas para Ctrl+F -->

@@ -92,6 +92,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   irAComunicacion(): void {
+    this.router.navigate(['/aprende/comunicacion']); return;
     this.vista = 'comunicacion';
   }
 
