@@ -64,28 +64,63 @@
 
         <!-- ══ PANTALLA 0: SELECTOR ══ -->
         <ng-container *ngIf="vista === 'selector'">
-          <h1 class="vv-title">¿Qué quieres <em>aprender</em>?</h1>
-          <p class="vv-section-label">Elige una sección</p>
-
-          <div class="vv-cat-grid">
-            <div class="vv-cat-card" (click)="irAVocabulario()">
-              <div class="vv-cat-title">Vocabulario</div>
-              <div class="vv-cat-sub">Signos por categorías temáticas</div>
-              <div class="vv-cat-progress-track">
-                <div class="vv-cat-progress-fill" style="width: 0%"></div>
-              </div>
+          <div class="apr-selector">
+            <div class="apr-header">
+              <div class="apr-eyebrow">Aprende · Visual Voices</div>
+              <div class="apr-title">¿Por dónde quieres <em>empezar?</em></div>
             </div>
-            <div class="vv-cat-card" (click)="irAComunicacion()">
-              <div class="vv-cat-title">Comunicación</div>
-              <div class="vv-cat-sub">Gramática y normas de la LSE</div>
-              <div class="vv-cat-progress-track">
-                <div class="vv-cat-progress-fill" style="width: 0%"></div>
+
+            <div class="apr-cards">
+
+              <div class="apr-card apr-card--v" (click)="irAVocabulario()">
+                <div class="apr-deco">V</div>
+                <div class="apr-card-top">
+                  <span class="apr-pill apr-pill--v">Vocabulario</span>
+                </div>
+                <div class="apr-card-body">
+                  <div class="apr-card-title">Signos organizados por categorías temáticas</div>
+                  <div class="apr-card-sub">Explora y aprende a tu ritmo con el avatar</div>
+                  <div class="apr-card-footer">
+                    <div class="apr-topics">
+                      <span class="apr-topic apr-topic--v">Familia</span>
+                      <span class="apr-topic apr-topic--v">Comida</span>
+                      <span class="apr-topic apr-topic--v">Verbos</span>
+                    </div>
+                    <button class="apr-cta apr-cta--v">
+                      Explorar
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                </div>
               </div>
+
+              <div class="apr-card apr-card--c" (click)="irAComunicacion()">
+                <div class="apr-deco">C</div>
+                <div class="apr-card-top">
+                  <span class="apr-pill apr-pill--c">Comunicación</span>
+                </div>
+                <div class="apr-card-body">
+                  <div class="apr-card-title">Gramática y normas de la LSE</div>
+                  <div class="apr-card-sub">Orden de frases, expresión no manual, género</div>
+                  <div class="apr-card-footer">
+                    <div class="apr-topics">
+                      <span class="apr-topic apr-topic--c">SOV</span>
+                      <span class="apr-topic apr-topic--c">ENM</span>
+                      <span class="apr-topic apr-topic--c">Género</span>
+                    </div>
+                    <button class="apr-cta apr-cta--c">
+                      Aprender
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
             </div>
           </div>
         </ng-container>
 
-        <!-- ══ PANTALLA 1: CATEGORÍAS DE VOCABULARIO ══ -->
+        <!-- ══ PANTALLA 1: CATEGORÍAS ══ -->
         <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
           <h1 class="vv-title">Elige una <em>categoría</em></h1>
           <div class="vv-cat-grid">
@@ -99,7 +134,7 @@
           </div>
         </ng-container>
 
-        <!-- ══ PANTALLA 2: PALABRAS DE CATEGORÍA ══ -->
+        <!-- ══ PANTALLA 2: PALABRAS ══ -->
         <ng-container *ngIf="vista === 'vocabulario' && selectedCategory">
           <h2 class="vv-title">{{ selectedCategory.nombre }}</h2>
           <div class="vv-section-label">Signos del tema</div>
@@ -120,7 +155,6 @@
               </button>
             </div>
           </div>
-
           <div class="vv-exercises-divider"><span>Practica este tema</span></div>
           <div class="vv-exercises-banner">
             <div class="vv-exercises-text">
@@ -142,7 +176,9 @@
       <!-- FOOTER -->
       <div class="vv-footer">
         <ng-container *ngIf="vista === 'selector'">
-          <div class="vv-footer-stat">Aprende · <span class="vv-footer-val">Visual Voices</span></div>
+          <div class="vv-footer-stat">Nivel <span class="vv-footer-val">A1</span></div>
+          <div class="vv-footer-sep"></div>
+          <div class="vv-footer-stat">Fuente <span class="vv-footer-val">SIGNOcampus · CNSE</span></div>
         </ng-container>
         <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
           <div class="vv-footer-stat"><span class="vv-footer-val">{{ categorias.length }}</span> categorías</div>
