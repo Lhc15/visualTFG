@@ -7,7 +7,7 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class PalabrasService {
-    private baseUrl = `${environment.apiUrl}/palabras`;
+  private baseUrl = `${environment.apiUrl}/palabras`;
 
   constructor(private http: HttpClient) {}
 
@@ -26,15 +26,12 @@ export class PalabrasService {
   obtenerPalabraPorIndice(indice: number) {
     return this.http.get<{ texto: string }>(`/api/palabras/${indice}`);
   }
-  
-  
 
   crearPalabra(data: any): Observable<any> {
     return this.http.post(`${this.baseUrl}`, data, { withCredentials: true });
   }
 
   editarPalabra(id: string, data: any): Observable<any> {
-    console.log('Service editarPalabra payload', data);
     return this.http.put(`${this.baseUrl}/${id}`, data, { withCredentials: true });
   }
 
@@ -50,12 +47,14 @@ export class PalabrasService {
     return this.http.get<number>(`${this.baseUrl}/nivel/total`);
   }
 
-  asignarAnimacion(id: string, data: { gltf: string; clipName: string; }): Observable<any> {
-    return this.http.patch(
-      `${this.baseUrl}/${id}/animacion`,
-      data,
-      { withCredentials: true }
-    );
+  asignarAnimacion(id: string, data: { gltf: string; clipName: string }): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/${id}/animacion`, data, { withCredentials: true });
   }
-  
+
+  obtenerPalabrasMotor(tipo?: string): Observable<any> {
+    const url = tipo
+      ? `${environment.apiUrl}/practica/motor?tipo=${tipo}`
+      : `${environment.apiUrl}/practica/motor`;
+    return this.http.get(url, { withCredentials: true });
+  }
 }
