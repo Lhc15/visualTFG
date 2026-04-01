@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CanvasComponent } from '../canvas/canvas.component';
@@ -237,7 +237,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     }
   ];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private cdr: ChangeDetectorRef) {}
   ngOnInit(): void {}
   ngAfterViewInit(): void { this.waitForSkinAndResize(); }
 
@@ -325,7 +325,11 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
   }
 
   // ── Avatar ───────────────────────────────────────────────
-  resetAvatar(): void { this.isPlaying = false; this.isLooping = false; this.tokenActivo = -1; this.canvasRef?.stopLoop(true); }
+  resetAvatar(): void {
+    this.isPlaying = false; this.isLooping = false; this.tokenActivo = -1; this.canvasRef?.stopLoop(true);
+    this.cdr.detectChanges();
+    setTimeout(() => this.waitForSkinAndResize(), 50);
+  }
   onPlayClicked(): void { this.isLooping = false; this.isPlaying = true; this.reproducirSchema(); }
   onAnimationEnded(): void { this.isPlaying = false; this.tokenActivo = -1; }
   setPlaybackRate(r: number): void { this.currentPlaybackRate = r; this.canvasRef?.setPlaybackRate(r); }
