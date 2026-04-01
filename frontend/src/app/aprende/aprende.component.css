@@ -1,0 +1,350 @@
+/* ═══════════════════════════════════════
+   APRENDE — LSE
+   Variables heredadas de styles.css
+═══════════════════════════════════════ */
+
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.vv-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background: var(--color-bg, #F9F6F3);
+  overflow: hidden;
+}
+
+.vv-topnav {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: 0.75rem 2rem;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.vv-back-btn {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  font-weight: 500;
+  color: #4a5568;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: .35rem .75rem;
+  border-radius: 999px;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: background .15s;
+}
+.vv-back-btn:hover { background: var(--color-bg, #F9F6F3); }
+.vv-back-btn svg { width: 13px; height: 13px; }
+
+.vv-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  color: #9ca3af;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-breadcrumb span:last-child { color: #1C2B2A; font-weight: 500; }
+.vv-bc-dim { cursor: pointer; }
+.vv-bc-dim:hover { color: #1C2B2A; }
+.vv-bc-sep { color: #9ca3af; }
+
+.vv-nav-right { margin-left: auto; }
+
+.vv-avatar-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: #8B00A8;
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  display: grid;
+  place-items: center;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.vv-split {
+  display: grid;
+  grid-template-columns: 58% 42%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.vv-avatar-panel {
+  background: var(--color-bg, #F9F6F3);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.vv-avatar-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 75%, rgba(244,169,64,.10) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.vv-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.vv-canvas-wrap ::ng-deep app-canvas {
+  display: block;
+  width: 70%;
+  height: 110%;
+}
+
+.vv-canvas-wrap ::ng-deep .button-container {
+  display: none;
+}
+
+.vv-subtitle {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  padding: 14px 0;
+  background: linear-gradient(to right,
+    transparent 0%,
+    rgba(249,246,243,0.65) 12%,
+    rgba(249,246,243,0.65) 88%,
+    transparent 100%
+  );
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #1C0E0A;
+  text-align: center;
+  z-index: 20;
+  pointer-events: none;
+}
+
+:host ::ng-deep app-tool-menu {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+}
+:host ::ng-deep .radio-input {
+  position: static !important;
+  transform: none !important;
+  border-radius: 8px 0 0 8px !important;
+}
+
+.vv-webcam-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+}
+.vv-webcam-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.vv-action-panel {
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(0,0,0,.07);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.vv-action-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.75rem 2rem 1rem;
+  min-height: 0;
+}
+
+.vv-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1C2B2A;
+  line-height: 1.2;
+  margin-bottom: 1.25rem;
+}
+.vv-title em {
+  font-style: italic;
+  font-weight: 300;
+  color: #F4A940;
+}
+
+.vv-cat-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .9rem;
+}
+
+.vv-cat-card {
+  background: var(--color-bg, #F9F6F3);
+  border-radius: .9rem;
+  padding: 1.1rem 1.1rem .9rem;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all .18s;
+}
+.vv-cat-card:hover {
+  border-color: #F4A940;
+  box-shadow: 0 4px 20px rgba(244,169,64,.15);
+  transform: translateY(-2px);
+}
+
+.vv-cat-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: .95rem;
+  font-weight: 700;
+  color: #1C2B2A;
+  margin-bottom: .2rem;
+}
+.vv-cat-sub {
+  font-size: .72rem;
+  color: #6b7280;
+  margin-bottom: .7rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-cat-progress-track {
+  height: 3px;
+  background: rgba(0,0,0,.08);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.vv-cat-progress-fill {
+  height: 100%;
+  background: #F4A940;
+  border-radius: 99px;
+}
+
+.vv-section-label {
+  font-size: .67rem;
+  font-weight: 600;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #9ca3af;
+  margin-bottom: .6rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.vv-word-list {
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+  margin-bottom: 1.5rem;
+}
+
+.vv-word-row {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .6rem .85rem;
+  border-radius: .65rem;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  background: var(--color-bg, #F9F6F3);
+  transition: all .14s;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-word-row:hover { border-color: rgba(244,169,64,.35); background: #f0fdf4; }
+.vv-word-active { border-color: #F4A940 !important; background: #f0fdf4 !important; }
+
+.vv-word-status {
+  width: 20px; height: 20px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: .6rem;
+  background: rgba(0,0,0,.07);
+  color: #9ca3af;
+}
+.vv-status-signing { background: #F4A940 !important; color: #fff !important; font-size: .55rem !important; }
+
+.vv-word-name { font-size: .88rem; font-weight: 500; color: #1C2B2A; flex: 1; }
+.vv-word-active .vv-word-name { font-weight: 600; color: #F4A940; }
+
+.vv-sign-cta {
+  display: flex; align-items: center; gap: .25rem;
+  font-size: .68rem; font-weight: 600; color: #F4A940;
+  background: none; border: none; cursor: pointer;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  opacity: 0; transition: opacity .14s; padding: 0;
+}
+.vv-sign-cta svg { width: 10px; height: 10px; }
+.vv-word-row:hover .vv-sign-cta,
+.vv-word-active .vv-sign-cta { opacity: 1; }
+
+.vv-exercises-divider {
+  display: flex; align-items: center; gap: .65rem; margin: .25rem 0 .9rem;
+}
+.vv-exercises-divider::before,
+.vv-exercises-divider::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,.07); }
+.vv-exercises-divider span {
+  font-size: .67rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  color: #9ca3af; white-space: nowrap; font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.vv-exercises-banner {
+  background: #F4A940; border-radius: .9rem; padding: 1rem 1.25rem;
+  display: flex; align-items: center; gap: .9rem;
+  cursor: pointer; transition: background .15s, transform .15s;
+}
+.vv-exercises-banner:hover { background: #C4841A; transform: translateY(-1px); }
+
+.vv-exercises-text { flex: 1; }
+.vv-exercises-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: .95rem; font-weight: 700; color: #fff; line-height: 1.2;
+}
+.vv-exercises-sub {
+  font-size: .72rem; color: rgba(255,255,255,.7); margin-top: .15rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.vv-exercises-cta {
+  background: #fff; color: #F4A940; border: none; border-radius: .55rem;
+  padding: .4rem .9rem; font-size: .72rem; font-weight: 700; cursor: pointer;
+  font-family: var(--font-body, 'DM Sans', sans-serif); white-space: nowrap; flex-shrink: 0;
+}
+
+.vv-footer {
+  border-top: 1px solid rgba(0,0,0,.07);
+  padding: .65rem 2rem;
+  display: flex; align-items: center; gap: 1.5rem;
+  background: var(--color-bg, #F9F6F3);
+  flex-shrink: 0;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-footer-stat { font-size: .75rem; color: #6b7280; }
+.vv-footer-val { font-weight: 600; color: #1C2B2A; }
+.vv-footer-sep { width: 1px; height: 1rem; background: rgba(0,0,0,.1); flex-shrink: 0; }

@@ -39,13 +39,13 @@ export class Modos2Component implements AfterViewInit {
     },
     {
       id: 'voc',
-      label: 'Vocabulario',
-      sublabel: 'Temas · Objetos · Verbos',
+      label: 'Aprende',
+      sublabel: 'Vocabulario · Comunicación',
       accentColor: '#F4A940',
       progress: 15,
       locked: false,
       ctaLabel: 'Explorar',
-      route: '/libre',
+      route: '/aprende',
     },
     {
       id: 'gram',

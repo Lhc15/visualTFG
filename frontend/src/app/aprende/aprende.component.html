@@ -1,0 +1,157 @@
+<div class="vv-layout">
+
+  <!-- TOPNAV -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="onBackClick()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M19 12H5M12 5l-7 7 7 7"/>
+      </svg>
+      {{ breadcrumbBack }}
+    </button>
+    <div class="vv-breadcrumb">
+      <span [class.vv-bc-dim]="vista !== 'selector'" (click)="vista !== 'selector' && volverASelector()">Aprende</span>
+      <ng-container *ngIf="vista === 'vocabulario'">
+        <span class="vv-bc-sep">›</span>
+        <span [class.vv-bc-dim]="!!selectedCategory" (click)="selectedCategory && volverAListaCategorias()">Vocabulario</span>
+        <ng-container *ngIf="selectedCategory">
+          <span class="vv-bc-sep">›</span>
+          <span>{{ selectedCategory.nombre }}</span>
+        </ng-container>
+      </ng-container>
+      <ng-container *ngIf="vista === 'comunicacion'">
+        <span class="vv-bc-sep">›</span>
+        <span>Comunicación</span>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- SPLIT -->
+  <div class="vv-split">
+
+    <!-- AVATAR PANEL -->
+    <div class="vv-avatar-panel" #avatarPanel>
+      <div class="vv-avatar-glow"></div>
+
+      <div class="vv-subtitle" *ngIf="selectedWord && (isPlaying || isLooping)">
+        {{ selectedWord.palabra }}
+      </div>
+
+      <app-tool-menu
+        *ngIf="selectedWord"
+        [isPlaying]="isPlaying"
+        [currentPlaybackRate]="currentPlaybackRate"
+        (rateChange)="setPlaybackRate($event)"
+        [isLooping]="isLooping"
+        [showWebcam]="showWebcam"
+        [disabled]="!selectedWord"
+        (playClicked)="onPlayClicked()"
+        (loopToggled)="handleLoop($event)"
+        (webcamToggled)="toggleWebcam()">
+      </app-tool-menu>
+
+      <div class="vv-canvas-wrap">
+        <app-canvas [cameraZ]="4.3" (animationEnded)="onAnimationEnded()"></app-canvas>
+      </div>
+
+      <div class="vv-webcam-wrap" *ngIf="showWebcam">
+        <video #videoElement class="vv-webcam-video" autoplay></video>
+      </div>
+    </div>
+
+    <!-- ACTION PANEL -->
+    <div class="vv-action-panel">
+      <div class="vv-action-scroll">
+
+        <!-- ══ PANTALLA 0: SELECTOR ══ -->
+        <ng-container *ngIf="vista === 'selector'">
+          <h1 class="vv-title">¿Qué quieres <em>aprender</em>?</h1>
+          <p class="vv-section-label">Elige una sección</p>
+
+          <div class="vv-cat-grid">
+            <div class="vv-cat-card" (click)="irAVocabulario()">
+              <div class="vv-cat-title">Vocabulario</div>
+              <div class="vv-cat-sub">Signos por categorías temáticas</div>
+              <div class="vv-cat-progress-track">
+                <div class="vv-cat-progress-fill" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="vv-cat-card" (click)="irAComunicacion()">
+              <div class="vv-cat-title">Comunicación</div>
+              <div class="vv-cat-sub">Gramática y normas de la LSE</div>
+              <div class="vv-cat-progress-track">
+                <div class="vv-cat-progress-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ══ PANTALLA 1: CATEGORÍAS DE VOCABULARIO ══ -->
+        <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
+          <h1 class="vv-title">Elige una <em>categoría</em></h1>
+          <div class="vv-cat-grid">
+            <div class="vv-cat-card" *ngFor="let cat of categorias" (click)="onCategoryClick(cat)">
+              <div class="vv-cat-title">{{ cat.nombre }}</div>
+              <div class="vv-cat-sub">{{ getPrimerasPalabras(cat) }}</div>
+              <div class="vv-cat-progress-track">
+                <div class="vv-cat-progress-fill" style="width: 0%"></div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ══ PANTALLA 2: PALABRAS DE CATEGORÍA ══ -->
+        <ng-container *ngIf="vista === 'vocabulario' && selectedCategory">
+          <h2 class="vv-title">{{ selectedCategory.nombre }}</h2>
+          <div class="vv-section-label">Signos del tema</div>
+          <div class="vv-word-list">
+            <div
+              class="vv-word-row"
+              *ngFor="let palabra of filteredWordsInSelectedCategory"
+              [class.vv-word-active]="selectedWord?.palabra === palabra.palabra"
+              (click)="seleccionarPalabra(palabra)">
+              <div class="vv-word-status" [class.vv-status-signing]="selectedWord?.palabra === palabra.palabra">
+                <span *ngIf="selectedWord?.palabra === palabra.palabra">▶</span>
+                <span *ngIf="selectedWord?.palabra !== palabra.palabra">○</span>
+              </div>
+              <div class="vv-word-name">{{ palabra.palabra }}</div>
+              <button class="vv-sign-cta">
+                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Signar
+              </button>
+            </div>
+          </div>
+
+          <div class="vv-exercises-divider"><span>Practica este tema</span></div>
+          <div class="vv-exercises-banner">
+            <div class="vv-exercises-text">
+              <div class="vv-exercises-title">¡Pon a prueba lo aprendido!</div>
+              <div class="vv-exercises-sub">Ejercicios de {{ selectedCategory.nombre }}</div>
+            </div>
+            <button class="vv-exercises-cta">Ir a Practica</button>
+          </div>
+        </ng-container>
+
+        <!-- ══ PANTALLA 3: COMUNICACIÓN (placeholder) ══ -->
+        <ng-container *ngIf="vista === 'comunicacion'">
+          <h1 class="vv-title">Comunicación en <em>LSE</em></h1>
+          <p class="vv-section-label">Próximamente</p>
+        </ng-container>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="vv-footer">
+        <ng-container *ngIf="vista === 'selector'">
+          <div class="vv-footer-stat">Aprende · <span class="vv-footer-val">Visual Voices</span></div>
+        </ng-container>
+        <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
+          <div class="vv-footer-stat"><span class="vv-footer-val">{{ categorias.length }}</span> categorías</div>
+        </ng-container>
+        <ng-container *ngIf="vista === 'vocabulario' && selectedCategory">
+          <div class="vv-footer-stat"><span class="vv-footer-val">{{ filteredWordsInSelectedCategory.length }}</span> signos</div>
+        </ng-container>
+      </div>
+    </div>
+
+  </div>
+</div>
