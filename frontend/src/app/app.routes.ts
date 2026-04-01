@@ -20,6 +20,7 @@ import { LearningObjectComponent } from './learning-object/learning-object.compo
 import { AbecedarioComponent } from './abecedario/abecedario.component';
 import { ConversamosComponent } from './conversamos/conversamos.component';
 import { ComunicacionComponent } from './comunicacion/comunicacion.component';
+import { PracticaComponent } from './practica/practica.component';
 import { AprendeComponent } from './aprende/aprende.component';
 
 export const routes: Routes = [
@@ -30,6 +31,7 @@ export const routes: Routes = [
   { path: 'perfil',  component: MiperfilComponent },
 
   // Aprende
+  { path: 'practica', component: PracticaComponent },
   { path: 'aprende',              component: AprendeComponent },
   { path: 'aprende/comunicacion', component: ComunicacionComponent },
 

@@ -1,0 +1,198 @@
+:host { display: block; width: 100%; height: 100vh; overflow: hidden; }
+
+.prac-page {
+  width: 100%; height: 100vh;
+  background: #F9F6F3;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  display: flex; flex-direction: column;
+  box-sizing: border-box;
+}
+
+/* TOPNAV */
+.prac-topnav {
+  display: flex; align-items: flex-start; padding-top: 1rem; justify-content: space-between;
+  padding: .85rem 2rem; flex-shrink: 0;
+  background: #fff; border-bottom: 1px solid rgba(0,0,0,.06);
+}
+.prac-back {
+  display: flex; align-items: flex-start; padding-top: 1rem; gap: .35rem;
+  font-size: .85rem; font-weight: 500; color: #4a5568;
+  background: none; border: none; cursor: pointer;
+  padding: .3rem .7rem; border-radius: 999px;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: background .15s;
+}
+.prac-back:hover { background: rgba(0,0,0,.05); }
+.prac-back svg { width: 13px; height: 13px; }
+.prac-breadcrumb { font-size: .9rem; font-weight: 500; color: #1C0E0A; }
+.prac-streak {
+  display: flex; align-items: flex-start; padding-top: 1rem; gap: 5px;
+  background: rgba(18,86,3,.1); border: 1px solid rgba(18,86,3,.2);
+  padding: .28rem .8rem; border-radius: 999px;
+  font-size: .75rem; color: #125603; font-weight: 500;
+}
+.prac-streak-dot { width: 6px; height: 6px; border-radius: 50%; background: #125603; }
+
+/* CENTRO */
+.prac-center {
+  flex: 1; display: flex; align-items: flex-start; padding-top: 1rem; justify-content: center;
+  padding: 0 1.5rem; min-height: 0;
+}
+
+/* PANEL — grande, con margen superior extra para el avatar que sobresale */
+.prac-panel {
+  width: 100%; max-width: 1400px;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding-top: 115px; /* espacio para el avatar que sobresale */
+}
+
+/* IZQUIERDA */
+.prac-left {
+  display: grid;
+  grid-template-rows: 420px 160px 88px;
+  gap: 14px;
+}
+
+/* Progreso — avatar sobresale por arriba */
+.prac-prog-wrap { position: relative; }
+
+.prac-prog-card {
+  background: #125603; border-radius: 18px;
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.5rem 1.75rem;
+  height: 420px;
+}
+
+/* Canvas desbordando arriba */
+.prac-canvas-wrap {
+  position: absolute;
+  right: -5%;
+  top: -110px; /* sobresale 55px por encima del card */
+  width: 55%;
+  height: calc(100% + 110px);
+  z-index: 2; pointer-events: none; overflow: visible;
+}
+.prac-canvas-wrap ::ng-deep app-canvas { width: 100%; height: 100%; display: block; }
+.prac-canvas-wrap ::ng-deep canvas.skin-canvas {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+.prac-canvas-wrap ::ng-deep .button-container { display: none; }
+
+.prac-prog-content { position: relative; z-index: 3; }
+.prac-prog-eyebrow {
+  font-size: .88rem; letter-spacing: .12em; text-transform: uppercase;
+  color: rgba(255,255,255,.55); margin-bottom: 8px;
+}
+.prac-prog-val {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 5rem; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 2px;
+}
+.prac-prog-sub { font-size: .95rem; color: rgba(255,255,255,.45); margin-bottom: 14px; }
+.prac-prog-bar { height: 4px; background: rgba(255,255,255,.15); border-radius: 99px; }
+.prac-prog-fill { height: 100%; width: 35%; background: #9FE1CB; border-radius: 99px; }
+
+/* Stats cuadradas */
+.prac-stats-mini { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+.prac-stat {
+  background: #fff; border-radius: 12px;
+  display: flex; flex-direction: column;
+  align-items: center; padding-top: 1rem; justify-content: center;
+  gap: 3px; border: .5px solid rgba(0,0,0,.06);
+}
+.prac-stat-val {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 2.4rem; font-weight: 700;
+}
+.sm1 .prac-stat-val { color: #E04A1A; }
+.sm2 .prac-stat-val { color: #185FA5; }
+.sm3 .prac-stat-val { color: #993556; }
+.prac-stat-label { font-size: .9rem; color: #9ca3af; }
+
+/* Tablón */
+.prac-tablon-wrap { position: relative; width: 100%; height: 100%; }
+.prac-tablon-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.prac-tablon-inner {
+  position: absolute; inset: 3px;
+  background: #fff; border-radius: 9px;
+  padding: .55rem 1rem;
+  display: flex; align-items: center; padding-top: 1rem; gap: 1rem;
+  box-sizing: border-box;
+}
+.prac-tablon-badge {
+  font-size: .6rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  background: #EAF3DE; color: #125603; padding: .25rem .65rem; border-radius: 99px;
+  white-space: nowrap; flex-shrink: 0;
+}
+.prac-tablon-items { display: flex; gap: 1rem; flex: 1; overflow: hidden; }
+.prac-tablon-item { font-size: .75rem; color: #9ca3af; white-space: nowrap; }
+.prac-tablon-item strong { color: #1C0E0A; font-weight: 500; }
+
+/* DERECHA — acordeón mismo alto que izquierda */
+.prac-right {
+  display: flex; flex-direction: column; gap: 14px;
+  height: calc(420px + 160px + 88px + 28px); /* igual que izquierda */
+}
+
+.prac-ac-item {
+  flex: 1; border-radius: 14px; background: #fff;
+  border: 1.5px solid rgba(18,86,3,.12);
+  cursor: pointer;
+  transition: flex .45s cubic-bezier(.4,0,.2,1), background .2s, border-color .2s;
+  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.5rem 1.75rem; position: relative; min-height: 0;
+}
+.prac-ac-item:hover, .prac-ac-item.activo {
+  flex: 4; background: #EFF7EC; border-color: #125603;
+}
+.prac-ac-deco {
+  position: absolute; right: .5rem; bottom: -.5rem;
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 8rem; font-weight: 700;
+  color: rgba(18,86,3,.05); line-height: 1; pointer-events: none;
+  transition: font-size .4s;
+}
+.prac-ac-item:hover .prac-ac-deco, .prac-ac-item.activo .prac-ac-deco { font-size: 12rem; }
+.prac-ac-expanded {
+  opacity: 0; max-height: 0; overflow: hidden;
+  transition: opacity .25s .1s, max-height .4s;
+  display: flex; flex-direction: column; gap: .5rem;
+}
+.prac-ac-item:hover .prac-ac-expanded, .prac-ac-item.activo .prac-ac-expanded {
+  opacity: 1; max-height: 180px;
+}
+.prac-ac-pct {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 3.5rem; font-weight: 700; color: #125603; line-height: 1;
+}
+.prac-ac-sub { font-size: 1rem; color: #6b7280; }
+.prac-ac-bar-wrap { display: flex; align-items: flex-start; padding-top: 1rem; gap: .6rem; }
+.prac-ac-bar { flex: 1; height: 4px; background: rgba(18,86,3,.1); border-radius: 99px; overflow: hidden; }
+.prac-ac-bar-fill { height: 100%; background: #125603; border-radius: 99px; }
+.prac-ac-bar-label { font-size: .8rem; color: #125603; font-weight: 500; white-space: nowrap; }
+.prac-ac-cta {
+  display: flex; align-items: flex-start; padding-top: 1rem; gap: .35rem;
+  font-size: .9rem; font-weight: 500; color: #125603;
+}
+.prac-ac-cta svg { width: 11px; height: 11px; }
+.prac-ac-collapsed {
+  display: flex; align-items: flex-start; padding-top: 1rem; justify-content: space-between;
+  position: relative; z-index: 1;
+}
+.prac-ac-name {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.35rem; font-weight: 500; color: #1C0E0A;
+  transition: font-size .3s;
+}
+.prac-ac-item:hover .prac-ac-name, .prac-ac-item.activo .prac-ac-name { font-size: 1.65rem; }
+.prac-ac-pct-small {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.2rem; font-weight: 700; color: #125603;
+  transition: opacity .15s;
+}
+.prac-ac-item:hover .prac-ac-pct-small, .prac-ac-item.activo .prac-ac-pct-small { opacity: 0; }

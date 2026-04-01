@@ -1,1 +1,110 @@
-<p>practica works!</p>
+<div class="prac-page">
+
+  <div class="prac-topnav">
+    <button class="prac-back" (click)="volver()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Inicio
+    </button>
+    <div class="prac-breadcrumb">Practica</div>
+    <div class="prac-streak">
+      <div class="prac-streak-dot"></div>
+      <span>5 días de racha</span>
+    </div>
+  </div>
+
+  <div class="prac-center">
+    <div class="prac-panel">
+
+      <div class="prac-left">
+
+        <!-- Card verde con avatar sobresaliendo -->
+        <div class="prac-prog-wrap">
+          <!-- Canvas fuera del card, desbordando por arriba -->
+          <div class="prac-canvas-wrap" #canvasWrap>
+            <app-canvas [cameraZ]="4.3"></app-canvas>
+          </div>
+          <div class="prac-prog-card">
+            <div class="prac-prog-content">
+              <div class="prac-prog-eyebrow">Tu progreso actual</div>
+              <div class="prac-prog-val">35%</div>
+              <div class="prac-prog-sub">42 de 120 signos · nivel A1</div>
+              <div class="prac-prog-bar"><div class="prac-prog-fill"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="prac-stats-mini">
+          <div class="prac-stat sm1">
+            <div class="prac-stat-val">78%</div>
+            <div class="prac-stat-label">Aciertos</div>
+          </div>
+          <div class="prac-stat sm2">
+            <div class="prac-stat-val">12</div>
+            <div class="prac-stat-label">Ejercicios</div>
+          </div>
+          <div class="prac-stat sm3">
+            <div class="prac-stat-val">2h</div>
+            <div class="prac-stat-label">Practicado</div>
+          </div>
+        </div>
+
+        <div class="prac-tablon-wrap">
+          <svg class="prac-tablon-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="tgrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#125603"/>
+                <stop offset="40%" stop-color="#F4A940"/>
+                <stop offset="70%" stop-color="#4F9CF9"/>
+                <stop offset="100%" stop-color="#125603"/>
+              </linearGradient>
+            </defs>
+            <rect x="1.5" y="1.5" width="97" height="97" rx="10" ry="10"
+              stroke="url(#tgrad)" stroke-width="3" fill="none"
+              stroke-dasharray="80 300" stroke-dashoffset="0">
+              <animate attributeName="stroke-dashoffset" from="0" to="-380" dur="2.5s" repeatCount="indefinite"/>
+            </rect>
+          </svg>
+          <div class="prac-tablon-inner">
+            <div class="prac-tablon-badge">Novedades</div>
+            <div class="prac-tablon-items">
+              <div class="prac-tablon-item" *ngFor="let n of novedades">
+                {{ n.texto }} <strong>{{ n.negrita }}</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="prac-right">
+        <div
+          class="prac-ac-item"
+          *ngFor="let s of secciones"
+          [class.activo]="activoId === s.id"
+          (mouseenter)="activar(s.id)"
+          (mouseleave)="desactivar()"
+          (click)="irA(s.id)">
+          <div class="prac-ac-deco">{{ s.deco }}</div>
+          <div class="prac-ac-expanded">
+            <div class="prac-ac-pct">{{ s.progreso }}%</div>
+            <div class="prac-ac-sub">{{ s.subtitulo }}</div>
+            <div class="prac-ac-bar-wrap">
+              <div class="prac-ac-bar"><div class="prac-ac-bar-fill" [style.width.%]="s.progreso"></div></div>
+              <div class="prac-ac-bar-label">{{ s.progreso }}% completado</div>
+            </div>
+            <div class="prac-ac-cta">
+              Ir a practicar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </div>
+          </div>
+          <div class="prac-ac-collapsed">
+            <div class="prac-ac-name">{{ s.nombre }}</div>
+            <div class="prac-ac-pct-small">{{ s.progreso }}%</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
