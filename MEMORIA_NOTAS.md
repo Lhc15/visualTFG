@@ -266,5 +266,43 @@ Fase 5 — Cierre
 - ¿Conversamos? con backend real: se retoma en fase posterior, no bloquea nada
 
 ---
+
+## [DESBLOQUEO_CONTENIDO] Sistema de desbloqueo y priorización de contenido
+
+### Estado: parcialmente definido — pendiente de completar cuando estén definidos los tipos de ejercicio
+
+### Concepto base
+El sistema de desbloqueo se basa en el uso de la barra de herramientas (tool-menu): **dar al play de una palabra o letra es lo que la marca como "vista"**, y ese evento es el que desbloquea su práctica correspondiente. No se desbloquea por tiempo ni por completar lecciones enteras, sino por interacción explícita con el contenido.
+
+### Dos capas distintas
+
+**Capa 1 — Desbloqueo**: ¿puede el usuario acceder a practicar este contenido?
+**Capa 2 — Priorización**: dentro de lo desbloqueado, ¿qué aparece primero en los ejercicios?
+
+Son independientes y se modelan por separado.
+
+### Capa 1 — Reglas de desbloqueo por módulo
+
+| Módulo | Qué desbloquea | Granularidad |
+|--------|---------------|--------------|
+| Practica/abecedario | Haber dado al play a esa letra en Abecedario | Letra a letra |
+| Practica/vocabulario | Haber dado al play a esa palabra en Aprende/vocabulario | Palabra a palabra |
+| Practica/gramática | Haber visitado Aprende/gramática (pendiente de definir con más detalle) | Por definir |
+
+### Capa 2 — Priorización dentro de los ejercicios (spaced repetition simplificado)
+El principio es el mismo que usan Anki o Duolingo: los signos que más necesitas repasar aparecen con más frecuencia. Los factores que influyen en la prioridad de aparición de una palabra en los ejercicios:
+
+- **Nunca vista en práctica** → máxima prioridad (aparece primero)
+- **Número de veces mostrada** → a más exposiciones, menos prioridad relativa
+- **Ratio de aciertos/fallos** → más fallos = más prioridad
+- **Tiempo desde última aparición** → si hace mucho que no sale, sube prioridad
+
+Todos estos datos se pueden calcular a partir de `PracticaEntry` (que registra cada intento con `palabraId`, `acierto`, `tiempoMs` y `createdAt`).
+
+### Pendiente de definir
+- Mecánica exacta de Practica/gramática: los factores de priorización dependen de los tipos de ejercicio, que aún no están definidos. Se sabe que habrá que registrar qué tipo de palabra falló (S, O, V...) y si el error fue de orden o de identificación de signo.
+- Implementación del algoritmo de priorización en el frontend (servicio Angular que ordena las palabras antes de pasarlas al motor de ejercicios)
+
+---
 <!-- Añadir nuevas secciones aquí siguiendo el mismo formato -->
 <!-- Palabra clave: [NOMBRE_SECCION] en mayúsculas para Ctrl+F -->
