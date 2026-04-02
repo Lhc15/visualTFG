@@ -5,6 +5,7 @@ import { CanvasComponent } from '../canvas/canvas.component';
 
 interface SeccionPractica {
   id: string; nombre: string; subtitulo: string; deco: string; progreso: number;
+  novedad?: string;
 }
 
 @Component({
@@ -20,7 +21,7 @@ export class PracticaComponent implements AfterViewInit {
   @ViewChild('canvasWrap') canvasWrap!: ElementRef<HTMLElement>;
 
   secciones: SeccionPractica[] = [
-    { id: 'abecedario',  nombre: 'Abecedario',  subtitulo: '27 letras · LSE básico',  deco: 'A', progreso: 68 },
+    { id: 'abecedario',  nombre: 'Abecedario',  subtitulo: '27 letras · LSE básico',  deco: 'A', progreso: 68, novedad: 'Desbloqueada la letra Ñ — completa el abecedario' },
     { id: 'vocabulario', nombre: 'Vocabulario', subtitulo: 'Categorías temáticas',     deco: 'V', progreso: 30 },
     { id: 'gramatica',   nombre: 'Gramática',   subtitulo: 'SOV · Preguntas · ENM',   deco: 'G', progreso: 10 }
   ];

@@ -50,7 +50,7 @@
 /* IZQUIERDA */
 .prac-left {
   display: grid;
-  grid-template-rows: 420px 160px 88px;
+  grid-template-rows: auto auto 88px;
   gap: 14px;
 }
 
@@ -137,18 +137,16 @@
   display: flex; flex-direction: column; gap: 14px;
   height: calc(420px + 160px + 88px + 28px); /* igual que izquierda */
 }
-
+/* prac-ac-item — layout y estilo visual; flex lo gestiona prac-ac-wrap */
 .prac-ac-item {
-  flex: 1; border-radius: 14px; background: #fff;
+  height: 100%;
+  border-radius: 14px; background: #fff;
   border: 1.5px solid rgba(18,86,3,.12);
   cursor: pointer;
-  transition: flex .45s cubic-bezier(.4,0,.2,1), background .2s, border-color .2s;
   overflow: hidden;
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: 1.5rem 1.75rem; position: relative; min-height: 0;
-}
-.prac-ac-item:hover, .prac-ac-item.activo {
-  flex: 4; background: #EFF7EC; border-color: #125603;
+  transition: background .2s, border-color .2s;
 }
 .prac-ac-deco {
   position: absolute; right: .5rem; bottom: -.5rem;
@@ -157,13 +155,13 @@
   color: rgba(18,86,3,.05); line-height: 1; pointer-events: none;
   transition: font-size .4s;
 }
-.prac-ac-item:hover .prac-ac-deco, .prac-ac-item.activo .prac-ac-deco { font-size: 12rem; }
+.prac-ac-wrap:hover .prac-ac-deco, .prac-ac-wrap.activo .prac-ac-deco { font-size: 12rem; }
 .prac-ac-expanded {
   opacity: 0; max-height: 0; overflow: hidden;
   transition: opacity .25s .1s, max-height .4s;
   display: flex; flex-direction: column; gap: .5rem;
 }
-.prac-ac-item:hover .prac-ac-expanded, .prac-ac-item.activo .prac-ac-expanded {
+.prac-ac-wrap:hover .prac-ac-expanded, .prac-ac-wrap.activo .prac-ac-expanded {
   opacity: 1; max-height: 180px;
 }
 .prac-ac-pct {
@@ -189,10 +187,94 @@
   font-size: 1.35rem; font-weight: 500; color: #1C0E0A;
   transition: font-size .3s;
 }
-.prac-ac-item:hover .prac-ac-name, .prac-ac-item.activo .prac-ac-name { font-size: 1.65rem; }
+.prac-ac-wrap:hover .prac-ac-name, .prac-ac-wrap.activo .prac-ac-name { font-size: 1.65rem; }
 .prac-ac-pct-small {
   font-family: var(--font-display, 'Fraunces', serif);
   font-size: 1.2rem; font-weight: 700; color: #125603;
   transition: opacity .15s;
 }
-.prac-ac-item:hover .prac-ac-pct-small, .prac-ac-item.activo .prac-ac-pct-small { opacity: 0; }
+.prac-ac-wrap:hover .prac-ac-pct-small, .prac-ac-wrap.activo .prac-ac-pct-small { opacity: 0; }
+
+/* ID CARD — wrapper que agrupa el card verde y el panel de stats */
+.prac-id-card {
+  position: relative;
+  display: flex; flex-direction: column;
+  grid-row: 1 / 3; /* ocupa las dos primeras filas del grid de prac-left */
+}
+
+/* Panel que nace desde detras del card verde, esquinas de abajo redondeadas */
+.prac-id-back {
+  background: #E2EDE0;
+  border-radius: 0 0 18px 18px;
+  border: 1px solid rgba(18,86,3,0.15);
+  border-top: none;
+  padding: 0 1.25rem 1.25rem;
+  margin-left: 18px;
+  margin-right: 18px;
+  margin-top: -18px;
+  padding-top: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+/* El card verde queda por encima del panel */
+.prac-id-card .prac-prog-wrap { position: relative; z-index: 2; }
+
+/* Titulo de la columna derecha */
+.prac-right-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #1C0E0A;
+  padding-bottom: 0.75rem;
+  border-bottom: 1.5px solid rgba(0,0,0,0.08);
+  flex-shrink: 0;
+}
+
+/* Wrapper exterior del item — controla el flex y permite que el punto sobresalga */
+.prac-ac-wrap {
+  flex: 1;
+  position: relative;
+  transition: flex .45s cubic-bezier(.4,0,.2,1);
+  min-height: 0;
+}
+.prac-ac-wrap.activo,
+.prac-ac-wrap:hover { flex: 4; }
+
+/* Redefinir prac-ac-item para que ocupe el wrapper completo sin gestionar el flex */
+.prac-ac-item {
+  height: 100%;
+  border-radius: 14px; background: #fff;
+  border: 1.5px solid rgba(18,86,3,.12);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 1.5rem 1.75rem; position: relative; min-height: 0;
+  transition: background .2s, border-color .2s;
+}
+.prac-ac-wrap.activo .prac-ac-item,
+.prac-ac-wrap:hover .prac-ac-item { background: #EFF7EC; border-color: #125603; }
+
+/* Punto de notificacion — sobresale de la esquina superior derecha */
+.prac-ac-notif-dot {
+  position: absolute;
+  top: -9px; right: -9px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #E04A1A;
+  border: 2.5px solid #F9F6F3;
+  z-index: 10;
+}
+
+/* Franja de novedad dentro del expandido */
+.prac-ac-novedad {
+  background: #FFF6EB;
+  border: 1px solid #F4A940;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem; color: #8a5200;
+  display: flex; align-items: center; gap: 6px;
+}
+.prac-ac-novedad-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #F4A940; flex-shrink: 0;
+}
