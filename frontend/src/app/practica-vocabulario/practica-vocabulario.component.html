@@ -1,0 +1,181 @@
+<div class="vv-layout">
+
+  <!-- TOPNAV -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="volver()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Practica
+    </button>
+    <div class="vv-breadcrumb">
+      <span class="vv-bc-dim" (click)="volver()">Practica</span>
+      <span class="vv-bc-sep">›</span>
+      <span>Vocabulario</span>
+    </div>
+    <div class="vv-nav-right">
+      <button class="vv-avatar-btn">L</button>
+    </div>
+  </div>
+
+  <!-- CUERPO -->
+  <div class="vv-body">
+
+    <!-- MAPA IZQUIERDA -->
+    <div class="vv-map-panel">
+
+      <div class="vv-path-title">Vocabulario · Camino de práctica</div>
+
+      <div *ngIf="cargando" class="vv-loading">Cargando categorías…</div>
+
+      <ng-container *ngFor="let cat of categorias; let i = index; let last = last; trackBy: trackById">
+
+        <!-- Nodo -->
+        <div class="vv-node-row" [class.shift-r]="shifts[i] === 'shift-r'" [class.shift-l]="shifts[i] === 'shift-l'">
+
+          <!-- Info izquierda (solo en shift-r) -->
+          <div class="vv-node-info vv-node-info-right" *ngIf="shifts[i] === 'shift-r'">
+            <div class="vv-node-name" [class.blocked]="cat.estado === 'bloqueado'">{{ cat.nombre }}</div>
+            <div class="vv-node-sub">{{ cat.estado === 'bloqueado' ? 'Bloqueado' : cat.palabrasEstudiadas + ' de ' + cat.totalPalabras + ' palabras' }}</div>
+          </div>
+          <div class="vv-node-spacer" *ngIf="shifts[i] === 'shift-l'"></div>
+
+          <!-- Círculo nodo -->
+          <div
+            class="vv-node"
+            [class.done]="cat.estado === 'completado'"
+            [class.active]="cat.estado === 'activo'"
+            [class.locked]="cat.estado === 'bloqueado'"
+            [class.selected]="categoriaActiva?.id === cat.id"
+            (click)="seleccionarCategoria(cat)">
+
+            <!-- Estrellas -->
+            <div class="vv-stars" *ngIf="cat.estado !== 'bloqueado'">
+              <svg class="vv-star" [class.lit]="cat.estrellas >= 1" viewBox="0 0 14 14"><path d="M7 1l1.5 3.2L12 4.7l-2.5 2.4.6 3.4L7 9l-3.1 1.6.6-3.4L2 4.7l3.5-.5z"/></svg>
+              <svg class="vv-star" [class.lit]="cat.estrellas >= 2" viewBox="0 0 14 14"><path d="M7 1l1.5 3.2L12 4.7l-2.5 2.4.6 3.4L7 9l-3.1 1.6.6-3.4L2 4.7l3.5-.5z"/></svg>
+              <svg class="vv-star" [class.lit]="cat.estrellas >= 3" viewBox="0 0 14 14"><path d="M7 1l1.5 3.2L12 4.7l-2.5 2.4.6 3.4L7 9l-3.1 1.6.6-3.4L2 4.7l3.5-.5z"/></svg>
+            </div>
+
+            <!-- Icono / Candado -->
+            <div class="vv-node-icon" *ngIf="cat.estado !== 'bloqueado'">{{ cat.icono }}</div>
+            <svg *ngIf="cat.estado === 'bloqueado'" class="vv-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <div class="vv-node-num">{{ i + 1 }}</div>
+
+            <!-- Flecha activo -->
+            <div class="vv-active-arrow" *ngIf="cat.estado === 'activo' && shifts[i] === 'shift-l'">&#9664; aquí</div>
+            <div class="vv-active-arrow vv-active-arrow-r" *ngIf="cat.estado === 'activo' && shifts[i] === 'shift-r'">aquí &#9654;</div>
+
+          </div>
+
+          <!-- Info derecha (solo en shift-l) -->
+          <div class="vv-node-info" *ngIf="shifts[i] === 'shift-l'">
+            <div class="vv-node-name" [class.blocked]="cat.estado === 'bloqueado'">{{ cat.nombre }}</div>
+            <div class="vv-node-sub">{{ cat.estado === 'bloqueado' ? 'Bloqueado' : cat.palabrasEstudiadas + ' de ' + cat.totalPalabras + ' palabras' }}</div>
+          </div>
+          <div class="vv-node-spacer" *ngIf="shifts[i] === 'shift-r'"></div>
+
+        </div>
+
+        <!-- Conector entre nodos -->
+        <div class="vv-connector" [class.done]="cat.estado === 'completado'" *ngIf="!last"></div>
+
+      </ng-container>
+
+    </div>
+
+    <!-- PANEL DERECHO — detalle categoría activa -->
+    <div class="vv-info-panel">
+
+      <ng-container *ngIf="categoriaActiva">
+
+        <div>
+          <div class="vv-info-header">
+            <div class="vv-info-dot" [class.completado]="categoriaActiva.estado === 'completado'"></div>
+            <div class="vv-info-eyebrow">
+              {{ categoriaActiva.estado === 'completado' ? 'Completado' : 'En curso' }} · {{ categoriaActiva.nombre }}
+            </div>
+          </div>
+          <div class="vv-info-title">{{ categoriaActiva.nombre }}</div>
+          <div class="vv-info-sub">{{ categoriaActiva.palabrasEstudiadas }} de {{ categoriaActiva.totalPalabras }} palabras estudiadas en Aprende</div>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div class="vv-progress-wrap">
+          <div class="vv-progress-label">
+            <span>Progreso</span>
+            <span>{{ progresoPct }}%</span>
+          </div>
+          <div class="vv-progress-bar">
+            <div class="vv-progress-fill" [style.width.%]="progresoPct"></div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="vv-stats-row">
+          <div class="vv-stat-pill">
+            <div class="vv-stat-val">{{ categoriaActiva.estrellas }}/3</div>
+            <div class="vv-stat-lbl">Estrellas</div>
+          </div>
+          <div class="vv-stat-pill">
+            <div class="vv-stat-val">{{ categoriaActiva.palabrasEstudiadas }}</div>
+            <div class="vv-stat-lbl">Estudiadas</div>
+          </div>
+          <div class="vv-stat-pill">
+            <div class="vv-stat-val">{{ categoriaActiva.totalPalabras - categoriaActiva.palabrasEstudiadas }}</div>
+            <div class="vv-stat-lbl">Pendientes</div>
+          </div>
+        </div>
+
+        <!-- Preview palabras -->
+        <div class="vv-words-preview" *ngIf="categoriaActiva.palabras.length">
+          <div class="vv-words-title">Palabras de esta categoría</div>
+          <div class="vv-words-chips">
+            <span
+              *ngFor="let p of palabrasPreview"
+              class="vv-word-chip"
+              [class.aprendida]="p.estado === 'aprendida'"
+              [class.vista]="p.estado === 'vista'"
+              [class.bloqueada]="p.estado === 'bloqueada'">
+              {{ p.nombre }}
+            </span>
+          </div>
+        </div>
+
+        <div class="vv-words-preview" *ngIf="!categoriaActiva.palabras.length">
+          <div class="vv-words-empty">Las palabras se mostrarán cuando estudies esta categoría en Aprende.</div>
+        </div>
+
+        <!-- CTA -->
+        <button class="vv-cta-btn" (click)="irAPracticar()" [disabled]="categoriaActiva.estado === 'bloqueado'">
+          Practicar {{ categoriaActiva.nombre }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+
+        <!-- Leyenda -->
+        <div class="vv-legend">
+          <div class="vv-legend-item">
+            <div class="vv-legend-dot" style="background:#F4A940"></div>
+            <span>Completado</span>
+          </div>
+          <div class="vv-legend-item">
+            <div class="vv-legend-dot" style="background:#E04A1A"></div>
+            <span>En curso</span>
+          </div>
+          <div class="vv-legend-item">
+            <div class="vv-legend-dot" style="background:#e5e7eb"></div>
+            <span>Bloqueado</span>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <ng-container *ngIf="!categoriaActiva && !cargando">
+        <div class="vv-empty-state">Selecciona una categoría del mapa para ver su detalle.</div>
+      </ng-container>
+
+    </div>
+
+  </div>
+
+</div>

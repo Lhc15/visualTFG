@@ -25,6 +25,8 @@ import { AprendeComponent } from './aprende/aprende.component';
 import { PracticaAbecedarioComponent } from './practica-abecedario/practica-abecedario.component';
 import { PracticaAbecedarioModoAComponent } from './practica-abecedario-modo-a/practica-abecedario-modo-a.component';
 import { PracticaAbecedarioModoBComponent } from './practica-abecedario-modo-b/practica-abecedario-modo-b.component';
+import { PracticaVocabularioComponent } from './practica-vocabulario/practica-vocabulario.component';
+import { PracticaGramaticaComponent } from './practica-gramatica/practica-gramatica.component';
 
 export const routes: Routes = [
   { path: '',        component: LandingComponent },
@@ -38,6 +40,8 @@ export const routes: Routes = [
   { path: 'practica/abecedario',               component: PracticaAbecedarioComponent },
   { path: 'practica/abecedario/modo-a',        component: PracticaAbecedarioModoAComponent },
   { path: 'practica/abecedario/modo-b',        component: PracticaAbecedarioModoBComponent },
+  { path: 'practica/vocabulario',              component: PracticaVocabularioComponent },
+  { path: 'practica/gramatica',                component: PracticaGramaticaComponent },
 
   // Aprende
   { path: 'aprende',              component: AprendeComponent },

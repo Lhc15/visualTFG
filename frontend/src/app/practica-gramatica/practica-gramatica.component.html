@@ -1,0 +1,170 @@
+<div class="vv-layout">
+
+  <!-- TOPNAV -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="volver()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Practica
+    </button>
+    <div class="vv-breadcrumb">
+      <span class="vv-bc-dim" (click)="volver()">Practica</span>
+      <span class="vv-bc-sep">›</span>
+      <span>Gramática</span>
+    </div>
+    <div class="vv-nav-right">
+      <button class="vv-avatar-btn">L</button>
+    </div>
+  </div>
+
+  <!-- CUERPO -->
+  <div class="vv-body">
+
+    <!-- MAPA IZQUIERDA -->
+    <div class="vv-map-panel">
+
+      <div class="vv-path-title">Gramática LSE · Bloques de práctica</div>
+
+      <ng-container *ngFor="let bloque of bloques; let i = index; let last = last; trackBy: trackById">
+
+        <div class="vv-node-row"
+          [class.shift-r]="shifts[i] === 'shift-r'"
+          [class.shift-l]="shifts[i] === 'shift-l'">
+
+          <!-- Info izquierda (shift-r) -->
+          <div class="vv-node-info vv-node-info-right" *ngIf="shifts[i] === 'shift-r'">
+            <div class="vv-node-name" [class.blocked]="bloque.estado === 'bloqueado'">{{ bloque.nombre }}</div>
+            <div class="vv-node-sub">{{ bloque.estado === 'bloqueado' ? 'Bloqueado' : bloque.subtitulo }}</div>
+          </div>
+          <div class="vv-node-spacer" *ngIf="shifts[i] === 'shift-l'"></div>
+
+          <!-- Nodo círculo -->
+          <div
+            class="vv-node"
+            [class.done]="bloque.estado === 'completado'"
+            [class.active]="bloque.estado === 'activo'"
+            [class.locked]="bloque.estado === 'bloqueado'"
+            [class.selected]="bloqueActivo?.id === bloque.id"
+            (click)="seleccionarBloque(bloque)">
+
+            <!-- Estrellas -->
+            <div class="vv-stars" *ngIf="bloque.estado !== 'bloqueado'">
+              <svg class="vv-star" [class.lit]="bloque.estrellas >= 1" viewBox="0 0 14 14"><path d="M7 1l1.5 3.2L12 4.7l-2.5 2.4.6 3.4L7 9l-3.1 1.6.6-3.4L2 4.7l3.5-.5z"/></svg>
+              <svg class="vv-star" [class.lit]="bloque.estrellas >= 2" viewBox="0 0 14 14"><path d="M7 1l1.5 3.2L12 4.7l-2.5 2.4.6 3.4L7 9l-3.1 1.6.6-3.4L2 4.7l3.5-.5z"/></svg>
+              <svg class="vv-star" [class.lit]="bloque.estrellas >= 3" viewBox="0 0 14 14"><path d="M7 1l1.5 3.2L12 4.7l-2.5 2.4.6 3.4L7 9l-3.1 1.6.6-3.4L2 4.7l3.5-.5z"/></svg>
+            </div>
+
+            <div class="vv-node-icon" *ngIf="bloque.estado !== 'bloqueado'">{{ bloque.icono }}</div>
+            <svg *ngIf="bloque.estado === 'bloqueado'" class="vv-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <rect x="3" y="11" width="18" height="11" rx="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+            <div class="vv-node-num">{{ i + 1 }}</div>
+
+            <div class="vv-active-arrow" *ngIf="bloque.estado === 'activo' && shifts[i] === 'shift-l'">&#9664; aquí</div>
+            <div class="vv-active-arrow vv-active-arrow-r" *ngIf="bloque.estado === 'activo' && shifts[i] === 'shift-r'">aquí &#9654;</div>
+          </div>
+
+          <!-- Info derecha (shift-l) -->
+          <div class="vv-node-info" *ngIf="shifts[i] === 'shift-l'">
+            <div class="vv-node-name" [class.blocked]="bloque.estado === 'bloqueado'">{{ bloque.nombre }}</div>
+            <div class="vv-node-sub">{{ bloque.estado === 'bloqueado' ? 'Bloqueado' : bloque.subtitulo }}</div>
+          </div>
+          <div class="vv-node-spacer" *ngIf="shifts[i] === 'shift-r'"></div>
+
+        </div>
+
+        <div class="vv-connector" [class.done]="bloque.estado === 'completado'" *ngIf="!last"></div>
+
+      </ng-container>
+
+    </div>
+
+    <!-- PANEL DERECHO -->
+    <div class="vv-info-panel">
+
+      <ng-container *ngIf="bloqueActivo">
+
+        <div>
+          <div class="vv-info-header">
+            <div class="vv-info-dot" [class.completado]="bloqueActivo.estado === 'completado'"></div>
+            <div class="vv-info-eyebrow">
+              {{ bloqueActivo.estado === 'completado' ? 'Completado' : 'En curso' }} · Bloque {{ bloqueActivo.nombre }}
+            </div>
+          </div>
+          <div class="vv-info-title">{{ bloqueActivo.nombre }}</div>
+          <div class="vv-info-sub">{{ bloqueActivo.subtitulo }}</div>
+        </div>
+
+        <!-- Ejemplo de frase -->
+        <div class="vv-ejemplo-wrap">
+          <div class="vv-ejemplo-label">Ejemplo en LSE</div>
+          <div class="vv-ejemplo">{{ bloqueActivo.ejemplo }}</div>
+        </div>
+
+        <!-- Barra de progreso -->
+        <div class="vv-progress-wrap">
+          <div class="vv-progress-label">
+            <span>Ejercicios completados</span>
+            <span>{{ bloqueActivo.ejerciciosCompletados }} / {{ bloqueActivo.totalEjercicios }}</span>
+          </div>
+          <div class="vv-progress-bar">
+            <div class="vv-progress-fill" [style.width.%]="progresoPct"></div>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="vv-stats-row">
+          <div class="vv-stat-pill">
+            <div class="vv-stat-val">{{ bloqueActivo.estrellas }}/3</div>
+            <div class="vv-stat-lbl">Estrellas</div>
+          </div>
+          <div class="vv-stat-pill">
+            <div class="vv-stat-val">{{ bloqueActivo.ejerciciosCompletados }}</div>
+            <div class="vv-stat-lbl">Completados</div>
+          </div>
+          <div class="vv-stat-pill">
+            <div class="vv-stat-val">{{ bloqueActivo.totalEjercicios - bloqueActivo.ejerciciosCompletados }}</div>
+            <div class="vv-stat-lbl">Pendientes</div>
+          </div>
+        </div>
+
+        <!-- Conceptos que cubre -->
+        <div class="vv-conceptos-wrap">
+          <div class="vv-conceptos-title">Qué practica este bloque</div>
+          <ul class="vv-conceptos-list">
+            <li *ngFor="let c of bloqueActivo.conceptos" class="vv-concepto-item">
+              <div class="vv-concepto-dot"></div>
+              {{ c }}
+            </li>
+          </ul>
+        </div>
+
+        <!-- CTA -->
+        <button class="vv-cta-btn" (click)="irAPracticar()" [disabled]="bloqueActivo.estado === 'bloqueado'">
+          Practicar {{ bloqueActivo.nombre }}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+
+        <!-- Leyenda -->
+        <div class="vv-legend">
+          <div class="vv-legend-item">
+            <div class="vv-legend-dot" style="background:#7B4EA0"></div>
+            <span>Completado</span>
+          </div>
+          <div class="vv-legend-item">
+            <div class="vv-legend-dot" style="background:#E04A1A"></div>
+            <span>En curso</span>
+          </div>
+          <div class="vv-legend-item">
+            <div class="vv-legend-dot" style="background:#e5e7eb"></div>
+            <span>Bloqueado</span>
+          </div>
+        </div>
+
+      </ng-container>
+
+    </div>
+
+  </div>
+
+</div>
