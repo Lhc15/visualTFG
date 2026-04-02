@@ -22,6 +22,9 @@ import { ConversamosComponent } from './conversamos/conversamos.component';
 import { ComunicacionComponent } from './comunicacion/comunicacion.component';
 import { PracticaComponent } from './practica/practica.component';
 import { AprendeComponent } from './aprende/aprende.component';
+import { PracticaAbecedarioComponent } from './practica-abecedario/practica-abecedario.component';
+import { PracticaAbecedarioModoAComponent } from './practica-abecedario-modo-a/practica-abecedario-modo-a.component';
+import { PracticaAbecedarioModoBComponent } from './practica-abecedario-modo-b/practica-abecedario-modo-b.component';
 
 export const routes: Routes = [
   { path: '',        component: LandingComponent },
@@ -30,8 +33,13 @@ export const routes: Routes = [
   { path: 'modos2',  component: Modos2Component },
   { path: 'perfil',  component: MiperfilComponent },
 
+  // Practica
+  { path: 'practica',                          component: PracticaComponent },
+  { path: 'practica/abecedario',               component: PracticaAbecedarioComponent },
+  { path: 'practica/abecedario/modo-a',        component: PracticaAbecedarioModoAComponent },
+  { path: 'practica/abecedario/modo-b',        component: PracticaAbecedarioModoBComponent },
+
   // Aprende
-  { path: 'practica', component: PracticaComponent },
   { path: 'aprende',              component: AprendeComponent },
   { path: 'aprende/comunicacion', component: ComunicacionComponent },
 
@@ -46,7 +54,7 @@ export const routes: Routes = [
     ]
   },
 
-  // Legacy — se mantienen hasta verificar los nuevos
+  // Legacy
   { path: 'pruebas',     component: PruebasComponent },
   { path: 'guiado',      component: ModoGuiadoComponent },
   { path: 'libre',       component: ModoLibreComponent },

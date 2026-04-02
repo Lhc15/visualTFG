@@ -1,0 +1,219 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+:host {
+  --abc: #00B4D8;
+  --abc-dark: #0088A8;
+  --abc-light: #CCEEFF;
+  --abc-pale: #EBF9FF;
+}
+
+.vv-layout {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background: #F9F6F3;
+  overflow: hidden;
+}
+
+.vv-topnav {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: 0.75rem 2rem;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.vv-back-btn {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  font-weight: 500;
+  color: #4a5568;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: .35rem .75rem;
+  border-radius: 999px;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: background .15s;
+}
+.vv-back-btn:hover { background: #F9F6F3; }
+.vv-back-btn svg { width: 13px; height: 13px; }
+
+.vv-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .85rem;
+  color: #9ca3af;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-breadcrumb span:last-child { color: #1C2B2A; font-weight: 500; }
+.vv-bc-dim { cursor: pointer; }
+.vv-bc-dim:hover { color: #1C2B2A; }
+.vv-bc-sep { color: #9ca3af; }
+
+.vv-nav-right { margin-left: auto; }
+.vv-avatar-btn {
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: #8B00A8;
+  color: #fff;
+  font-weight: 700;
+  font-size: .85rem;
+  display: grid;
+  place-items: center;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+
+.vv-split {
+  display: grid;
+  grid-template-columns: 58% 42%;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.vv-avatar-panel {
+  position: relative;
+  overflow: hidden;
+  background: #F9F6F3;
+}
+
+.vv-avatar-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 75%, rgba(0,180,216,.12) 0%, transparent 65%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.vv-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.vv-action-panel {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid rgba(0,0,0,.06);
+  overflow: hidden;
+  background: #F9F6F3;
+}
+
+.vv-action-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2rem 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.vv-section-label {
+  font-size: .7rem;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--abc);
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  margin-bottom: .5rem;
+}
+
+.vv-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 2rem;
+  font-weight: 900;
+  color: #1C0E0A;
+  line-height: 1.15;
+  margin-bottom: 1.75rem;
+}
+.vv-title em { color: var(--abc); font-style: normal; }
+
+.vv-mode-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+}
+
+.vv-mode-card {
+  border-radius: 16px;
+  padding: 1.1rem 1rem 1rem;
+  cursor: pointer;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: .3rem;
+  transition: transform .18s, box-shadow .18s;
+  min-height: 180px;
+}
+.vv-mode-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,.15);
+}
+
+.vv-mode-a { background: #003D4D; }
+.vv-mode-b { background: #2E1206; }
+
+.vv-mode-eyebrow {
+  font-size: .6rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-mode-a .vv-mode-eyebrow { color: var(--abc); }
+.vv-mode-b .vv-mode-eyebrow { color: #E04A1A; }
+
+.vv-mode-num {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  opacity: .12;
+  color: #ffffff;
+  position: absolute;
+  top: .7rem;
+  right: .85rem;
+  pointer-events: none;
+}
+
+.vv-mode-title {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: #ffffff;
+  line-height: 1.15;
+  margin-top: .25rem;
+  flex: 1;
+}
+
+.vv-mode-desc {
+  font-size: .72rem;
+  line-height: 1.4;
+  margin-top: auto;
+  color: rgba(255,255,255,.45);
+}
+
+.vv-mode-go {
+  font-size: .75rem;
+  font-weight: 700;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  margin-top: .6rem;
+}
+.vv-mode-a .vv-mode-go { color: var(--abc); }
+.vv-mode-b .vv-mode-go { color: #E04A1A; }

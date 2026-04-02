@@ -1,6 +1,6 @@
 import {
   Component, OnInit, OnDestroy, AfterViewInit,
-  ViewChild, ViewChildren, QueryList, ElementRef
+  ViewChild, ElementRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -11,7 +11,7 @@ import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
 
-type Pantalla = 'aprende' | 'nombre' | 'practica' | 'quizA' | 'quizB';
+type Pantalla = 'aprende' | 'nombre';
 
 interface LetraInfo {
   letra: string;
@@ -23,8 +23,6 @@ const LETRAS: LetraInfo[] = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').map(l => ({
   gltf: `${l.toLowerCase()}_lse.gltf`
 }));
 
-const QUIZ_B_COLORS = ['#00B4D8', '#E04A1A', '#2A7A4A', '#D4A017'];
-
 @Component({
   selector: 'app-abecedario',
   standalone: true,
@@ -34,16 +32,13 @@ const QUIZ_B_COLORS = ['#00B4D8', '#E04A1A', '#2A7A4A', '#D4A017'];
 })
 export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
 
-  // Canvas principal (aprende / nombre / quizA)
+  // Canvas principal
   @ViewChild('mainCanvas') mainCanvasRef!: CanvasComponent;
   @ViewChild('avatarPanel') avatarPanel!: ElementRef<HTMLElement>;
   @ViewChild('videoElement', { static: false }) videoElement!: ElementRef;
   @ViewChild('letterGrid') letterGrid!: ElementRef<HTMLElement>;
 
   // 4 canvas para Quiz B
-  @ViewChildren('quizBCanvas') quizBCanvases!: QueryList<CanvasComponent>;
-  @ViewChildren('quizBCell') quizBCells!: QueryList<ElementRef<HTMLElement>>;
-
   // Estado general
   pantalla: Pantalla = 'aprende';
   readonly letras = LETRAS;
@@ -65,25 +60,6 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
   letraSignandoIdx = -1;
   signandoNombre = false;
   private nombreTimeout: any;
-
-  // Quiz A
-  quizALetraCorrecta: LetraInfo | null = null;
-  quizAOpciones: LetraInfo[] = [];
-  quizASeleccion: string | null = null;
-  quizACorrectas = 0;
-  quizAErrores = 0;
-  quizAPreguntaNum = 1;
-
-  // Quiz B
-  quizBLetraPregunta: LetraInfo | null = null;
-  quizBOrden: number[] = [0, 1, 2, 3];  // quizBOrden[cellIdx] === 0 → correcto
-  quizBSeleccion: number | null = null;
-  quizBCorrectas = 0;
-  quizBErrores = 0;
-  quizBPreguntaNum = 1;
-  readonly quizBColors = QUIZ_B_COLORS;
-  // Distractores: letras de los 3 celdas incorrectas
-  quizBDistractores: LetraInfo[] = [];
 
   // Stats
   userId = '';
@@ -162,24 +138,6 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mainCanvasRef.resizeToContainer(w, h);
   }
 
-  private waitForQuizBCanvases(attempts = 0): void {
-    if (attempts > 60) return;
-    const canvases = this.quizBCanvases?.toArray() ?? [];
-    const cells = this.quizBCells?.toArray() ?? [];
-    if (canvases.length < 4 || !canvases.every(c => c.skinReady)) {
-      setTimeout(() => this.waitForQuizBCanvases(attempts + 1), 100);
-      return;
-    }
-    canvases.forEach((canvas, i) => {
-      if (cells[i]) {
-        const { clientWidth: w, clientHeight: h } = cells[i].nativeElement;
-        canvas.resizeToContainer(w, h);
-      }
-    });
-    // Cargar la animación correcta en cada celda
-    this.loadQuizBAnimations();
-  }
-
   // ══════════════════════════════════════════════════════════════════════════
   // Letras flotantes
   // ══════════════════════════════════════════════════════════════════════════
@@ -242,18 +200,7 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
       this.stopLetrasFlotantes();
     }
 
-    if (p === 'quizA') {
-      setTimeout(() => { this.waitForMainCanvas(); this.nuevaPreguntaQuizA(); }, 50);
-    }
-    if (p === 'quizB') {
-      this.nuevaPreguntaQuizB();
-      // Esperar a que el DOM renderice los 4 canvas
-      setTimeout(() => this.waitForQuizBCanvases(), 100);
-    }
     if (p === 'nombre') {
-      setTimeout(() => this.waitForMainCanvas(), 50);
-    }
-    if (p === 'practica') {
       setTimeout(() => this.waitForMainCanvas(), 50);
     }
   }
@@ -412,94 +359,7 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.nombreParaMostrar.split('').filter(l => this.letras.some(li => li.letra === l));
   }
 
-  // ══════════════════════════════════════════════════════════════════════════
-  // PANTALLA 3 — Quiz A
-  // ══════════════════════════════════════════════════════════════════════════
-
-  nuevaPreguntaQuizA(): void {
-    this.quizASeleccion = null;
-    const idx = Math.floor(Math.random() * this.letras.length);
-    this.quizALetraCorrecta = this.letras[idx];
-    const pool = this.letras.filter(l => l.letra !== this.quizALetraCorrecta!.letra);
-    const shuffled = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
-    this.quizAOpciones = [...shuffled, this.quizALetraCorrecta].sort(() => Math.random() - 0.5);
-    this.reproducirLetra(this.quizALetraCorrecta, false);
-  }
-
-  elegirLetraQuizA(letra: LetraInfo): void {
-    if (this.quizASeleccion !== null) return;
-    this.quizASeleccion = letra.letra;
-    if (letra.letra === this.quizALetraCorrecta?.letra) this.quizACorrectas++;
-    else this.quizAErrores++;
-  }
-
-  quizAEsCorrecta(l: LetraInfo): boolean {
-    return this.quizASeleccion !== null && l.letra === this.quizALetraCorrecta?.letra;
-  }
-  quizAEsIncorrecta(l: LetraInfo): boolean {
-    return this.quizASeleccion === l.letra && l.letra !== this.quizALetraCorrecta?.letra;
-  }
-  siguientePreguntaQuizA(): void { this.quizAPreguntaNum++; this.nuevaPreguntaQuizA(); }
-
-  // ══════════════════════════════════════════════════════════════════════════
-  // PANTALLA 4 — Quiz B (4 canvas reales)
-  // ══════════════════════════════════════════════════════════════════════════
-
-  nuevaPreguntaQuizB(): void {
-    this.quizBSeleccion = null;
-    // Letra correcta
-    const idx = Math.floor(Math.random() * this.letras.length);
-    this.quizBLetraPregunta = this.letras[idx];
-    // 3 distractores
-    const pool = this.letras.filter(l => l.letra !== this.quizBLetraPregunta!.letra);
-    this.quizBDistractores = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
-    // Permutación: posición 0 en el array = índice de la celda correcta
-    this.quizBOrden = [0, 1, 2, 3].sort(() => Math.random() - 0.5);
-  }
-
-  /** Carga la animación correcta en cada uno de los 4 canvas */
-  private async loadQuizBAnimations(): Promise<void> {
-    const canvases = this.quizBCanvases?.toArray() ?? [];
-    if (canvases.length < 4 || !this.quizBLetraPregunta) return;
-
-    // Construir array de 4 letras: la correcta en la posición quizBOrden.indexOf(0)
-    const cuatroLetras: LetraInfo[] = new Array(4);
-    for (let cellIdx = 0; cellIdx < 4; cellIdx++) {
-      if (this.quizBOrden[cellIdx] === 0) {
-        cuatroLetras[cellIdx] = this.quizBLetraPregunta;
-      } else {
-        // quizBOrden[cellIdx] es 1, 2 o 3 → distractor en ese orden
-        cuatroLetras[cellIdx] = this.quizBDistractores[this.quizBOrden[cellIdx] - 1];
-      }
-    }
-
-    // Cargar y reproducir en bucle en cada canvas
-    for (let i = 0; i < 4; i++) {
-      this.reproducirLetra(cuatroLetras[i], true, canvases[i]);
-    }
-  }
-
-  quizBEsCorrecto(cellIdx: number): boolean { return this.quizBOrden[cellIdx] === 0; }
-
-  elegirCeldaQuizB(cellIdx: number): void {
-    if (this.quizBSeleccion !== null) return;
-    this.quizBSeleccion = cellIdx;
-    if (this.quizBEsCorrecto(cellIdx)) this.quizBCorrectas++;
-    else this.quizBErrores++;
-  }
-
-  quizBCeldaEsCorrecta(i: number): boolean { return this.quizBSeleccion !== null && this.quizBEsCorrecto(i); }
-  quizBCeldaEsIncorrecta(i: number): boolean { return this.quizBSeleccion === i && !this.quizBEsCorrecto(i); }
-  quizBColorManos(cellIdx: number): string { return QUIZ_B_COLORS[this.quizBOrden[cellIdx]]; }
-  get quizBCorrectoEnCelda(): number { return this.quizBOrden.findIndex(v => v === 0); }
-
-  siguientePreguntaQuizB(): void {
-    this.quizBPreguntaNum++;
-    this.nuevaPreguntaQuizB();
-    setTimeout(() => this.waitForQuizBCanvases(), 50);
-  }
-
-  // ══════════════════════════════════════════════════════════════════════════
+    // ══════════════════════════════════════════════════════════════════════════
   // Helpers
   // ══════════════════════════════════════════════════════════════════════════
 

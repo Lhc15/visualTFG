@@ -1,0 +1,100 @@
+<div class="vv-layout">
+
+  <!-- TOPNAV -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="volver()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Abecedario
+    </button>
+    <div class="vv-breadcrumb">
+      <span class="vv-bc-dim" (click)="volver()">Practica</span>
+      <span class="vv-bc-sep">›</span>
+      <span class="vv-bc-dim" (click)="volver()">Abecedario</span>
+      <span class="vv-bc-sep">›</span>
+      <span>Modo B</span>
+    </div>
+    <div class="vv-nav-right">
+      <button class="vv-avatar-btn">L</button>
+    </div>
+  </div>
+
+  <!-- SPLIT: panel izquierdo con 4 celdas -->
+  <div class="vv-split">
+
+    <!-- 4 AVATARES -->
+    <div class="vv-four-grid-panel">
+      <div
+        *ngFor="let i of [0,1,2,3]"
+        #quizBCell
+        class="vv-mini-cell"
+        [class.vv-cell-correct]="celdaEsCorrecta(i)"
+        [class.vv-cell-wrong]="celdaEsIncorrecta(i)"
+        (click)="elegirCelda(i)">
+
+        <div class="vv-mini-glow"
+          [style.background]="'radial-gradient(ellipse at 50% 75%, ' + colorManos(i) + '22 0%, transparent 65%)'">
+        </div>
+        <div class="vv-mini-num">{{ i + 1 }}</div>
+
+        <div class="vv-mini-canvas-wrap">
+          <app-canvas
+            #quizBCanvas
+            [cameraZ]="4.3"
+            [standalone]="true">
+          </app-canvas>
+        </div>
+
+        <div class="vv-cell-overlay correct" *ngIf="celdaEsCorrecta(i)">&#10003;</div>
+        <div class="vv-cell-overlay wrong" *ngIf="celdaEsIncorrecta(i)">&#10007;</div>
+      </div>
+    </div>
+
+    <!-- ACTION PANEL -->
+    <div class="vv-action-panel">
+      <div class="vv-action-scroll">
+
+        <div class="vv-badge-strip">
+          <div class="vv-badge vv-badge-abc">Modo B · Identifica</div>
+          <div class="vv-badge vv-badge-score">{{ correctas }} pts</div>
+        </div>
+
+        <div class="vv-quiz-progress">
+          <div class="vv-quiz-progress-fill" [style.width.%]="(preguntaNum / 10) * 100"></div>
+        </div>
+
+        <div class="vv-question-chip">Observa los 4 avatares</div>
+
+        <div class="vv-question-big">{{ letraPregunta?.letra }}</div>
+        <div class="vv-question-sub">¿Cuál de los cuatro avatares está signando esta letra?</div>
+
+        <div class="vv-select-hint" *ngIf="seleccion === null">
+          Haz clic en el avatar que creas correcto.<br>
+          <strong>Consejo:</strong> observa la forma y posicion de los brazos.
+        </div>
+
+        <div class="vv-result-banner correct" *ngIf="seleccion !== null && celdaEsCorrecta(seleccion)">
+          <span>&#10003;</span> Correcto. El avatar {{ correctoEnCelda + 1 }} signaba la <strong>{{ letraPregunta?.letra }}</strong>.
+        </div>
+        <div class="vv-result-banner wrong" *ngIf="seleccion !== null && celdaEsIncorrecta(seleccion)">
+          <span>&#10007;</span> No era ese. El correcto era el <strong>avatar {{ correctoEnCelda + 1 }}</strong>.
+        </div>
+
+        <button class="vv-next-btn" *ngIf="seleccion !== null" (click)="siguiente()">
+          Siguiente pregunta →
+        </button>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="vv-footer">
+        <div class="vv-footer-stat">Correctas: <span class="vv-footer-val">{{ correctas }}</span></div>
+        <div class="vv-footer-sep"></div>
+        <div class="vv-footer-stat">Errores: <span class="vv-footer-val">{{ errores }}</span></div>
+        <div class="vv-footer-sep"></div>
+        <div class="vv-footer-stat vv-switch-mode" (click)="irAModoA()">Cambiar a Modo A →</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

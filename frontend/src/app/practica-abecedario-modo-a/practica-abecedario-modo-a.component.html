@@ -1,0 +1,98 @@
+<div class="vv-layout">
+
+  <!-- TOPNAV -->
+  <div class="vv-topnav">
+    <button class="vv-back-btn" (click)="volver()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Abecedario
+    </button>
+    <div class="vv-breadcrumb">
+      <span class="vv-bc-dim" (click)="volver()">Practica</span>
+      <span class="vv-bc-sep">›</span>
+      <span class="vv-bc-dim" (click)="volver()">Abecedario</span>
+      <span class="vv-bc-sep">›</span>
+      <span>Modo A</span>
+    </div>
+    <div class="vv-nav-right">
+      <button class="vv-avatar-btn">L</button>
+    </div>
+  </div>
+
+  <!-- SPLIT -->
+  <div class="vv-split">
+
+    <!-- AVATAR PANEL -->
+    <div class="vv-avatar-panel" #avatarPanel>
+      <div class="vv-avatar-glow"></div>
+
+      <app-tool-menu
+        [isPlaying]="isPlaying"
+        [currentPlaybackRate]="currentPlaybackRate"
+        (rateChange)="setPlaybackRate($event)"
+        [isLooping]="isLooping"
+        [showWebcam]="showWebcam"
+        [disabled]="false"
+        (playClicked)="onPlayClicked()"
+        (loopToggled)="handleLoop($event)"
+        (webcamToggled)="toggleWebcam()">
+      </app-tool-menu>
+
+      <div class="vv-canvas-wrap">
+        <app-canvas
+          #mainCanvas
+          [cameraZ]="4.3"
+          (animationEnded)="onAnimationEnded()">
+        </app-canvas>
+      </div>
+    </div>
+
+    <!-- ACTION PANEL -->
+    <div class="vv-action-panel">
+      <div class="vv-action-scroll">
+
+        <div class="vv-badge-strip">
+          <div class="vv-badge vv-badge-abc">Modo A · Adivina</div>
+          <div class="vv-badge vv-badge-score">{{ correctas }} pts</div>
+        </div>
+
+        <div class="vv-quiz-progress">
+          <div class="vv-quiz-progress-fill" [style.width.%]="(preguntaNum / 10) * 100"></div>
+        </div>
+
+        <div class="vv-section-label">Pregunta {{ preguntaNum }}</div>
+        <div class="vv-title">¿Qué letra está<br><em>signando</em> el avatar?</div>
+
+        <div class="vv-quiz-choices">
+          <div
+            *ngFor="let opcion of opciones"
+            class="vv-quiz-choice"
+            [class.vv-choice-correct]="esCorrecta(opcion)"
+            [class.vv-choice-wrong]="esIncorrecta(opcion)"
+            (click)="elegirLetra(opcion)">
+            {{ opcion.letra }}
+          </div>
+        </div>
+
+        <div class="vv-quiz-hint" *ngIf="!seleccion">
+          ¿No ves bien? Usa el boton de velocidad en la barra de herramientas para ralentizar
+        </div>
+
+        <button class="vv-next-btn" *ngIf="seleccion !== null" (click)="siguiente()">
+          Siguiente pregunta →
+        </button>
+
+      </div>
+
+      <!-- FOOTER -->
+      <div class="vv-footer">
+        <div class="vv-footer-stat">Correctas: <span class="vv-footer-val">{{ correctas }}</span></div>
+        <div class="vv-footer-sep"></div>
+        <div class="vv-footer-stat">Errores: <span class="vv-footer-val">{{ errores }}</span></div>
+        <div class="vv-footer-sep"></div>
+        <div class="vv-footer-stat vv-switch-mode" (click)="irAModoB()">Cambiar a Modo B →</div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
