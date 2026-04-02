@@ -12,8 +12,8 @@ import { CanvasComponent } from '../canvas/canvas.component';
 })
 export class PracticaAbecedarioComponent implements AfterViewInit {
 
-  @ViewChild(CanvasComponent) canvasRef!: CanvasComponent;
-  @ViewChild('canvasWrap') canvasWrap!: ElementRef<HTMLElement>;
+  @ViewChild('mainCanvas') mainCanvasRef!: CanvasComponent;
+  @ViewChild('avatarPanel') avatarPanel!: ElementRef<HTMLElement>;
 
   constructor(private router: Router) {}
 
@@ -23,13 +23,17 @@ export class PracticaAbecedarioComponent implements AfterViewInit {
 
   private waitForCanvas(attempts = 0): void {
     if (attempts > 50) return;
-    if (!this.canvasRef?.skinReady) {
+    if (!this.mainCanvasRef?.skinReady) {
       setTimeout(() => this.waitForCanvas(attempts + 1), 100);
       return;
     }
-    if (!this.canvasWrap) return;
-    const { clientWidth: w, clientHeight: h } = this.canvasWrap.nativeElement;
-    this.canvasRef.resizeToContainer(w, h);
+    this.resizeCanvas();
+  }
+
+  private resizeCanvas(): void {
+    if (!this.avatarPanel || !this.mainCanvasRef) return;
+    const { clientWidth: w, clientHeight: h } = this.avatarPanel.nativeElement;
+    this.mainCanvasRef.resizeToContainer(w, h);
   }
 
   irAModo(modo: 'modo-a' | 'modo-b'): void {
