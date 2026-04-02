@@ -36,8 +36,14 @@
             </div>
           </div>
 
-          <!-- Panel que nace desde detras del card verde -->
-          <div class="prac-id-back">
+          <!-- Panel que nace desde detras del card verde - desplegable -->
+          <div class="prac-id-back" [class.expandido]="statsExpandido" (click)="toggleStats()">
+            <div class="prac-id-back-hint">
+              <span>{{ statsExpandido ? 'Ocultar estadisticas' : 'Despliega para ver las estadisticas' }}</span>
+              <svg class="prac-id-back-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6 6 6-6"/>
+              </svg>
+            </div>
             <div class="prac-stats-mini">
               <div class="prac-stat sm1">
                 <div class="prac-stat-val">78%</div>

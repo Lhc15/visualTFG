@@ -35,23 +35,26 @@
 
 /* CENTRO */
 .prac-center {
-  flex: 1; display: flex; align-items: flex-start; padding-top: 1rem; justify-content: center;
-  padding: 0 1.5rem; min-height: 0;
+  flex: 1; display: flex; align-items: flex-start; justify-content: center;
+  padding: 0 clamp(0.75rem, 2vw, 1.5rem);
+  min-height: 0; overflow: visible;
 }
 
 /* PANEL — grande, con margen superior extra para el avatar que sobresale */
 .prac-panel {
   width: 100%; max-width: 1400px;
   display: grid; grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  padding-top: 115px; /* espacio para el avatar que sobresale */
+  gap: clamp(10px, 1.5vw, 20px);
+  padding-top: clamp(80px, 12vh, 140px);
+  align-items: start;
+  box-sizing: border-box;
 }
 
 /* IZQUIERDA */
 .prac-left {
-  display: grid;
-  grid-template-rows: auto auto 88px;
-  gap: 14px;
+  display: flex; flex-direction: column;
+  gap: clamp(8px, 1vh, 14px);
+  min-height: 0;
 }
 
 /* Progreso — avatar sobresale por arriba */
@@ -62,16 +65,17 @@
   position: relative; overflow: hidden;
   display: flex; flex-direction: column; justify-content: flex-end;
   padding: 1.5rem 1.75rem;
-  height: 420px;
+  height: clamp(220px, 35vh, 420px);
 }
 
 /* Canvas desbordando arriba */
 .prac-canvas-wrap {
   position: absolute;
   right: -5%;
-  top: -110px; /* sobresale 55px por encima del card */
+  top: -110px;
   width: 55%;
   height: calc(100% + 110px);
+  max-height: calc(clamp(220px, 35vh, 420px) + 110px);
   z-index: 2; pointer-events: none; overflow: visible;
 }
 .prac-canvas-wrap ::ng-deep app-canvas { width: 100%; height: 100%; display: block; }
@@ -90,7 +94,7 @@
 }
 .prac-prog-val {
   font-family: var(--font-display, 'Fraunces', serif);
-  font-size: 5rem; font-weight: 700; color: #fff; line-height: 1; margin-bottom: 2px;
+  font-size: clamp(2.5rem, 4vw, 5rem); font-weight: 700; color: #fff; line-height: 1; margin-bottom: 2px;
 }
 .prac-prog-sub { font-size: .95rem; color: rgba(255,255,255,.45); margin-bottom: 14px; }
 .prac-prog-bar { height: 4px; background: rgba(255,255,255,.15); border-radius: 99px; }
@@ -99,18 +103,21 @@
 /* Stats cuadradas */
 .prac-stats-mini { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
 .prac-stat {
-  background: #fff; border-radius: 12px;
+  border-radius: 12px;
   display: flex; flex-direction: column;
-  align-items: center; padding-top: 1rem; justify-content: center;
-  gap: 3px; border: .5px solid rgba(0,0,0,.06);
+  align-items: center; padding: 0.85rem 0.5rem; justify-content: center;
+  gap: 3px;
 }
+.sm1 { background: #FEF0EB; }
+.sm2 { background: #EBF3FE; }
+.sm3 { background: #F5EAF0; }
 .prac-stat-val {
   font-family: var(--font-display, 'Fraunces', serif);
-  font-size: 2.4rem; font-weight: 700;
+  font-size: clamp(1.4rem, 2vw, 2.4rem); font-weight: 700;
 }
-.sm1 .prac-stat-val { color: #E04A1A; }
+.sm1 .prac-stat-val { color: #B83410; }
 .sm2 .prac-stat-val { color: #185FA5; }
-.sm3 .prac-stat-val { color: #993556; }
+.sm3 .prac-stat-val { color: #7A2848; }
 .prac-stat-label { font-size: .9rem; color: #9ca3af; }
 
 /* Tablón */
@@ -134,8 +141,12 @@
 
 /* DERECHA — acordeón mismo alto que izquierda */
 .prac-right {
-  display: flex; flex-direction: column; gap: 14px;
-  height: calc(420px + 160px + 88px + 28px); /* igual que izquierda */
+  display: flex; flex-direction: column; gap: clamp(8px, 1vh, 14px);
+  padding-right: 12px;
+  height: 70vh;
+  max-height: 70vh;
+  min-height: 0;
+  overflow: hidden;
 }
 /* prac-ac-item — layout y estilo visual; flex lo gestiona prac-ac-wrap */
 .prac-ac-item {
@@ -166,7 +177,7 @@
 }
 .prac-ac-pct {
   font-family: var(--font-display, 'Fraunces', serif);
-  font-size: 3.5rem; font-weight: 700; color: #125603; line-height: 1;
+  font-size: clamp(2rem, 3vw, 3.5rem); font-weight: 700; color: #125603; line-height: 1;
 }
 .prac-ac-sub { font-size: 1rem; color: #6b7280; }
 .prac-ac-bar-wrap { display: flex; align-items: flex-start; padding-top: 1rem; gap: .6rem; }
@@ -199,22 +210,55 @@
 .prac-id-card {
   position: relative;
   display: flex; flex-direction: column;
-  grid-row: 1 / 3; /* ocupa las dos primeras filas del grid de prac-left */
+  min-height: 0;
 }
 
 /* Panel que nace desde detras del card verde, esquinas de abajo redondeadas */
 .prac-id-back {
-  background: #E2EDE0;
+  background: #fff;
   border-radius: 0 0 18px 18px;
   border: 1px solid rgba(18,86,3,0.15);
   border-top: none;
-  padding: 0 1.25rem 1.25rem;
   margin-left: 18px;
   margin-right: 18px;
   margin-top: -18px;
-  padding-top: 28px;
+  padding-top: 18px;
   position: relative;
   z-index: 1;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+/* Hint visible siempre — texto + flecha */
+.prac-id-back-hint {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 1.25rem 10px;
+  font-size: 0.75rem; color: #125603; font-weight: 500;
+  animation: hint-pulse 2.2s ease-in-out infinite;
+}
+@keyframes hint-pulse {
+  0%, 100% { transform: translateY(0); opacity: 1; }
+  40%       { transform: translateY(3px); opacity: 0.7; }
+  60%       { transform: translateY(3px); opacity: 0.7; }
+  80%       { transform: translateY(0); opacity: 1; }
+}
+.prac-id-back.expandido .prac-id-back-hint { animation: none; }
+.prac-id-back-arrow {
+  width: 13px; height: 13px; color: #125603;
+  transition: transform 0.3s;
+  flex-shrink: 0;
+}
+.prac-id-back.expandido .prac-id-back-arrow { transform: rotate(180deg); }
+
+/* Stats ocultas por defecto, se muestran al expandir */
+.prac-id-back .prac-stats-mini {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.7s cubic-bezier(.4,0,.2,1), padding 0.6s;
+  padding: 0 1.25rem;
+}
+.prac-id-back.expandido .prac-stats-mini {
+  max-height: 200px;
+  padding: 0 1.25rem 1.25rem;
 }
 
 /* El card verde queda por encima del panel */
@@ -277,4 +321,7 @@
 .prac-ac-novedad-dot {
   width: 6px; height: 6px; border-radius: 50%;
   background: #F4A940; flex-shrink: 0;
+}
+@media (max-width: 1600px) {
+  .prac-panel { max-width: 1200px; }
 }

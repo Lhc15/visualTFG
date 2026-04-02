@@ -33,8 +33,11 @@ export class PracticaComponent implements AfterViewInit {
   ];
 
   activoId: string | null = null;
+  statsExpandido = false;
 
   constructor(private router: Router) {}
+
+  toggleStats(): void { this.statsExpandido = !this.statsExpandido; }
 
   ngAfterViewInit(): void { this.waitForSkinAndResize(); }
 
