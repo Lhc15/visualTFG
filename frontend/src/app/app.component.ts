@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
     }
   
     // Lista de rutas permitidas sin autenticación
-    const allowedRoutes = ['/landing', '/guiado', '/home', '/perfil', '/ajustes', '/learning', '/modos2', '/modos2', '/libre', '/abecedario', '/conversamos', '/aprende', '/aprende/comunicacion', '/practica','/practica/abecedario', '/practica/abecedario/modo-a', '/practica/abecedario/modo-b','/practica/vocabulario', '/practica/gramatica'];
+    const allowedRoutes = ['/landing', '/guiado', '/home', '/perfil', '/ajustes', '/learning', '/modos2', '/modos2', '/libre', '/abecedario', '/conversamos', '/aprende', '/aprende/comunicacion', '/practica','/practica/abecedario', '/practica/abecedario/modo-a', '/practica/abecedario/modo-b','/practica/vocabulario', '/practica/gramatica', '/practica/conversacion', '/practica/avanzado', '/stats', '/practica/vocabulario-ejercicio']; // Agrega aquí otras rutas que quieras permitir sin autenticación
   
     // Si la ruta actual está permitida, no hacer nada
     if (allowedRoutes.includes(currentRoute)) {
