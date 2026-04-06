@@ -122,20 +122,12 @@
         <!-- ── BLOQUE / DIAPOSITIVA ── -->
         <ng-container *ngIf="vista === 'bloque' && diapositiva">
           <div class="com-topnav">
-            <button class="com-nav-btn com-nav-prev" [disabled]="esPrimeraDiapositiva" (click)="anterior()">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
-              Anterior
-            </button>
             <div class="com-dots-wrap">
               <div class="com-dots">
                 <div class="com-dot" *ngFor="let d of diapositivasActivas; let i = index" [class.active]="i === diapositivaIdx"></div>
               </div>
               <div class="com-count">{{ diapositivaIdx + 1 }} de {{ totalDiapositivas }}</div>
             </div>
-            <button class="com-nav-btn com-nav-next" [disabled]="esUltimaDiapositiva" (click)="siguiente()">
-              Siguiente
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
           </div>
 
           <div class="com-body">
@@ -195,14 +187,41 @@
               <div class="com-tip-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
               <div class="com-tip-text">{{ diapositiva.tip }}</div>
             </div>
-          </div>
+          <!-- Navegación inferior: toda la navegación entre diapos y temas va aquí -->
+          <div class="com-nav-footer">
 
-          <div class="com-footer" *ngIf="esUltimaDiapositiva && siguienteBloque" (click)="irASiguienteBloque()">
-            <div>
-              <div class="com-footer-label">Siguiente bloque</div>
-              <div class="com-footer-title">{{ siguienteBloque!.titulo }}</div>
-            </div>
-            <svg viewBox="0 0 24 24" fill="none" stroke="#E04A1A" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            <!-- Anterior (diapositiva o sub-bloque anterior) -->
+            <button class="com-nav-prev-btn" *ngIf="!esPrimeraDiapositiva" (click)="anterior()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+              Anterior
+            </button>
+            <div *ngIf="esPrimeraDiapositiva" class="com-nav-prev-spacer"></div>
+
+            <!-- Siguiente diapositiva (dentro de la misma lección) -->
+            <button class="com-nav-next-btn" *ngIf="!esUltimaDiapositiva" (click)="siguiente()">
+              Siguiente
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+
+            <!-- Siguiente lección (sub-bloque, cuando estamos en la última diapo) -->
+            <button class="com-nav-next-btn com-nav-tema" *ngIf="esUltimaDiapositiva && siguienteSubBloque" (click)="irASiguienteSubBloque()">
+              Lección {{ siguienteSubBloqueNum }}: {{ siguienteSubBloque!.titulo }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+
+            <!-- Siguiente bloque -->
+            <button class="com-nav-next-btn com-nav-tema" *ngIf="esUltimaDiapositiva && esUltimoSubBloque && siguienteBloque" (click)="irASiguienteBloque()">
+              Bloque {{ siguienteBloque!.numero }}: {{ siguienteBloque!.titulo }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+
+            <!-- Fin: última diapo del último bloque -->
+            <button class="com-nav-next-btn com-nav-fin" *ngIf="esUltimaDiapositiva && esUltimoSubBloque && !siguienteBloque" (click)="volverAIndice()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Volver al índice
+            </button>
+
+          </div>
           </div>
         </ng-container>
 

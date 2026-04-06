@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CategoriasService } from '../services/categorias.service';
-import { UsuariosService } from '../services/usuarios.service';
+import { PalabrasService } from '../services/palabras.service';
 
 export interface CategoriaNodo {
   id: string;
@@ -10,24 +10,10 @@ export interface CategoriaNodo {
   totalPalabras: number;
   palabrasEstudiadas: number;
   estado: 'completado' | 'activo' | 'bloqueado';
-  estrellas: number; // 0-3
-  palabras: string[]; // nombres de palabras para preview
-  icono: string;     // inicial o emoji placeholder
+  estrellas: number;
+  palabras: string[];
+  icono: string;
 }
-
-// Iconos por nombre de categoría (fallback a inicial)
-const ICONOS: Record<string, string> = {
-  'saludos': 'S',
-  'colores': 'C',
-  'familia': 'F',
-  'comida': 'A',
-  'números': 'N',
-  'animales': 'Z',
-  'ropa': 'R',
-  'cuerpo': 'B',
-  'tiempo': 'T',
-  'profesiones': 'P',
-};
 
 @Component({
   selector: 'app-practica-vocabulario',
@@ -42,13 +28,13 @@ export class PracticaVocabularioComponent implements OnInit {
   categoriaActiva: CategoriaNodo | null = null;
   cargando = true;
 
-  // Posiciones alternas del zigzag
-  readonly shifts = ['shift-r', 'shift-l', 'shift-r', 'shift-l', 'shift-r', 'shift-l'];
+  readonly shifts = ['shift-r', 'shift-l', 'shift-r', 'shift-l', 'shift-r', 'shift-l',
+                     'shift-r', 'shift-l', 'shift-r', 'shift-l', 'shift-r', 'shift-l'];
 
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
-    private usuariosService: UsuariosService
+    private palabrasService: PalabrasService
   ) {}
 
   ngOnInit(): void {
@@ -58,76 +44,82 @@ export class PracticaVocabularioComponent implements OnInit {
   private cargarCategorias(): void {
     this.categoriasService.obtenerCategorias().subscribe({
       next: (cats: any[]) => {
-        // Filtrar solo las de vocabulario
-        const vocab = cats.filter((c: any) =>
-          !c.modulo || c.modulo === 'vocabulario'
+        // Filtrar SOLO las de modulo vocabulario — las que crea el admin con ese modulo
+        // Sin reordenar: se respeta el orden de insercion en MongoDB,
+        // que es el mismo que usa Aprende, garantizando coherencia entre secciones.
+        const vocab = cats.filter((c: any) => c.modulo === 'vocabulario');
+
+        if (vocab.length === 0) {
+          this.cargando = false;
+          return;
+        }
+
+        // Cargar palabras de cada categoria para obtener los nombres reales
+        // Usamos forkJoin para esperar todas las peticiones
+        const peticiones = vocab.map((cat: any) =>
+          this.categoriasService.obtenerPalabrasPorCategoria(cat._id).toPromise()
+            .then((palabras: any[]) => palabras ?? [])
+            .catch(() => [])
         );
 
-        // Construir nodos con datos simulados de progreso
-        // En una implementación completa esto vendría del backend con las palabras jugadas
-        this.categorias = vocab.map((cat: any, idx: number) => {
-          const total = cat.totalPalabras ?? Math.floor(Math.random() * 5) + 4;
-          const estudiadas = idx === 0 ? total : idx === 1 ? Math.floor(total * 0.5) : 0;
-          const estado = this.calcularEstado(idx, estudiadas, total);
-          const estrellas = this.calcularEstrellas(estudiadas, total, estado);
-          return {
-            id: cat._id,
-            nombre: cat.nombre,
-            totalPalabras: total,
-            palabrasEstudiadas: estudiadas,
-            estado,
-            estrellas,
-            palabras: cat.palabrasPreview ?? [],
-            icono: ICONOS[cat.nombre?.toLowerCase()] ?? cat.nombre?.[0]?.toUpperCase() ?? '?'
-          } as CategoriaNodo;
+        Promise.all(peticiones).then((resultados: any[][]) => {
+          this.categorias = vocab.map((cat: any, idx: number) => {
+            const palabrasDeCat: any[] = resultados[idx] ?? [];
+            const total = palabrasDeCat.length;
+            // Por ahora palabrasEstudiadas = 0, se conectará al sistema
+            // de desbloqueo cuando esté implementado (PracticaEntry)
+            const estudiadas = 0;
+            const estado = this.calcularEstado(idx, estudiadas, total);
+            const estrellas = this.calcularEstrellas(estudiadas, total, estado);
+
+            return {
+              id: cat._id,
+              nombre: cat.nombre,
+              totalPalabras: total,
+              palabrasEstudiadas: estudiadas,
+              estado,
+              estrellas,
+              palabras: palabrasDeCat.map((p: any) => p.palabra ?? ''),
+              icono: cat.nombre?.[0]?.toUpperCase() ?? '?'
+            } as CategoriaNodo;
+          });
+
+          // La primera categoria siempre activa (desbloqueo real viene después)
+          if (this.categorias.length > 0 && this.categorias[0].estado === 'bloqueado') {
+            this.categorias[0] = { ...this.categorias[0], estado: 'activo' };
+          }
+
+          this.categoriaActiva = this.categorias.find(c => c.estado === 'activo')
+            ?? this.categorias.find(c => c.estado === 'completado')
+            ?? this.categorias[0]
+            ?? null;
+
+          this.cargando = false;
         });
-
-        // Seleccionar la categoría activa por defecto
-        this.categoriaActiva = this.categorias.find(c => c.estado === 'activo')
-          ?? this.categorias.find(c => c.estado === 'completado')
-          ?? this.categorias[0]
-          ?? null;
-
-        this.cargando = false;
       },
       error: () => {
-        // Datos de ejemplo si falla la carga
-        this.categorias = this.categoriasEjemplo();
-        this.categoriaActiva = this.categorias.find(c => c.estado === 'activo') ?? null;
         this.cargando = false;
       }
     });
   }
 
   private calcularEstado(idx: number, estudiadas: number, total: number): 'completado' | 'activo' | 'bloqueado' {
-    if (idx === 0 && estudiadas >= total) return 'completado';
-    if (idx === 0) return 'activo';
-    // Una categoría se desbloquea si la anterior está al menos iniciada
+    if (idx === 0) return estudiadas >= total && total > 0 ? 'completado' : 'activo';
     const anterior = this.categorias[idx - 1];
     if (!anterior) return 'bloqueado';
     if (anterior.estado === 'completado' || anterior.palabrasEstudiadas > 0) {
-      return estudiadas >= total ? 'completado' : 'activo';
+      return estudiadas >= total && total > 0 ? 'completado' : 'activo';
     }
     return 'bloqueado';
   }
 
   private calcularEstrellas(estudiadas: number, total: number, estado: string): number {
     if (estado === 'bloqueado' || total === 0) return 0;
-    const pct = estudiadas / total;
-    if (pct >= 1) return 3;
+    const pct = total > 0 ? estudiadas / total : 0;
+    if (pct >= 1)   return 3;
     if (pct >= 0.6) return 2;
     if (pct >= 0.3) return 1;
     return 0;
-  }
-
-  private categoriasEjemplo(): CategoriaNodo[] {
-    return [
-      { id: '1', nombre: 'Saludos', totalPalabras: 6, palabrasEstudiadas: 6, estado: 'completado', estrellas: 3, palabras: ['hola', 'adios', 'gracias', 'por favor', 'buenos dias', 'buenas noches'], icono: 'S' },
-      { id: '2', nombre: 'Colores', totalPalabras: 8, palabrasEstudiadas: 4, estado: 'activo', estrellas: 2, palabras: ['rojo', 'azul', 'verde', 'amarillo', 'blanco', 'negro', 'naranja', 'marron'], icono: 'C' },
-      { id: '3', nombre: 'Familia', totalPalabras: 7, palabrasEstudiadas: 0, estado: 'bloqueado', estrellas: 0, palabras: [], icono: 'F' },
-      { id: '4', nombre: 'Comida', totalPalabras: 9, palabrasEstudiadas: 0, estado: 'bloqueado', estrellas: 0, palabras: [], icono: 'A' },
-      { id: '5', nombre: 'Numeros', totalPalabras: 10, palabrasEstudiadas: 0, estado: 'bloqueado', estrellas: 0, palabras: [], icono: 'N' },
-    ];
   }
 
   seleccionarCategoria(cat: CategoriaNodo): void {

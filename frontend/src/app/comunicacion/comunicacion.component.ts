@@ -288,6 +288,30 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     return idx < this.bloques.length - 1 ? this.bloques[idx + 1] : null;
   }
 
+  // Sub-bloque siguiente dentro del mismo bloque (ENM y Preguntas)
+  get siguienteSubBloque(): SubBloque | null {
+    if (!this.bloqueActivo?.subBloques?.length || !this.subBloqueActivo) return null;
+    const subs = this.bloqueActivo.subBloques;
+    const idx = subs.findIndex(s => s.id === this.subBloqueActivo!.id);
+    return idx < subs.length - 1 ? subs[idx + 1] : null;
+  }
+
+  // Número (1-based) del siguiente sub-bloque dentro del bloque activo
+  get siguienteSubBloqueNum(): number | null {
+    if (!this.bloqueActivo?.subBloques?.length || !this.subBloqueActivo) return null;
+    const subs = this.bloqueActivo.subBloques;
+    const idx = subs.findIndex(s => s.id === this.subBloqueActivo!.id);
+    return idx < subs.length - 1 ? idx + 2 : null; // +2: idx es 0-based, queremos el siguiente
+  }
+
+  // True cuando estamos en el último sub-bloque del bloque (o en un bloque sin sub-bloques)
+  get esUltimoSubBloque(): boolean {
+    if (!this.bloqueActivo?.subBloques?.length) return true;
+    if (!this.subBloqueActivo) return false;
+    const subs = this.bloqueActivo.subBloques;
+    return subs[subs.length - 1].id === this.subBloqueActivo.id;
+  }
+
   // ── Navegación ───────────────────────────────────────────
   abrirBloque(bloque: Bloque): void {
     this.bloqueActivo = bloque;
@@ -331,6 +355,11 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
   irASiguienteBloque(): void {
     const sig = this.siguienteBloque;
     if (sig) this.abrirBloque(sig);
+  }
+
+  irASiguienteSubBloque(): void {
+    const sig = this.siguienteSubBloque;
+    if (sig) this.abrirSubBloque(sig);
   }
 
   volver(): void {
