@@ -77,6 +77,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
 
   // ── Contenido ──
   readonly bloques: Bloque[] = [
+    // ── BLOQUE 1: ENM ──────────────────────────────────────────────────────────
     {
       id: 'enm', numero: 1,
       titulo: 'ENM — Expresión no manual',
@@ -88,68 +89,56 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
             {
               tipo: 'layout-b',
               titulo: 'El contacto', tituloItalica: 'visual',
-              lead: 'Mirar a la otra persona no es solo educación — es parte del propio lenguaje. Sin contacto visual la comunicación se interrumpe.',
-              imagenIzq: '', captionIzq: 'Contacto visual directo', subtituloIzq: 'La base de toda comunicación en LSE',
-              derechoTipo: 'reglas',
+              lead: 'El contacto visual es la base de la comunicación en LSE. Mirar a la otra persona no es solo educación — es parte del propio lenguaje. Sin contacto visual, la comunicación no puede ocurrir.',
+              imagenIzq: '', captionIzq: 'Contacto visual directo', subtituloIzq: 'Imprescindible para comunicarse',
+              derechoTipo: 'lista',
               items: [
-                { texto: 'Mantén la mirada durante toda la conversación', tipo: 'ok' },
-                { texto: 'Asiente ligeramente para indicar que sigues', tipo: 'ok' },
-                { texto: 'No apartes la vista — indica que has terminado', tipo: 'no' },
-                { texto: 'No mires al suelo ni a los lados mientras firman', tipo: 'no' }
-              ]
+                { texto: 'Mantén la mirada a los ojos durante toda la conversación', tipo: 'ok' },
+                { texto: 'Asiente con la cabeza para indicar que sigues y comprendes', tipo: 'ok' },
+                { texto: 'Apartar la vista indica que la conversación ha terminado', tipo: 'no' },
+                { texto: 'No mires al suelo ni a los lados mientras te están signando', tipo: 'no' }
+              ],
+              tip: 'Para una persona sorda, mirar a los ojos es equivalente a "estar escuchando" en la comunicación oral.'
             }
           ]
         },
         {
-          id: 'enm-cuerpo', titulo: 'Posición del cuerpo', subtitulo: 'El cuerpo como herramienta comunicativa',
+          id: 'enm-cuerpo', titulo: 'Posición del cuerpo', subtitulo: 'El cuerpo como parte de la gramática',
           diapositivas: [
             {
               tipo: 'layout-b',
               titulo: 'La posición', tituloItalica: 'del cuerpo',
-              lead: 'El cuerpo también habla. Inclinarse hacia delante activa la comunicación y forma parte de la gramática.',
-              imagenIzq: '', captionIzq: 'Posición correcta e incorrecta', subtituloIzq: 'El cuerpo como herramienta comunicativa',
+              lead: 'La postura corporal forma parte activa de la gramática en LSE. No es solo postura — es información lingüística. Inclinarse hacia delante activa la pregunta igual que lo hace la entonación en español.',
+              imagenIzq: '', captionIzq: 'Cuerpo inclinado = pregunta', subtituloIzq: 'Postura corporal como marcador gramatical',
               derechoTipo: 'highlight',
               highlight: { titulo: 'En preguntas', texto: 'Inclina el cuerpo ligeramente hacia delante cuando hagas una pregunta — es parte de la gramática, no solo postura.' },
               nota: 'Recostarse o alejarse indica desinterés o que la conversación ha terminado.',
-              tip: 'La inclinación hacia delante en preguntas es equivalente a levantar la entonación en español.'
+              tip: 'La inclinación hacia delante en preguntas es equivalente a subir la entonación al final de una pregunta en español.'
             }
           ]
         },
         {
-          id: 'enm-atencion', titulo: 'Llamar la atención', subtitulo: 'Antes de empezar a signar',
+          id: 'enm-llamar', titulo: 'Llamar la atención', subtitulo: 'Antes de empezar a signar',
           diapositivas: [
             {
               tipo: 'layout-b',
               titulo: 'Llamar la', tituloItalica: 'atención',
-              lead: 'Antes de empezar a signar debes asegurarte de que la persona sorda te está mirando.',
-              imagenIzq: '', captionIzq: 'Formas de llamar la atención', subtituloIzq: 'Siempre antes de empezar a signar',
+              lead: 'Antes de empezar a signar debes asegurarte de que la persona sorda te está mirando. Sin ese contacto visual previo, todo lo que signes pasará desapercibido.',
+              imagenIzq: '', captionIzq: 'Formas correctas de llamar la atención', subtituloIzq: 'Siempre antes de empezar a signar',
               derechoTipo: 'lista',
               items: [
                 { texto: 'Agitar la mano en su campo visual', tipo: 'ok' },
                 { texto: 'Tocar suavemente el hombro o el brazo', tipo: 'ok' },
                 { texto: 'Golpear la mesa o el suelo para generar vibración', tipo: 'ok' },
-                { texto: 'Nunca gritar — no tiene ningún efecto', tipo: 'no' }
+                { texto: 'Gritar o hablar más alto — no tiene ningún efecto', tipo: 'no' }
               ]
-            }
-          ]
-        },
-        {
-          id: 'enm-presentar', titulo: 'Cómo presentarte', subtitulo: 'Signo personal + nombre deletreado',
-          diapositivas: [
-            {
-              tipo: 'layout-b',
-              titulo: 'Cómo', tituloItalica: 'presentarte',
-              lead: 'Al presentarte a una persona sorda por primera vez sigue siempre este orden: signo personal primero, luego nombre deletreado.',
-              imagenIzq: '', captionIzq: 'Presentación en LSE', subtituloIzq: 'Signo personal + nombre deletreado',
-              derechoTipo: 'highlight',
-              highlight: { titulo: 'Orden obligatorio', texto: 'Primero dices tu signo personal (la seña que te identifica), y después deletreas tu nombre con el abecedario dactilológico.' },
-              nota: 'El signo personal es único para cada persona — lo asigna la comunidad sorda.',
-              tip: 'Si todavía no tienes signo personal, deletrea directamente tu nombre.'
             }
           ]
         }
       ]
     },
+
+    // ── BLOQUE 2: SOV ──────────────────────────────────────────────────────────
     {
       id: 'sov', numero: 2,
       titulo: 'Orden SOV',
@@ -158,20 +147,23 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
         {
           tipo: 'layout-a',
           titulo: 'El orden', tituloItalica: 'S · O · V',
-          lead: 'En LSE el verbo siempre va al final. A diferencia del español, el objeto aparece antes del verbo.',
-          regla: { label: 'Regla principal', texto: 'La estructura básica es Sujeto → Objeto → Verbo. El verbo nunca va en el centro de la frase.' },
-          schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'PUERTA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }], label: 'Ejemplo · dale al play para verlo firmado' },
-          textoExtra: 'En español dirías "Tú compras una puerta" — en LSE el orden es completamente distinto.'
+          lead: 'En español las frases siguen el orden Sujeto → Verbo → Objeto. En LSE el orden es distinto: el verbo siempre va al final, después del objeto.',
+          regla: { label: 'Regla fundamental', texto: 'SUJETO + OBJETO + VERBO. El verbo nunca va en el centro — siempre al final de la frase.' },
+          schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'PUERTA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Tú compras una puerta" en LSE' },
+          textoExtra: 'En español: "Tú compras una puerta" (S-V-O). En LSE: TÚ PUERTA COMPRAR (S-O-V). El verbo siempre al final.'
         },
         {
           tipo: 'layout-a',
-          titulo: 'Más', tituloItalica: 'ejemplos',
-          lead: 'Practica el orden SOV con distintas combinaciones.',
-          schema: { tokens: [{ texto: 'YO', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'VIVIR', rol: 'V' }], label: 'Ejemplo 2' },
-          textoExtra: 'El patrón es siempre el mismo independientemente de los elementos que uses.'
+          titulo: 'Más', tituloItalica: 'ejemplos SOV',
+          lead: 'El patrón es siempre el mismo, independientemente de los signos que uses. Practica con estas combinaciones.',
+          schema: { tokens: [{ texto: 'YO', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'VIVIR', rol: 'V' }], label: '"Yo vivo en una casa" en LSE' },
+          textoExtra: 'También: ÉL/ELLA HABITACIÓN DORMIR → "Él/ella duerme en la habitación".',
+          highlight: { titulo: 'Recuerda', texto: 'En LSE no hay artículos ni preposiciones. TÚ PUERTA COMPRAR equivale a "Tú compras una puerta" — los artículos y preposiciones no se signan.' }
         }
       ]
     },
+
+    // ── BLOQUE 3: PREGUNTAS ────────────────────────────────────────────────────
     {
       id: 'preguntas', numero: 3,
       titulo: 'Preguntas',
@@ -183,10 +175,10 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
             {
               tipo: 'layout-a',
               titulo: 'Preguntas sin', tituloItalica: 'partícula',
-              lead: 'Para preguntas de sí/no se usa el mismo orden SOV. Lo que cambia es la expresión facial: cejas altas y hombros hacia delante.',
-              regla: { label: 'Expresión facial obligatoria', texto: 'Cejas levantadas + hombros ligeramente inclinados hacia delante. Sin esta expresión, la frase no es una pregunta.' },
-              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'COMER', rol: 'V' }, { texto: 'ENM', rol: 'ENM' }], label: '¿Comes?' },
-              textoExtra: 'La ENM (expresión no manual) sustituye al signo de interrogación.'
+              lead: 'Las preguntas de sí o no mantienen exactamente el mismo orden de frase que las afirmaciones (S-O-V). Lo único que cambia es la expresión facial.',
+              regla: { label: 'Expresión facial obligatoria', texto: 'Cejas levantadas + hombros ligeramente inclinados hacia delante. Sin esta expresión, la frase es una afirmación, no una pregunta.' },
+              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'COMER', rol: 'V' }, { texto: 'ENM', rol: 'ENM' }], label: '"¿Comes?" en LSE' },
+              textoExtra: 'Misma frase, distinta expresión: TÚ COMER con cejas altas = "¿Comes?". TÚ COMER con expresión neutra = "Tú comes".'
             }
           ]
         },
@@ -196,42 +188,65 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
             {
               tipo: 'layout-a',
               titulo: 'Preguntas con', tituloItalica: 'partícula',
-              lead: 'Cuando hay partícula interrogativa (qué, quién, dónde...) esta va siempre al final. La expresión facial cambia: cejas juntas y nariz arrugada.',
-              regla: { label: 'Posición de la partícula', texto: 'La partícula interrogativa va SIEMPRE al final de la frase, nunca al principio como en español.' },
-              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'DÓNDE', rol: 'INT' }], label: '¿Dónde vives?' },
-              textoExtra: 'Cejas juntas + nariz arrugada + inclinación hacia delante.'
+              lead: 'Cuando la pregunta incluye una palabra interrogativa (qué, quién, dónde, cómo, cuántos...) esa palabra va siempre al final de la frase. La expresión facial también cambia.',
+              regla: { label: 'Posición de la partícula', texto: 'La partícula interrogativa va SIEMPRE al final. En español decimos "¿Dónde vives?" — en LSE es TÚ VIVIR DÓNDE.' },
+              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'DÓNDE', rol: 'INT' }], label: '"¿Dónde vives?" en LSE' },
+              textoExtra: 'La expresión facial es diferente: cejas juntas y nariz ligeramente arrugada (diferente a las preguntas sin partícula, que llevan cejas altas).',
+              tip: 'Más ejemplos: TÚ LLAMARSE CÓMO ("¿Cómo te llamas?") · TÚ COMER QUÉ ("¿Qué comes?") · CASA HABITACIÓN CUÁNTAS ("¿Cuántas habitaciones tiene?")'
             }
           ]
         }
       ]
     },
+
+    // ── BLOQUE 4: GÉNERO ───────────────────────────────────────────────────────
     {
-      id: 'adverbios', numero: 4,
-      titulo: 'Sí y No',
-      subtitulo: 'Adverbios de afirmación y negación',
-      diapositivas: [
-        {
-          tipo: 'layout-a',
-          titulo: 'Los adverbios', tituloItalica: 'Sí y No',
-          lead: 'El sí y el no tienen signos propios en LSE, pero también se refuerzan con expresión facial y movimiento de cabeza.',
-          regla: { label: 'Refuerzo no manual', texto: 'Asentir con la cabeza refuerza el SÍ. Negar con la cabeza refuerza el NO. La expresión facial amplifica el significado.' },
-          schema: { tokens: [{ texto: 'SÍ', rol: 'V' }], label: 'Signo de SÍ' },
-          textoExtra: 'El movimiento de cabeza es tan importante como el signo en sí.'
-        }
-      ]
-    },
-    {
-      id: 'genero', numero: 5,
-      titulo: 'Género',
+      id: 'genero', numero: 4,
+      titulo: 'Género gramatical',
       subtitulo: 'Cómo se expresa en la LSE',
       diapositivas: [
         {
           tipo: 'layout-a',
           titulo: 'El género en', tituloItalica: 'LSE',
-          lead: 'La LSE no tiene morfema de género — los signos no cambian de forma según el sexo. Para especificarlo se añade HOMBRE o MUJER después del sustantivo.',
-          regla: { label: 'Regla de género', texto: 'Añade HOMBRE o MUJER después del sustantivo solo cuando sea necesario. MADRE y PADRE tienen signo propio.' },
-          schema: { tokens: [{ texto: 'AMIGO', rol: 'O' }, { texto: 'HOMBRE', rol: 'O' }], label: 'Especificar género masculino' },
-          textoExtra: 'Si no hay ambigüedad no es necesario añadir el clasificador de género.'
+          lead: 'En LSE los signos no cambian de forma según el género — no hay morfema de género como en español. Si necesitas especificar el sexo, añades el signo HOMBRE o MUJER después del sustantivo.',
+          regla: { label: 'Regla general', texto: 'Sustantivo + HOMBRE o Sustantivo + MUJER cuando sea necesario especificar. Si no hay ambigüedad, no hace falta añadirlo.' },
+          schema: { tokens: [{ texto: 'AMIGO', rol: 'O' }, { texto: 'HOMBRE', rol: 'O' }], label: '"Amigo" (varón) en LSE' },
+          textoExtra: 'AMIGO sin más = genérico. AMIGO + HOMBRE = amigo varón. AMIGO + MUJER = amiga.'
+        },
+        {
+          tipo: 'layout-a',
+          titulo: 'Excepciones con', tituloItalica: 'signo propio',
+          lead: 'Hay sustantivos que tienen su propio signo diferenciado para cada género, sin necesidad de añadir HOMBRE o MUJER.',
+          regla: { label: 'Excepciones conocidas', texto: 'MADRE y PADRE tienen cada uno su propio signo. No se dice "PROGENITOR + MUJER" para madre — se signa directamente MADRE.' },
+          schema: { tokens: [{ texto: 'MADRE', rol: 'O' }], label: 'MADRE — signo propio, sin necesidad de clasificador' },
+          textoExtra: 'Lo mismo con PADRE. Estos son los dos casos más comunes con signo propio en el vocabulario básico.',
+          nota: 'En niveles más avanzados encontrarás más sustantivos con signo propio de género.'
+        }
+      ]
+    },
+
+    // ── BLOQUE 5: PRESENTACIONES ───────────────────────────────────────────────
+    {
+      id: 'presentaciones', numero: 5,
+      titulo: 'Presentaciones',
+      subtitulo: 'Cómo presentarse en LSE',
+      diapositivas: [
+        {
+          tipo: 'layout-a',
+          titulo: 'El signo', tituloItalica: 'personal',
+          lead: 'En la comunidad sorda, cada persona tiene un "signo personal" — una seña única que la identifica, normalmente relacionada con un rasgo físico o de personalidad. Es como un apodo visual.',
+          regla: { label: 'El orden de presentación', texto: 'Primero el signo personal, luego el nombre deletreado letra a letra con el abecedario dactilológico. Siempre en ese orden.' },
+          schema: { tokens: [{ texto: 'YO', rol: 'S' }, { texto: 'PRESENTAR', rol: 'V' }, { texto: 'MI SIGNO', rol: 'O' }, { texto: 'NOMBRE', rol: 'O' }], label: 'Estructura de una presentación' },
+          textoExtra: 'Ejemplo real: YO · PRESENTAR · MI-SIGNO "BARBA" · LLAMARSE P-E-D-R-O.'
+        },
+        {
+          tipo: 'layout-a',
+          titulo: 'Deletrear el', tituloItalica: 'nombre',
+          lead: 'Si todavía no tienes un signo personal asignado por la comunidad sorda, deletreas directamente tu nombre con el abecedario dactilológico. Una letra a la vez, con fluidez.',
+          regla: { label: 'Cuándo usar el abecedario', texto: 'El abecedario dactilológico se usa para nombres propios, apellidos y cualquier palabra que no tenga signo propio en LSE.' },
+          schema: { tokens: [{ texto: 'LLAMARSE', rol: 'V' }, { texto: 'A-N-A', rol: 'O' }], label: 'Deletrear el nombre' },
+          highlight: { titulo: 'Sin signo personal', texto: 'Si no tienes signo personal todavía, preséntate directamente con LLAMARSE + deletreo. La comunidad te asignará tu signo personal con el tiempo.' },
+          tip: 'Practica el abecedario dactilológico en la sección Abecedario antes de usarlo en una presentación real.'
         }
       ]
     }

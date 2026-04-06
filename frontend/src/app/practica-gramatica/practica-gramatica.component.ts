@@ -163,5 +163,11 @@ export class PracticaGramaticaComponent implements OnInit {
 
   trackById(_: number, b: BloquGramatica): string { return b.id; }
 
+  irATeoria(): void {
+    const id = this.bloqueActivo?.id ?? '';
+    const ruta = id ? `/aprende/comunicacion` : '/aprende/comunicacion';
+    this.router.navigate([ruta]);
+  }
+
   volver(): void { this.router.navigate(['/practica']); }
 }
