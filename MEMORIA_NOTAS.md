@@ -310,5 +310,112 @@ Todos estos datos se pueden calcular a partir de `PracticaEntry` (que registra c
 Para la memoria del TFG esto es perfectamente válido y defendible — el contenido de comunicación es curricular y estable, no necesita gestión dinámica. Es una decisión de diseño consciente, no una limitación.
 
 ---
+
+## [COMUNICACION_IMPLEMENTACION] Implementación de la sección teórica de gramática LSE
+
+### Qué es este componente
+El componente `comunicacion` (`/aprende/comunicacion`) es la sección teórica de gramática de la app. Su función es enseñar cómo funciona la LSE antes de que el usuario practique. Es el equivalente a "leer la lección" antes de hacer los ejercicios.
+
+Se accede desde dos sitios:
+- Desde `/aprende` → card "Comunicación"
+- Desde `/practica/gramatica` → botón "Repasar teoría" en el panel derecho
+
+### Contenido que enseña (5 bloques)
+Los bloques están ordenados pedagógicamente: primero las normas de comunicación no lingüística (ENM), luego la gramática propiamente dicha.
+
+1. **ENM — Expresión no manual** (3 sub-secciones): contacto visual, posición del cuerpo, llamar la atención
+2. **Orden SOV** (2 diapositivas): explicación + ejemplos adicionales
+3. **Preguntas** (2 sub-secciones): sin partícula interrogativa (sí/no) y con partícula (qué, quién, dónde...)
+4. **Género gramatical** (2 diapositivas): regla general + excepciones MADRE/PADRE
+5. **Presentaciones** (2 diapositivas): signo personal + deletreo del nombre
+
+Fuente: apuntes propios del curso SIGNOcampus básico (Fundación CNSE), pendiente de revisión por intérprete LSE antes de la entrega.
+
+### Cómo está implementado — arquitectura de datos
+El contenido es **completamente estático**: está hardcodeado en el propio TypeScript del componente como un array de objetos `readonly bloques: Bloque[]`. No hay llamadas al backend, no hay base de datos implicada.
+
+Esta decisión es intencionada: el contenido gramatical LSE básico es estable y curricular. Meterlo en BD añadiría complejidad sin ninguna ventaja real — nadie lo va a editar desde el panel admin.
+
+La estructura de tipos es:
+
+```typescript
+Bloque {
+  id: string
+  numero: number
+  titulo: string
+  subtitulo: string
+  subBloques?: SubBloque[]   // si tiene sub-secciones (ENM, Preguntas)
+  diapositivas?: Diapositiva[] // si va directo al contenido
+}
+
+SubBloque {
+  id: string
+  titulo: string
+  subtitulo: string
+  diapositivas: Diapositiva[]
+}
+
+Diapositiva {
+  tipo: 'layout-a' | 'layout-b'
+  titulo: string
+  tituloItalica?: string    // parte en cursiva naranja del título
+  lead: string              // párrafo principal explicativo
+  regla?: { label, texto }  // caja de regla destacada
+  schema?: { tokens, label } // los tokens S-O-V animables
+  textoExtra?: string
+  items?: ReglaItem[]       // lista de ok/no (para ENM)
+  highlight?: { titulo, texto } // caja destacada naranja
+  nota?: string             // nota al pie sutil
+  tip?: string              // caja de consejo amarilla
+  // para layout-b (con imagen en lugar de avatar):
+  imagenIzq?: string
+  captionIzq?: string
+  subtituloIzq?: string
+}
+
+Token { texto: string; rol: 'S' | 'O' | 'V' | 'ENM' | 'INT' }
+```
+
+### Los dos layouts
+Hay dos tipos de diapositiva que controlan qué aparece en el panel izquierdo:
+
+- **layout-a**: el panel izquierdo muestra el avatar 3D. Se usa para diapositivas con `schema` de tokens (SOV, preguntas, género) donde el avatar puede firmar el ejemplo.
+- **layout-b**: el panel izquierdo muestra un placeholder de imagen ilustrativa. Se usa para ENM, donde lo importante es la postura corporal y el contacto visual — el avatar no puede representarlo porque no tiene expresión facial.
+
+### Cómo se navega
+La navegación tiene tres niveles:
+
+1. **Índice** (`vista = 'indice'`): lista los 5 bloques. El usuario clica uno.
+2. **Sub-índice** (`vista = 'subindice'`): solo aparece para bloques con `subBloques` (ENM y Preguntas). Muestra las sub-secciones del bloque.
+3. **Bloque** (`vista = 'bloque'`): muestra las diapositivas una a una con navegación Anterior/Siguiente.
+
+El estado de navegación lo gestiona el propio componente con tres variables: `vista`, `bloqueActivo` y `subBloqueActivo`. No hay router ni rutas hijas.
+
+Al llegar a la última diapositiva de un bloque aparece un footer que enlaza al siguiente bloque (navegación lineal completa si el usuario lo desea).
+
+### Cómo se muestran los tokens S-O-V
+Cada diapositiva de tipo layout-a puede tener un `schema` con un array de `tokens`. Cada token tiene un texto (la glosa LSE en mayúsculas) y un rol (`S`, `O`, `V`, `INT`, `ENM`). El rol determina el color del token en pantalla:
+- S (sujeto) → rojo-naranja `#E04A1A`
+- O (objeto) → amarillo `#F4A940`
+- V (verbo) → verde `#4CAF50`
+- INT (partícula interrogativa) → índigo `#6366F1`
+- ENM → púrpura `#8B5CF6`
+
+Cuando el usuario pulsa "play" en la barra de herramientas, los tokens se van activando uno a uno (clase CSS `.active` + `translateY(-3px)`) con 800ms entre ellos, simulando el ritmo del signado. El avatar (cuando haya animaciones) firmará cada signo sincronizado con su token. Por ahora el temporizador está operativo aunque las animaciones no estén.
+
+### Relación con practica-gramatica
+El componente `practica-gramatica` muestra el mapa gamificado de los 5 bloques de práctica. Tiene un botón "Repasar teoría" en el panel derecho que navega a `/aprende/comunicacion`. Es una referencia de navegación simple — los dos componentes son completamente independientes y no comparten estado.
+
+### Lo que falta (pendiente de implementar)
+- El panel izquierdo de `layout-b` muestra un placeholder gris en lugar de imágenes reales. Las imágenes ilustrativas de ENM (contacto visual, postura corporal) hay que crearlas o conseguirlas y enlazarlas en el campo `imagenIzq` de cada diapositiva.
+- El avatar por ahora no tiene animaciones para los schemas — el temporizador visual está listo pero las animaciones Blender de los signos del corpus (SOV, interrogativas...) están pendientes de producción.
+- El contenido de los 5 bloques está basado en apuntes propios y está **pendiente de validación por una intérprete LSE**. Hasta esa validación el contenido es provisional.
+
+### Decisión de diseño defendible para la memoria
+El hecho de que el contenido sea estático (hardcodeado en TypeScript) es una decisión de diseño consciente y documentada. El contenido gramatical LSE básico es curricular, estable y definido externamente por la CNSE — no requiere gestión dinámica. Separarlo en base de datos añadiría una capa de complejidad (modelo, controlador, ruta, llamada HTTP, manejo de loading/error) que no aporta ningún valor funcional para este nivel de contenido.
+
+Esta misma decisión la toman productos comerciales como Duolingo para sus secciones de "tips" gramaticales — el contenido pedagógico estático vive en el frontend, el contenido generado o variable vive en backend.
+
+---
 <!-- Añadir nuevas secciones aquí siguiendo el mismo formato -->
 <!-- Palabra clave: [NOMBRE_SECCION] en mayúsculas para Ctrl+F -->
