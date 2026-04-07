@@ -91,8 +91,9 @@ const CATEGORIAS = [
   { nombre: 'Lugares y objetos',    modulo: 'vocabulario' },
   { nombre: 'Verbos',               modulo: 'vocabulario' },
   { nombre: 'Adjetivos y estados',  modulo: 'vocabulario' },
+  { nombre: 'Tiempo y adverbios',   modulo: 'vocabulario' },
   { nombre: 'Interrogativos',       modulo: 'vocabulario' },
-  { nombre: 'Respuestas basicas',   modulo: 'vocabulario' },
+  { nombre: 'Conversacion basica',  modulo: 'vocabulario' },
 
   // gramatica
   { nombre: 'Gramatica LSE',     modulo: 'gramatica' },
@@ -149,22 +150,22 @@ const PALABRAS_DATA = [
   // ── RESPUESTAS BASICAS ────────────────────────────────────────────────────
   {
     palabra: 'SI',
-    explicacion: 'Respuesta afirmativa.',
-    cat: 'Respuestas basicas',
+    explicacion: 'Respuesta afirmativa. Tiene signo manual propio.',
+    cat: 'Conversacion basica',
     nivel: 1, orden: 1,
     tiposLexicos: ['FX']
   },
   {
     palabra: 'NO',
-    explicacion: 'Respuesta negativa.',
-    cat: 'Respuestas basicas',
+    explicacion: 'Respuesta negativa. Tiene signo manual y tambien ENM (cabeceo) en negacion.',
+    cat: 'Conversacion basica',
     nivel: 1, orden: 2,
     tiposLexicos: ['FX']
   },
   {
     palabra: 'POR FAVOR REPETIR',
     explicacion: 'Formula para pedir que repitan lo que han signado.',
-    cat: 'Respuestas basicas',
+    cat: 'Conversacion basica',
     nivel: 1, orden: 3,
     tiposLexicos: ['FX']
   },
@@ -333,19 +334,13 @@ const PALABRAS_DATA = [
     tiposLexicos: ['V']
   },
   {
-    palabra: 'APELLIDARSE',
-    explicacion: 'Verbo. Se usa en presentaciones para indicar el apellido.',
+    palabra: 'CUIDAR',
+    explicacion: 'Verbo direccional. El movimiento indica quien cuida a quien: CUIDAR yo-a-ti / CUIDAR tu-a-mi.',
     cat: 'Verbos',
     nivel: 1, orden: 7,
     tiposLexicos: ['V']
   },
-  {
-    palabra: 'SER (SOLTERO)',
-    explicacion: 'Verbo/estado. En LSE el verbo "ser" en este contexto se expresa con el signo de soltero/a.',
-    cat: 'Verbos',
-    nivel: 1, orden: 8,
-    tiposLexicos: ['V']
-  },
+
 
   // ── ADJETIVOS Y ESTADOS ───────────────────────────────────────────────────
   {
@@ -365,29 +360,52 @@ const PALABRAS_DATA = [
   {
     palabra: 'BIEN',
     explicacion: 'Adjetivo/formula fija. Se usa tanto como adjetivo ("estoy bien") como formula de cierre ("bien, hasta luego").',
-    cat: 'Adjetivos y estados',
-    nivel: 1, orden: 3,
+    cat: 'Conversacion basica',
+    nivel: 1, orden: 4,
     tiposLexicos: ['ADJ', 'FX']
   },
   {
     palabra: 'REGULAR',
-    explicacion: 'Adjetivo/estado. Indica que algo o alguien esta en un estado intermedio.',
-    cat: 'Adjetivos y estados',
-    nivel: 1, orden: 4,
+    explicacion: 'Adjetivo y adverbio de modo. Estado intermedio. Ejemplo: TU VIVIR REGULAR.',
+    cat: 'Conversacion basica',
+    nivel: 1, orden: 5,
     tiposLexicos: ['ADJ']
+  },
+
+  // ── TIEMPO Y ADVERBIOS ──────────────────────────────────────────────────
+  {
+    palabra: 'AYER',
+    explicacion: 'Marcador temporal de pasado reciente. Va al inicio de la frase: AYER YO COMPRAR.',
+    cat: 'Tiempo y adverbios',
+    nivel: 1, orden: 1,
+    tiposLexicos: ['ENM']
+  },
+  {
+    palabra: 'ANTES',
+    explicacion: 'Marcador temporal de pasado habitual. Va al inicio: ANTES YO DORMIR.',
+    cat: 'Tiempo y adverbios',
+    nivel: 1, orden: 2,
+    tiposLexicos: ['ENM']
+  },
+  {
+    palabra: 'MANANA',
+    explicacion: 'Marcador temporal de futuro proximo. Va al inicio: MANANA TU COMPRAR.',
+    cat: 'Tiempo y adverbios',
+    nivel: 1, orden: 3,
+    tiposLexicos: ['ENM']
   },
 
   // ── INTERROGATIVOS ────────────────────────────────────────────────────────
   {
     palabra: 'QUE',
-    explicacion: 'Particula interrogativa. Va al FINAL de la frase en LSE: TU COMER QUE.',
+    explicacion: 'Particula interrogativa. Va al FINAL: TU COMER QUE / TU COMPRAR QUE.',
     cat: 'Interrogativos',
     nivel: 1, orden: 1,
     tiposLexicos: ['INT']
   },
   {
     palabra: 'QUIEN',
-    explicacion: 'Particula interrogativa. Va al final: TU HABLAR QUIEN.',
+    explicacion: 'Particula interrogativa. Va al final: TU AMIGO QUIEN / TU COMPANERO QUIEN.',
     cat: 'Interrogativos',
     nivel: 1, orden: 2,
     tiposLexicos: ['INT']

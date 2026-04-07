@@ -192,8 +192,8 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
               titulo: 'Preguntas sin', tituloItalica: 'partícula',
               lead: 'Las preguntas de sí o no mantienen exactamente el mismo orden de frase que las afirmaciones (S-O-V). Lo único que cambia es la expresión facial.',
               regla: { label: 'Expresión facial obligatoria', texto: 'Cejas levantadas + inclinación de cabeza y hombros hacia delante. Sin esta expresión, la frase es una afirmación, no una pregunta. Los signos son idénticos — solo cambia la cara.' },
-              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'TRABAJAR', rol: 'V' }], label: '"¿Vas a trabajar?" en LSE — misma estructura que la afirmación' },
-              textoExtra: 'TÚ TRABAJAR con cejas levantadas y cabeza inclinada = "¿Vas a trabajar?". TÚ TRABAJAR con expresión neutra = "Tú vas a trabajar". Los signos son exactamente los mismos.'
+              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }], label: '"¿Duermes?" en LSE — misma estructura que la afirmación' },
+              textoExtra: 'TÚ DORMIR con cejas levantadas y cabeza inclinada = "¿Duermes?". TÚ DORMIR con expresión neutra = "Tú duermes". Los signos son exactamente los mismos — solo cambia la cara.'
             }
           ]
         },
@@ -282,13 +282,13 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
               lead: 'Una de las primeras sorpresas del LSE: los verbos "ser", "estar" y "hacer" (tiempo atmosférico) no tienen signo. Se omiten porque el contexto y el orden de la frase ya transmiten esa información.',
               regla: { label: 'Regla de omisión', texto: 'Cuando en español usarías "es", "está" o "hace (frío/calor...)", en LSE simplemente no lo signas. El adjetivo o el lugar ocupa su posición y ya es suficiente.' },
               schema: { tokens: [{ texto: 'TU HIJO', rol: 'S' }, { texto: 'GUAPO', rol: 'ENM' }], label: '"Tu hijo es guapo" en LSE — GUAPO ocupa el lugar del verbo omitido' },
-              textoExtra: 'Más ejemplos: TU HIJO ENFERMO ("Tu hijo está enfermo") · FRÍO ("Hace frío") · YO CERCA ("Estoy cerca") · TU HERMANO ALLÍ ("Tu hermano está allí"). En todos los casos el adjetivo o adverbio ocupa la posición final, donde iría el verbo.'
+              textoExtra: 'Más ejemplos: TU HIJO ALTO ("Tu hijo es alto") · MADRE BIEN ("Tu madre está bien") · YO CERCA ("Estoy cerca") · TU HERMANO ALLÍ ("Tu hermano está allí"). En todos los casos el adjetivo o adverbio ocupa la posición final, donde iría el verbo.'
             },
             {
               tipo: 'layout-a',
               titulo: 'La estructura', tituloItalica: 'sin verbo',
               lead: 'Cuando hay un adjetivo, un adverbio o un lugar donde en español iría "ser" o "estar", el orden es siempre: sujeto → complemento. Sin verbo intermedio.',
-              schema: { tokens: [{ texto: 'HAMBURGUESA', rol: 'S' }, { texto: 'RICO-SABOR', rol: 'ENM' }], label: '"La hamburguesa está rica" en LSE — adjetivo en posición predicativa' },
+              schema: { tokens: [{ texto: 'PADRE', rol: 'S' }, { texto: 'ALTO', rol: 'ENM' }], label: '"Tu padre es alto" en LSE — adjetivo en posición predicativa' },
               highlight: { titulo: 'También con HABER/TENER', texto: 'HABER y TENER sí tienen signo, pero pueden omitirse cuando hay un signo de cantidad en la frase: TÚ HIJO TRES = "Tienes tres hijos" (TENER omitido).' },
               tip: 'Recuerda: la ausencia del verbo no es un error — es la gramática correcta del LSE.'
             }
@@ -302,16 +302,16 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
               titulo: 'El verbo', tituloItalica: 'al final',
               lead: 'En LSE el verbo se coloca siempre después del sujeto y del objeto. Nunca en el centro de la frase como en español. Esto es coherente con el orden SOV que ya conoces.',
               regla: { label: 'Posición fija', texto: 'Sujeto + Objeto/Lugar + Verbo. El verbo siempre cierra la frase.' },
-              schema: { tokens: [{ texto: 'YO', rol: 'S' }, { texto: 'PIZZA', rol: 'O' }, { texto: 'COMER', rol: 'V' }], label: '"Como pizza" en LSE' },
-              textoExtra: 'Excepción con QUERER intenso: el verbo va antes del objeto pero con expresión facial específica (boca cerrada, labios hacia fuera): YO QUERER VACACIONES.'
+              schema: { tokens: [{ texto: 'YO', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'VIVIR', rol: 'V' }], label: '"Yo vivo en casa" en LSE' },
+              textoExtra: 'El verbo siempre cierra la frase: YO CASA VIVIR, TÚ PUERTA COMPRAR. Excepción con QUERER intenso: el verbo va antes del objeto pero con expresión facial específica (boca cerrada, labios hacia fuera): YO QUERER VACACIONES.'
             },
             {
               tipo: 'layout-a',
               titulo: 'Dos verbos', tituloItalica: 'juntos',
               lead: 'Cuando hay dos verbos en la frase (como "debo ir", "me apetece ver", "me gusta hacer"), el verbo modal o de sentimiento va al final, después del verbo principal.',
               regla: { label: 'Orden con dos verbos', texto: 'Objeto + Verbo principal + Verbo modal/sentimiento. El verbo que en español va primero, en LSE va al final.' },
-              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'MÉDICO', rol: 'O' }, { texto: 'IR', rol: 'V' }, { texto: 'DEBER', rol: 'V' }], label: '"Debes ir al médico" en LSE' },
-              textoExtra: 'Más ejemplos: YO PELÍCULA VER APETECER ("Me apetece ver la película") · YO ESTRELLA VER GUSTAR ("Me gusta ver estrellas").'
+              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'PUERTA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Tú compras una puerta" en LSE — posición final del verbo' },
+              textoExtra: 'Más ejemplos: YO CASA COMPRAR ("Compro una casa") · NOSOTROS HABITACIÓN DORMIR ("Dormimos en la habitación") · YO ESTRELLA VER GUSTAR ("Me gusta ver estrellas").'
             }
           ]
         },
@@ -356,7 +356,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Sin', tituloItalica: 'conjugación',
           lead: 'En LSE los verbos no se conjugan. El mismo signo vale para presente, pasado y futuro. Para indicar el tiempo, se añade un marcador temporal al principio de la frase.',
           regla: { label: 'Estructura temporal', texto: 'Marcador temporal + Sujeto + Objeto + Verbo. El marcador temporal siempre al principio, antes de todo lo demás.' },
-          schema: { tokens: [{ texto: 'ANTES', rol: 'ENM' }, { texto: 'YO', rol: 'S' }, { texto: 'FUMAR', rol: 'V' }, { texto: 'MUCHO', rol: 'O' }], label: '"Antes fumaba mucho" en LSE' },
+          schema: { tokens: [{ texto: 'ANTES', rol: 'ENM' }, { texto: 'YO', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }], label: '"Antes dormía (mucho)" en LSE — marcador temporal al inicio' },
           textoExtra: 'Otros marcadores: PRÓXIMO (futuro próximo) · ESTE MES / ESTA SEMANA · AYER · MAÑANA · AÑO PASADO · AÑO 2000...'
         },
         {
@@ -364,8 +364,8 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Varios', tituloItalica: 'marcadores',
           lead: 'Cuando hay más de un marcador temporal (como "dentro de un mes", "la semana pasada"), primero se coloca el más general y después el más concreto.',
           regla: { label: 'Orden de marcadores', texto: 'General → Concreto. Primero el marco más amplio (PASADO, FUTURO), luego el detalle (SEMANA, MES, DÍA).' },
-          schema: { tokens: [{ texto: 'PASADO', rol: 'ENM' }, { texto: 'SEMANA', rol: 'ENM' }, { texto: 'NOSOTROS', rol: 'S' }, { texto: 'PASEAR', rol: 'V' }], label: '"La semana pasada paseamos" en LSE' },
-          textoExtra: 'Más ejemplos: FUTURO UN-MES TÚ BAÚL COMPRAR ("Dentro de un mes comprarás un baúl") · AYER TODO-EL-DÍA YO TRABAJAR ("Ayer trabajé todo el día").'
+          schema: { tokens: [{ texto: 'AYER', rol: 'ENM' }, { texto: 'NOSOTROS', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Ayer compramos" en LSE — AYER al inicio marca el tiempo' },
+          textoExtra: 'Más ejemplos: MAÑANA TÚ CASA COMPRAR ("Mañana compras la casa") · ANTES TÚ VIVIR DÓNDE ("¿Dónde vivías antes?")") · AYER TODO-EL-DÍA YO TRABAJAR ("Ayer trabajé todo el día").'
         }
       ]
     },
@@ -381,8 +381,8 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'NO va', tituloItalica: 'al final',
           lead: 'En LSE el signo NO se coloca después del verbo o de la palabra que niega — nunca antes. Es la diferencia más llamativa respecto al español, donde el "no" va siempre delante del verbo.',
           regla: { label: 'Posición de la negación', texto: 'Sujeto + Objeto + Verbo + NO. El NO cierra la frase, igual que el verbo en una afirmación.' },
-          schema: { tokens: [{ texto: 'NOSOTROS', rol: 'S' }, { texto: 'CHOCOLATE', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }, { texto: 'NO', rol: 'ENM' }], label: '"No compramos chocolate" en LSE' },
-          textoExtra: 'Más ejemplos: MI HIJO ESCONDER NO ("Mi hijo no se ha escondido") · YO ALTO NO ("No soy alto") · TU PIZZA COMER MÁS NO ("No comes más pizza").',
+          schema: { tokens: [{ texto: 'NOSOTROS', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }, { texto: 'NO', rol: 'ENM' }], label: '"No compramos la casa" en LSE — NO al final' },
+          textoExtra: 'Más ejemplos: YO DORMIR NO ("No duermo") · TÚ PUERTA COMPRAR NO ("No compras la puerta") · YO ALTO NO ("No soy alto") · TU PIZZA COMER MÁS NO ("No comes más pizza").',
           nota: 'Además del signo NO, es importante mover la cabeza de lado a lado simultáneamente para reforzar la negación.'
         },
         {
@@ -439,16 +439,16 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Adverbios de', tituloItalica: 'modo y cantidad',
           lead: 'Los adverbios acompañan a verbos o adjetivos para añadir significado (cómo, cuánto, dónde...). En LSE se colocan justo después del verbo o del adjetivo al que acompañan.',
           regla: { label: 'Posición general', texto: 'Verbo/Adjetivo + Adverbio. Si el verbo es "ser", "estar" o "tener/haber", el adverbio va después del sujeto.' },
-          schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'ESCRIBIR', rol: 'V' }, { texto: 'REGULAR', rol: 'ENM' }], label: '"Escribes regular" en LSE — adverbio después del verbo' },
-          textoExtra: 'Más ejemplos: ÉL COMER BIEN BASTANTE ("Come bastante bien") · MUCHO ("Es mucho") · YO TRABAJAR PRONTO ("Empiezo a trabajar pronto").'
+          schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'REGULAR', rol: 'ENM' }], label: '"Vives regular" en LSE — adverbio después del verbo' },
+          textoExtra: 'Más ejemplos: ÉL/ELLA COMER BIEN ("Come bien") · YO DORMIR REGULAR ("Duermo regular") · YO TRABAJAR PRONTO ("Empiezo a trabajar pronto").'
         },
         {
           tipo: 'layout-a',
           titulo: 'Adverbios de', tituloItalica: 'tiempo y lugar',
           lead: 'Los adverbios de tiempo y lugar tienen una posición flexible: van al principio si afectan a toda la oración, y al final si solo afectan a una parte concreta.',
           regla: { label: 'Inicio vs final', texto: 'Al principio: cuando el tiempo o lugar enmarca toda la frase (contexto global). Al final: cuando solo afecta al elemento que precede.' },
-          schema: { tokens: [{ texto: 'AYER', rol: 'ENM' }, { texto: 'YO', rol: 'S' }, { texto: 'TELEVISIÓN', rol: 'O' }, { texto: 'VER', rol: 'V' }], label: '"Ayer vi la televisión" — adverbio al inicio' },
-          textoExtra: 'Mismo principio para lugares: AQUÍ GENTE MUCHO TRABAJAR = "Aquí trabaja mucha gente" (lugar al inicio, contexto global). YO TRABAJAR EMPEZAR PRONTO = "Empiezo a trabajar pronto" (adverbio al final, afecta solo al verbo).'
+          schema: { tokens: [{ texto: 'AYER', rol: 'ENM' }, { texto: 'YO', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Ayer compré" en LSE — adverbio temporal al inicio' },
+          textoExtra: 'Mismo principio con tiempo: AYER YO DORMIR BIEN = "Ayer dormí bien". El marcador temporal al inicio enmarca toda la frase. AQUÍ GENTE MUCHO TRABAJAR = "Aquí trabaja mucha gente" (lugar al inicio, contexto global). YO TRABAJAR EMPEZAR PRONTO = "Empiezo a trabajar pronto" (adverbio al final, afecta solo al verbo).'
         }
       ]
     },
@@ -464,8 +464,8 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Más intensidad,', tituloItalica: 'más expresión',
           lead: 'En LSE la intensidad de un signo no se cambia con palabras adicionales — se cambia con la expresión facial, la amplitud del movimiento y la repetición. La cara es el regulador de la intensidad.',
           regla: { label: 'Mecanismos de intensidad', texto: 'Para más intensidad: expresión facial marcada + movimiento más amplio o repetido. Para menos intensidad: labios arqueados + ligera inclinación de cabeza.' },
-          schema: { tokens: [{ texto: 'ÉL', rol: 'S' }, { texto: 'COMER-MUCHÍSIMO', rol: 'V' }], label: '"Se harta de comer" — signo COMER con intensidad máxima incorporada' },
-          textoExtra: 'Ejemplo de escala: COMER un poco (labios arqueados + cabeza ladeada) → COMER normal → COMER-MUCHO (expresión + amplitud) → COMER-MUCHÍSIMO (repetición + expresión máxima). La intensidad se incorpora al propio signo.'
+          schema: { tokens: [{ texto: 'ÉL/ELLA', rol: 'S' }, { texto: 'COMER-MUCHÍSIMO', rol: 'V' }], label: '"Se harta de comer" — signo COMER con intensidad máxima incorporada' },
+          textoExtra: 'Ejemplo de escala con COMER: COMER un poco → COMER normal → COMER-MUCHÍSIMO. Lo mismo con DORMIR: DORMIR-MUCHÍSIMO = "Duerme muchísimo". El movimiento amplifica la intensidad. COMER un poco (labios arqueados + cabeza ladeada) → COMER normal → COMER-MUCHO (expresión + amplitud) → COMER-MUCHÍSIMO (repetición + expresión máxima). La intensidad se incorpora al propio signo.'
         },
         {
           tipo: 'layout-a',
