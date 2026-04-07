@@ -1,0 +1,66 @@
+<div
+  class="enm-overlay"
+  [class.enm-minimizado]="minimizado"
+  [style.left.px]="pos.x"
+  [style.top.px]="pos.y"
+  [style.width.px]="size.w"
+  [style.height.px]="size.h"
+  *ngIf="pack"
+>
+  <!-- CABECERA (drag handle) -->
+  <div class="enm-header" (mousedown)="onDragStart($event)">
+    <div class="enm-header-left">
+      <span class="enm-badge">ENM</span>
+      <span class="enm-label">{{ pack.label }}</span>
+    </div>
+    <div class="enm-header-actions">
+      <button class="enm-btn" (click)="toggleMinimizar()" [title]="minimizado ? 'Expandir' : 'Minimizar'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path *ngIf="!minimizado" d="M5 12h14"/>
+          <path *ngIf="minimizado" d="M5 12h14M12 5l7 7-7 7"/>
+        </svg>
+      </button>
+      <button class="enm-btn enm-btn-close" (click)="cerrar()" title="Cerrar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M18 6L6 18M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- CUERPO -->
+  <div class="enm-body" *ngIf="!minimizado">
+    <!-- VIDEO (prioridad si existe) -->
+    <div class="enm-media" *ngIf="pack.video">
+      <video
+        [src]="pack.video"
+        autoplay
+        loop
+        muted
+        playsinline
+        class="enm-video"
+      ></video>
+    </div>
+
+    <!-- IMAGEN (si no hay vídeo) -->
+    <div class="enm-media" *ngIf="!pack.video && pack.imagen">
+      <img [src]="pack.imagen" [alt]="pack.label" class="enm-img" />
+    </div>
+
+    <!-- Sin recurso visual aún -->
+    <div class="enm-media enm-media-placeholder" *ngIf="!pack.video && !pack.imagen">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <path d="M21 15l-5-5L5 21"/>
+      </svg>
+      <span>Animación próximamente</span>
+    </div>
+
+    <!-- DESCRIPCIÓN -->
+    <div class="enm-desc">{{ pack.descripcion }}</div>
+  </div>
+
+  <!-- HANDLE RESIZE (esquina inferior derecha) -->
+  <div class="enm-resize-handle" (mousedown)="onResizeStart($event)" *ngIf="!minimizado"></div>
+</div>

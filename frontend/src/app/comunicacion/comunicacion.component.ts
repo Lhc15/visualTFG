@@ -6,6 +6,8 @@ import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
 import { environment } from '../../environments/environment';
 import { StatsService } from '../services/stats.service';
 import { UsuariosService } from '../services/usuarios.service';
+import { EnmService } from '../services/enm.service';
+import { EnmPackId } from '../services/enm.types';
 
 export type RolToken = 'S' | 'O' | 'V' | 'ENM' | 'INT';
 export type DerechoTipo = 'lista' | 'highlight' | 'reglas';
@@ -19,6 +21,7 @@ export interface Diapositiva {
   titulo: string;
   tituloItalica?: string;
   lead: string;
+  enm?: EnmPackId;
   regla?: { label: string; texto: string };
   schema?: { tokens: Token[]; label?: string };
   textoExtra?: string;
@@ -185,6 +188,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           diapositivas: [
             {
               tipo: 'layout-a',
+              enm: 'pregunta-sin-particula',
               titulo: 'Preguntas sin', tituloItalica: 'partícula',
               lead: 'Las preguntas de sí o no mantienen exactamente el mismo orden de frase que las afirmaciones (S-O-V). Lo único que cambia es la expresión facial.',
               regla: { label: 'Expresión facial obligatoria', texto: 'Cejas levantadas + inclinación de cabeza y hombros hacia delante. Sin esta expresión, la frase es una afirmación, no una pregunta. Los signos son idénticos — solo cambia la cara.' },
@@ -198,6 +202,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           diapositivas: [
             {
               tipo: 'layout-a',
+              enm: 'pregunta-con-particula',
               titulo: 'Preguntas con', tituloItalica: 'partícula',
               lead: 'Cuando la pregunta incluye una palabra interrogativa (qué, quién, dónde, cómo, cuántos...) esa palabra va siempre al final de la frase. La expresión facial también cambia.',
               regla: { label: 'Posición de la partícula', texto: 'La partícula interrogativa va SIEMPRE al final. En español decimos "¿Dónde vives?" — en LSE es TÚ VIVIR DÓNDE.' },
@@ -485,10 +490,14 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
 
   constructor(private router: Router, private cdr: ChangeDetectorRef,
               private statsService: StatsService,
-              private usuariosService: UsuariosService) {}
+              private usuariosService: UsuariosService,
+              private enmService: EnmService) {}
 
   ngOnInit(): void {
     this.cargarUsuarioYProgreso();
+  }
+  ngOnDestroy(): void {
+    this.enmService.hide();
   }
   ngAfterViewInit(): void { this.waitForSkinAndResize(); }
 
@@ -599,8 +608,8 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.subBloqueActivo = null;
     this.diapositivaIdx = 0;
     this.resetAvatar();
-    // Si tiene subBloques → subíndice, si no → directo a diapositivas
     this.vista = bloque.subBloques?.length ? 'subindice' : 'bloque';
+    if (!bloque.subBloques?.length) this.syncEnm();
   }
 
   abrirSubBloque(sub: SubBloque): void {
@@ -608,6 +617,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.diapositivaIdx = 0;
     this.vista = 'bloque';
     this.resetAvatar();
+    this.syncEnm();
   }
 
   volverAIndice(): void {
@@ -616,6 +626,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.subBloqueActivo = null;
     this.diapositivaIdx = 0;
     this.resetAvatar();
+    this.enmService.hide();
   }
 
   volverASubIndice(): void {
@@ -623,14 +634,21 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.subBloqueActivo = null;
     this.diapositivaIdx = 0;
     this.resetAvatar();
+    this.enmService.hide();
   }
 
   siguiente(): void {
-    if (this.diapositivaIdx < this.totalDiapositivas - 1) { this.diapositivaIdx++; this.resetAvatar(); }
+    if (this.diapositivaIdx < this.totalDiapositivas - 1) { this.diapositivaIdx++; this.resetAvatar(); this.syncEnm(); }
   }
 
   anterior(): void {
-    if (this.diapositivaIdx > 0) { this.diapositivaIdx--; this.resetAvatar(); }
+    if (this.diapositivaIdx > 0) { this.diapositivaIdx--; this.resetAvatar(); this.syncEnm(); }
+  }
+
+  private syncEnm(): void {
+    const enm = this.diapositiva?.enm;
+    if (enm) { this.enmService.show(enm); }
+    else { this.enmService.hide(); }
   }
 
   irASiguienteBloque(): void {
@@ -651,6 +669,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
       this.portadaKey++;
       this.vista = 'portada';
       this.resetAvatar();
+      this.enmService.hide();
     };
 
     this.guardarYMostrarPortada(bloqueCompletadoId, mostrarPortada);
@@ -673,6 +692,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
       this.portadaKey++;
       this.vista = 'portada';
       this.resetAvatar();
+      this.enmService.hide();
     };
 
     this.guardarYMostrarPortada(subBloqueCompletadoId, mostrarPortada);

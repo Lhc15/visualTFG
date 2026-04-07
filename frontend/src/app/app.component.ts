@@ -6,20 +6,22 @@ import { RouterModule, Router, NavigationEnd } from '@angular/router';
 import { HeaderComponent } from "./header/header.component"; // Importar RouterModule para router-outlet
 import { UsuariosService } from './services/usuarios.service'; 
 import { AnimacionService } from './services/animacion.service';
+import { EnmOverlayComponent } from './enm-overlay/enm-overlay.component';
+import { EnmService } from './services/enm.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
   standalone: true,
-  imports: [CommonModule, UsuariosComponent, RouterModule, HeaderComponent]
+  imports: [CommonModule, UsuariosComponent, RouterModule, HeaderComponent, EnmOverlayComponent]
 })
 export class AppComponent implements OnInit {
   title = 'frontend';
   response: any;
   usuario: any = null;
 
-  constructor(private apiService: ApiService, private usuariosService: UsuariosService, private router: Router,private animacionService: AnimacionService) {}
+  constructor(private apiService: ApiService, private usuariosService: UsuariosService, private router: Router, private animacionService: AnimacionService, private enmService: EnmService) {}
 
   ngOnInit() {
     this.apiService.getHelloWorld().subscribe({
@@ -39,7 +41,8 @@ export class AppComponent implements OnInit {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
         console.log('[DEBUG] Ruta cambiada, limpiando animaciones.');
-        this.animacionService.limpiarAnimaciones(); // Limpia las animaciones al cambiar de ruta
+        this.animacionService.limpiarAnimaciones();
+        this.enmService.hide();
         this.redirigirSiAutenticado();
         
         // Permitir nuevas animaciones después de un breve retraso

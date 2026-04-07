@@ -616,3 +616,89 @@ Ambos usan `environment.apiUrl` directamente (no `this.statsUrl`) ya que apuntan
 ---
 <!-- Añadir nuevas secciones aquí siguiendo el mismo formato -->
 <!-- Palabra clave: [NOMBRE_SECCION] en mayúsculas para Ctrl+F -->
+---
+
+## [ENM_OVERLAY] Sistema de ayuda visual para Expresiones No Manuales — componente EnmOverlay
+
+### Problema que resuelve
+El avatar 3D de Visual Voices no tiene expresión facial animada. Las ENM (Expresiones No Manuales) son gramaticalmente constitutivas en LSE — sin la expresión facial correcta, una frase afirmativa y una pregunta son indistinguibles aunque los signos sean idénticos. Toda la sección de gramática (bloque 3 — Preguntas, bloque 1 — ENM) enfatiza este hecho, pero el propio avatar no podía ilustrarlo. Existía una contradicción directa entre el mensaje pedagógico ("la expresión facial es obligatoria") y el medio (un avatar sin cara expresiva).
+
+### Solución adoptada
+Se creó un sistema de ayuda visual complementaria basado en imágenes fotorrealistas generadas con IA (flujo de trabajo Gemini) que representan las ENM específicas de cada tipo gramatical. Estas imágenes están pensadas para ser sustituidas en el futuro por vídeos animados también generados con IA. El sistema está diseñado desde el principio para soportar ambos formatos (imagen estática y vídeo/GIF) sin cambios de arquitectura.
+
+La ayuda visual se presenta como una **ventana flotante draggable y resizable** (`EnmOverlayComponent`) que aparece automáticamente sobre el panel izquierdo (zona del avatar) cuando la lección o ejercicio activo implica una ENM relevante.
+
+### Arquitectura del sistema
+
+El sistema se compone de cuatro piezas:
+
+**1. Catálogo de packs (`enm-packs.data.ts`)**
+Un array de objetos `EnmPack` que centraliza toda la información de cada tipo de ENM:
+```typescript
+interface EnmPack {
+  id: EnmPackId;       // identificador único del tipo gramatical
+  label: string;       // nombre visible en la cabecera de la ventana
+  descripcion: string; // texto pedagógico mostrado bajo la imagen
+  imagen?: string;     // ruta al asset de imagen estática
+  video?: string;      // ruta al asset de vídeo (prioridad sobre imagen)
+}
+```
+El campo `video` tiene prioridad sobre `imagen` cuando ambos están presentes — permite la transición gradual de imagen estática a vídeo animado recurso a recurso, sin tocar ningún otro archivo.
+
+**2. Servicio singleton (`EnmService`)**
+Un `Injectable({ providedIn: 'root' })` con un `BehaviorSubject<EnmPackId | null>`. La API pública es mínima:
+```typescript
+show(id: EnmPackId): void  // activa el overlay con el pack indicado
+hide(): void               // oculta el overlay
+enm$: Observable<EnmPackId | null>  // observable para el componente
+```
+El servicio es la única fuente de verdad sobre qué ENM está activa. Cualquier componente de la app (lecciones, ejercicios, conversaciones) puede activar o desactivar el overlay con una sola llamada, sin acoplamiento directo.
+
+**3. Componente overlay (`EnmOverlayComponent`)**
+Montado una única vez en `app.component.html`, escucha el `EnmService` y se renderiza solo cuando hay un pack activo. Implementa:
+- **Drag**: `mousedown` en la cabecera inicia el arrastre; `mousemove` y `mouseup` a nivel de `document`. El movimiento está **restringido a la mitad izquierda de la pantalla** (`maxX = window.innerWidth / 2 - size.w`) para garantizar que el overlay nunca invade el panel de contenido ni tapa el texto de la lección.
+- **Resize**: handle de esquina inferior derecha, con tamaño mínimo de 160×160px y máximo vinculado al límite de la mitad izquierda.
+- **Minimizar**: colapsa el overlay a la cabecera sola, conservando posición y tamaño para cuando se expanda de nuevo.
+- **Cerrar**: llama a `enmService.hide()`, que limpia el observable y destruye el contenido renderizado.
+
+**4. Campo `enm` en la interfaz `Diapositiva`**
+Se añadió un campo opcional `enm?: EnmPackId` a la interfaz de diapositiva del componente `Comunicacion`. Al navegar entre diapositivas (`siguiente()`, `anterior()`, `abrirSubBloque()`, `abrirBloque()`), el método privado `syncEnm()` comprueba si la diapositiva activa tiene ENM asociada y llama a `show()` o `hide()` en consecuencia:
+```typescript
+private syncEnm(): void {
+  const enm = this.diapositiva?.enm;
+  if (enm) { this.enmService.show(enm); }
+  else { this.enmService.hide(); }
+}
+```
+El overlay desaparece automáticamente al:
+- Navegar a una diapositiva sin campo `enm`
+- Pulsar "Siguiente bloque" o "Siguiente lección" (pantalla de portada de transición)
+- Volver al índice o al subíndice
+- Cambiar de ruta (gestionado en `app.component.ts` al detectar `NavigationEnd`)
+- Destruirse el componente `Comunicacion` (`ngOnDestroy`)
+
+### Gestión de assets
+Los recursos visuales se almacenan en `frontend/public/enm/`. Angular 19 sirve el directorio `public/` como raíz de assets (configuración `angular.json`: `"input": "public", "output": "/assets"`), por lo que las rutas en el catálogo son relativas: `assets/enm/nombre-archivo.png`.
+
+Separar los assets de ENM en una subcarpeta propia facilita su gestión futura: cuando un recurso de imagen sea sustituido por un vídeo animado, solo hay que añadir el archivo a `public/enm/` y actualizar el campo `video` del pack correspondiente en `enm-packs.data.ts`.
+
+### Extensibilidad a otros componentes
+El sistema está diseñado para usarse en cualquier parte de la app sin coste adicional. Para activar el overlay en un ejercicio de práctica de gramática, por ejemplo, basta con inyectar `EnmService` en ese componente y llamar a `show('pregunta-sin-particula')` cuando el ejercicio implique ese tipo gramatical. No hay que modificar el overlay ni el catálogo.
+
+Los `EnmPackId` disponibles actualmente son:
+- `'pregunta-sin-particula'` — cejas levantadas, inclinación hacia delante
+- `'pregunta-con-particula'` — cejas fruncidas, nariz ligeramente arrugada
+- `'negacion'` — cabeza de lado a lado
+- `'afirmacion'` — cabeza asintiendo
+
+Añadir un nuevo pack requiere únicamente: añadir el `id` al tipo `EnmPackId`, añadir el objeto al array `ENM_PACKS`, y colocar el asset en `public/enm/`.
+
+### Decisiones de diseño descartadas
+
+| Opción descartada | Motivo |
+|---|---|
+| Integrar la imagen directamente en el layout de la diapositiva | No funciona en ejercicios; requiere duplicar la lógica en cada componente |
+| Añadir expresión facial al avatar 3D vía Blender | Fuera del alcance del TFG y del sistema de skin actual (WebAssembly) |
+| Modal centrado en pantalla | Tapa el avatar, que es el elemento principal de la interacción |
+| Panel fijo en una posición predeterminada | Reduce la flexibilidad; el usuario puede necesitar ver zonas concretas del avatar |
+| Overlay sin restricción de zona | Podría invadir el panel de contenido y competir visualmente con el texto de la lección |
