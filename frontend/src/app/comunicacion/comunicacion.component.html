@@ -8,6 +8,10 @@
     </button>
     <div class="vv-breadcrumb">
       <span [class.vv-bc-dim]="vista !== 'indice'" (click)="vista !== 'indice' && volverAIndice()">Comunicación</span>
+      <ng-container *ngIf="vista === 'portada'">
+        <span class="vv-bc-sep">›</span>
+        <span>{{ portadaTitulo }}</span>
+      </ng-container>
       <ng-container *ngIf="vista === 'subindice' && bloqueActivo">
         <span class="vv-bc-sep">›</span>
         <span>{{ bloqueActivo.titulo }}</span>
@@ -28,7 +32,7 @@
   <div class="vv-split">
 
     <!-- ══ PANEL IZQUIERDO ══ -->
-    <ng-container *ngIf="vista === 'indice' || vista === 'subindice' || diapositiva?.tipo === 'layout-a'">
+    <ng-container *ngIf="vista === 'indice' || vista === 'subindice' || vista === 'portada' || diapositiva?.tipo === 'layout-a'">
       <div class="vv-avatar-panel" #avatarPanel>
         <div class="vv-avatar-glow"></div>
         <div class="vv-subtitle" *ngIf="diapositiva?.schema && tokenActivo >= 0">
@@ -116,6 +120,26 @@
                 </div>
               </div>
             </div>
+          </div>
+        </ng-container>
+
+        <!-- ── PORTADA DE TRANSICIÓN ── -->
+        <ng-container *ngIf="vista === 'portada'">
+          <div class="com-portada"
+               [class.com-portada--bloque]="!portadaEsSubBloque"
+               [class.com-portada--leccion]="portadaEsSubBloque"
+               [attr.data-key]="portadaKey">
+            <div class="com-portada-deco" *ngIf="!portadaEsSubBloque">{{ portadaNumero }}</div>
+            <div class="com-portada-tag">
+              {{ portadaEsSubBloque ? 'Lección' : 'Bloque' }}
+              <span *ngIf="portadaNumero"> {{ portadaNumero }}</span>
+            </div>
+            <div class="com-portada-titulo">{{ portadaTitulo }}</div>
+            <div class="com-portada-sub">{{ portadaSubtitulo }}</div>
+            <button class="com-portada-btn" (click)="empezarDesdePortada()">
+              Empezar
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
           </div>
         </ng-container>
 

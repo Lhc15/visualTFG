@@ -192,5 +192,23 @@ export class StatsService {
       )
       .pipe(map(resp => resp.completedLevels));
   }
-  
+
+  // ── Progreso de Comunicación ─────────────────────────────
+  getProgresoComunicacion(): Observable<{ bloqueId: string, fechaCompletado: string }[]> {
+    return this.http
+      .get<{ ok: boolean, completados: { bloqueId: string, fechaCompletado: string }[] }>(
+        `${environment.apiUrl}/progreso-comunicacion`,
+        { withCredentials: true }
+      )
+      .pipe(map(r => r.completados));
+  }
+
+  completarBloqueComun(bloqueId: string): Observable<{ ok: boolean, bloqueId: string }> {
+    return this.http.post<{ ok: boolean, bloqueId: string }>(
+      `${environment.apiUrl}/progreso-comunicacion/completar`,
+      { bloqueId },
+      { withCredentials: true }
+    );
+  }
+
 }

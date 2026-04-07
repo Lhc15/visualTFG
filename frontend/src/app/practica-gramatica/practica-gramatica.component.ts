@@ -2,22 +2,37 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UsuariosService } from '../services/usuarios.service';
+import { StatsService } from '../services/stats.service';
 
 export interface BloquGramatica {
   id: string;
   nombre: string;
   subtitulo: string;
   icono: string;
-  conceptos: string[];         // lista de conceptos que cubre
-  ejemplo: string;             // ejemplo de frase LSE
+  conceptos: string[];
+  ejemplo: string;
   estado: 'completado' | 'activo' | 'bloqueado';
-  estrellas: number;           // 0-3
+  estrellas: number;
   ejerciciosCompletados: number;
   totalEjercicios: number;
 }
 
-// Los 5 bloques gramaticales del curso SIGNOcampus básico
+// IDs deben coincidir exactamente con los ids de comunicacion.component.ts
+// y con los subBloques ids para los que tienen subíndice
 const BLOQUES_GRAMATICA: Omit<BloquGramatica, 'estado' | 'estrellas' | 'ejerciciosCompletados'>[] = [
+  {
+    id: 'enm',
+    nombre: 'ENM',
+    subtitulo: 'Expresión No Manual',
+    icono: 'E',
+    totalEjercicios: 6,
+    conceptos: [
+      'Contacto visual imprescindible para comunicarse',
+      'Postura corporal como marcador gramatical',
+      'Cómo llamar la atención antes de signar',
+    ],
+    ejemplo: 'Cejas + postura + contacto visual'
+  },
   {
     id: 'sov',
     nombre: 'Orden S·O·V',
@@ -47,7 +62,7 @@ const BLOQUES_GRAMATICA: Omit<BloquGramatica, 'estado' | 'estrellas' | 'ejercici
   {
     id: 'genero',
     nombre: 'Género',
-    subtitulo: 'Marcadores de sexo',
+    subtitulo: 'Marcadores de sexo en LSE',
     icono: 'G',
     totalEjercicios: 6,
     conceptos: [
@@ -58,19 +73,6 @@ const BLOQUES_GRAMATICA: Omit<BloquGramatica, 'estado' | 'estrellas' | 'ejercici
     ejemplo: 'AMIGO + HOMBRE'
   },
   {
-    id: 'enm',
-    nombre: 'ENM',
-    subtitulo: 'Expresión No Manual',
-    icono: 'E',
-    totalEjercicios: 6,
-    conceptos: [
-      'Cara, mirada y postura corporal',
-      'Tan importante como el signo manual',
-      'Contacto visual con el interlocutor',
-    ],
-    ejemplo: 'Cejas + postura corporal'
-  },
-  {
     id: 'presentaciones',
     nombre: 'Presentaciones',
     subtitulo: 'Presentarse en LSE',
@@ -79,9 +81,87 @@ const BLOQUES_GRAMATICA: Omit<BloquGramatica, 'estado' | 'estrellas' | 'ejercici
     conceptos: [
       'Signo personal primero',
       'Luego nombre deletreado letra a letra',
-      'YO PRESENTAR · LLAMARSE + nombre',
+      'YO PRESENTAR · MI SIGNO · LLAMARSE',
     ],
-    ejemplo: 'YO · MI SIGNO · LLAMARSE'
+    ejemplo: 'YO · MI SIGNO · LLAMARSE A-N-A'
+  },
+  {
+    id: 'verbos',
+    nombre: 'Los verbos',
+    subtitulo: 'Cómo funcionan en LSE',
+    icono: 'V',
+    totalEjercicios: 8,
+    conceptos: [
+      'Sin signos para SER, ESTAR ni HACER',
+      'El verbo siempre cierra la frase',
+      'Verbos direccionales: el movimiento indica quién',
+    ],
+    ejemplo: 'YO PIZZA COMER'
+  },
+  {
+    id: 'tiempos',
+    nombre: 'Tiempos verbales',
+    subtitulo: 'Pasado, presente y futuro',
+    icono: 'T',
+    totalEjercicios: 6,
+    conceptos: [
+      'Sin conjugación — mismo signo para todos los tiempos',
+      'Marcador temporal siempre al principio',
+      'Varios marcadores: general → concreto',
+    ],
+    ejemplo: 'ANTES YO FUMAR MUCHO'
+  },
+  {
+    id: 'negacion',
+    nombre: 'La negación',
+    subtitulo: 'Cómo negar en LSE',
+    icono: 'N',
+    totalEjercicios: 6,
+    conceptos: [
+      'NO va después del verbo, nunca antes',
+      'Movimiento de cabeza de lado a lado',
+      'Algunos verbos incorporan la negación',
+    ],
+    ejemplo: 'NOSOTROS CHOCOLATE COMPRAR NO'
+  },
+  {
+    id: 'plural',
+    nombre: 'Singular y plural',
+    subtitulo: 'Cómo se indica el número',
+    icono: '+',
+    totalEjercicios: 4,
+    conceptos: [
+      'El contexto indica si es singular o plural',
+      'Números y cuantificadores lo hacen explícito',
+      'Algunos signos se repiten con desplazamiento (++)',
+    ],
+    ejemplo: 'TÚ HIJO TRES'
+  },
+  {
+    id: 'adverbios',
+    nombre: 'Los adverbios',
+    subtitulo: 'Cómo y dónde se colocan',
+    icono: 'A',
+    totalEjercicios: 6,
+    conceptos: [
+      'Después del verbo o adjetivo al que acompañan',
+      'Tiempo y lugar: al inicio si afectan toda la frase',
+      'Al final si solo afectan a una parte',
+    ],
+    ejemplo: 'TÚ ESCRIBIR REGULAR'
+  },
+  {
+    id: 'intensidad',
+    nombre: 'Intensidad y énfasis',
+    subtitulo: 'Graduar el significado',
+    icono: '!',
+    totalEjercicios: 6,
+    conceptos: [
+      'Expresión facial + amplitud del movimiento',
+      'Énfasis positivo: dientes apretados',
+      'Énfasis negativo: carrillos inflados',
+    ],
+    ejemplo: 'ÉL COMER-MUCHÍSIMO'
   },
 ];
 
@@ -96,45 +176,56 @@ export class PracticaGramaticaComponent implements OnInit {
 
   bloques: BloquGramatica[] = [];
   bloqueActivo: BloquGramatica | null = null;
+  esAdmin = false;
+  cargando = true;
 
-  readonly shifts = ['shift-r', 'shift-l', 'shift-r', 'shift-l', 'shift-r'];
+  readonly shifts = ['shift-r','shift-l','shift-r','shift-l','shift-r',
+                     'shift-r','shift-l','shift-r','shift-l','shift-r','shift-l'];
 
   constructor(
     private router: Router,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private statsService: StatsService
   ) {}
 
   ngOnInit(): void {
-    this.cargarBloques();
+    this.usuariosService.getAuthenticatedUser().subscribe({
+      next: (resp) => {
+        this.esAdmin = resp.usuario?.rol === 'ROL_ADMIN';
+        if (this.esAdmin) {
+          this.construirBloques(new Set(BLOQUES_GRAMATICA.map(b => b.id)));
+        } else {
+          this.statsService.getProgresoComunicacion().subscribe({
+            next: (completados) => {
+              this.construirBloques(new Set(completados.map(c => c.bloqueId)));
+            },
+            error: () => this.construirBloques(new Set())
+          });
+        }
+      },
+      error: () => this.construirBloques(new Set())
+    });
   }
 
-  private cargarBloques(): void {
-    // Construir bloques con progreso simulado
-    // En implementación real, el backend devolvería los PracticaEntry de gramática del usuario
+  private construirBloques(completados: Set<string>): void {
     this.bloques = BLOQUES_GRAMATICA.map((b, idx) => {
-      const ejerciciosCompletados = idx === 0 ? b.totalEjercicios : idx === 1 ? 4 : 0;
-      const estado = this.calcularEstado(idx, ejerciciosCompletados, b.totalEjercicios);
+      const desbloqueado = this.esAdmin || idx === 0 || completados.has(BLOQUES_GRAMATICA[idx - 1].id);
+      const estaCompletado = completados.has(b.id);
+      const estado: 'completado' | 'activo' | 'bloqueado' =
+        !desbloqueado ? 'bloqueado' :
+        estaCompletado ? 'completado' : 'activo';
+      const ejerciciosCompletados = estaCompletado ? b.totalEjercicios : 0;
       return {
         ...b,
-        ejerciciosCompletados,
         estado,
+        ejerciciosCompletados,
         estrellas: this.calcularEstrellas(ejerciciosCompletados, b.totalEjercicios, estado)
       };
     });
-
     this.bloqueActivo = this.bloques.find(b => b.estado === 'activo')
       ?? this.bloques.find(b => b.estado === 'completado')
       ?? this.bloques[0];
-  }
-
-  private calcularEstado(idx: number, completados: number, total: number): 'completado' | 'activo' | 'bloqueado' {
-    if (idx === 0) return completados >= total ? 'completado' : 'activo';
-    const anterior = this.bloques[idx - 1];
-    if (!anterior) return 'bloqueado';
-    if (anterior.estado === 'completado' || anterior.ejerciciosCompletados > 0) {
-      return completados >= total ? 'completado' : 'activo';
-    }
-    return 'bloqueado';
+    this.cargando = false;
   }
 
   private calcularEstrellas(completados: number, total: number, estado: string): number {
@@ -164,9 +255,7 @@ export class PracticaGramaticaComponent implements OnInit {
   trackById(_: number, b: BloquGramatica): string { return b.id; }
 
   irATeoria(): void {
-    const id = this.bloqueActivo?.id ?? '';
-    const ruta = id ? `/aprende/comunicacion` : '/aprende/comunicacion';
-    this.router.navigate([ruta]);
+    this.router.navigate(['/aprende/comunicacion']);
   }
 
   volver(): void { this.router.navigate(['/practica']); }

@@ -17,7 +17,8 @@ const loginRoute       = require('./routes/auth');
 const palabrasRoutes   = require('./routes/palabras');
 const categoriasRoutes = require('./routes/categorias');
 const gltfRoutes       = require('./routes/gltf');
-const practicaRoutes   = require('./routes/practica');
+const practicaRoutes      = require('./routes/practica');
+const progresoComunRoutes = require('./routes/progresoComun');
 
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
@@ -71,7 +72,8 @@ app.use('/api/login',      loginRoute);
 app.use('/api/categorias', categoriasRoutes);
 app.use('/api/palabras',   palabrasRoutes);
 app.use('/api/gltf',       gltfRoutes);
-app.use('/api/practica',   practicaRoutes);
+app.use('/api/practica',               practicaRoutes);
+app.use('/api/progreso-comunicacion',  progresoComunRoutes);
 
 
 // Abrir la aplicacíon en el puerto 3000

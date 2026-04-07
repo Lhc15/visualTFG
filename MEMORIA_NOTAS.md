@@ -170,65 +170,56 @@ Estos modelos pertenecían a modos que ya no existen en el nuevo enfoque:
 **`Palabra`** — se añaden dos campos:
 ```javascript
 tiposLexicos: { type: [String], default: [] }
-// Valores posibles: "S", "O", "V", "ADJ", "INT", "FX"
-// Array porque una palabra puede tener varios roles (ej. BIEN → ["ADJ", "FX"])
-
 enMotor: { type: Boolean, default: false }
-// Flag operativo: true solo cuando la animación Blender está lista
-// Permite clasificar la palabra sin que entre en el generador hasta estar completa
 ```
 
 **`Categoria`** — se añade un campo:
 ```javascript
 modulo: { type: String, enum: ['abecedario', 'vocabulario', 'gramatica'] }
-// Permite separar qué categorías pertenecen a cada sección de la app
 ```
 
 ### Modelos nuevos
 
-**`PracticaSession`** — una sesión de práctica completa:
+**`PracticaSession`**:
 ```javascript
 {
-  userId:      ObjectId ref Usuario   // quién la hizo
+  userId:      ObjectId ref Usuario
   tipo:        String enum ['abecedario', 'vocabulario', 'gramatica']
   startedAt:   Date
   finishedAt:  Date
-  total:       Number                 // preguntas totales
+  total:       Number
   correctas:   Number
   incorrectas: Number
 }
 ```
 
-**`PracticaEntry`** — un intento individual dentro de una sesión:
+**`PracticaEntry`**:
 ```javascript
 {
-  userId:         ObjectId ref Usuario
-  sessionId:      ObjectId ref PracticaSession
-  palabraId:      ObjectId ref Palabra   // null si es gramática (frase generada)
-  tipo:           String enum ['abecedario', 'vocabulario', 'gramatica']
-  acierto:        Boolean
-  tiempoMs:       Number
-  createdAt:      Date
-  // Solo para gramática:
-  fraseGenerada:  [String]   // ej. ["TU", "CASA", "VIVIR"]
-  estructuraUsada: String    // "SOV" | "SOV-INT" | "SV-ENM"
+  userId:          ObjectId ref Usuario
+  sessionId:       ObjectId ref PracticaSession
+  palabraId:       ObjectId ref Palabra
+  tipo:            String enum ['abecedario', 'vocabulario', 'gramatica']
+  acierto:         Boolean
+  tiempoMs:        Number
+  createdAt:       Date
+  fraseGenerada:   [String]
+  estructuraUsada: String
 }
 ```
 
 ### Rutas nuevas necesarias
 ```
-POST  /api/practica/session         → crear sesión al empezar
-PATCH /api/practica/session/:id     → cerrar sesión (finishedAt + totales)
-POST  /api/practica/entry           → guardar cada intento individual
-GET   /api/practica/stats/:userId   → estadísticas para la página de perfil
-GET   /api/palabras/motor           → palabras con enMotor: true (para el generador)
+POST  /api/practica/session
+PATCH /api/practica/session/:id
+POST  /api/practica/entry
+GET   /api/practica/stats/:userId
+GET   /api/palabras/motor
 ```
 
 ---
 
 ## [ORDEN_IMPLEMENTACION] Plan de implementación por fases
-
-El orden está dictado por dependencias: la práctica define qué necesita el backend, y el backend tiene que estar antes que el frontend que lo consume.
 
 ```
 Fase 1 — Backend base
@@ -236,7 +227,7 @@ Fase 1 — Backend base
   1b. Modificar modelo Categoria (+ modulo)
   1c. Crear modelos PracticaSession y PracticaEntry
   1d. Crear controladores y rutas de practica
-  1e. Eliminar modelos/rutas obsoletos (Stats, ExamenSession, VersusSession...)
+  1e. Eliminar modelos/rutas obsoletos
 
 Fase 2 — Admin panel
   2a. Añadir checkboxes tiposLexicos al editor de palabras
@@ -246,8 +237,8 @@ Fase 2 — Admin panel
 
 Fase 3 — Aprende
   3a. Componente /aprende (índice con 2 cards)
-  3b. Componente /aprende/vocabulario (reemplaza modo-libre)
-  3c. Componente /aprende/gramatica (contenido teórico estático)
+  3b. Componente /aprende/vocabulario
+  3c. Componente /aprende/gramatica
 
 Fase 4 — Practica
   4a. Componente /practica (selector de 3 submodos)
@@ -256,30 +247,24 @@ Fase 4 — Practica
   4d. Componente /practica/gramatica (motor S-O-V)
 
 Fase 5 — Cierre
-  5a. Adaptar /perfil a las nuevas estadísticas (PracticaSession)
+  5a. Adaptar /perfil a las nuevas estadísticas
   5b. Actualizar modos2 con las 4 cards nuevas
-  5c. Eliminar componentes obsoletos (modo-libre, modo-guiado, modo-examen, modo-versus)
+  5c. Eliminar componentes obsoletos
 ```
-
-### Decisiones de diseño pendientes
-- Mecánica exacta de Practica/gramática: ¿el usuario ve la frase en español y la ordena en LSE, o al revés? (pendiente de decidir)
-- ¿Conversamos? con backend real: se retoma en fase posterior, no bloquea nada
 
 ---
 
 ## [DESBLOQUEO_CONTENIDO] Sistema de desbloqueo y priorización de contenido
 
-### Estado: parcialmente definido — pendiente de completar cuando estén definidos los tipos de ejercicio
+### Estado: parcialmente definido
 
 ### Concepto base
-El sistema de desbloqueo se basa en el uso de la barra de herramientas (tool-menu): **dar al play de una palabra o letra es lo que la marca como "vista"**, y ese evento es el que desbloquea su práctica correspondiente. No se desbloquea por tiempo ni por completar lecciones enteras, sino por interacción explícita con el contenido.
+El sistema de desbloqueo se basa en el uso de la barra de herramientas (tool-menu): **dar al play de una palabra o letra es lo que la marca como "vista"**, y ese evento es el que desbloquea su práctica correspondiente.
 
 ### Dos capas distintas
 
 **Capa 1 — Desbloqueo**: ¿puede el usuario acceder a practicar este contenido?
 **Capa 2 — Priorización**: dentro de lo desbloqueado, ¿qué aparece primero en los ejercicios?
-
-Son independientes y se modelan por separado.
 
 ### Capa 1 — Reglas de desbloqueo por módulo
 
@@ -287,21 +272,13 @@ Son independientes y se modelan por separado.
 |--------|---------------|--------------|
 | Practica/abecedario | Haber dado al play a esa letra en Abecedario | Letra a letra |
 | Practica/vocabulario | Haber dado al play a esa palabra en Aprende/vocabulario | Palabra a palabra |
-| Practica/gramática | Haber visitado Aprende/gramática (pendiente de definir con más detalle) | Por definir |
+| Practica/gramática | Haber completado el bloque correspondiente en Comunicación | Por bloque |
 
-### Capa 2 — Priorización dentro de los ejercicios (spaced repetition simplificado)
-El principio es el mismo que usan Anki o Duolingo: los signos que más necesitas repasar aparecen con más frecuencia. Los factores que influyen en la prioridad de aparición de una palabra en los ejercicios:
-
-- **Nunca vista en práctica** → máxima prioridad (aparece primero)
+### Capa 2 — Priorización (spaced repetition simplificado)
+- **Nunca vista en práctica** → máxima prioridad
 - **Número de veces mostrada** → a más exposiciones, menos prioridad relativa
 - **Ratio de aciertos/fallos** → más fallos = más prioridad
 - **Tiempo desde última aparición** → si hace mucho que no sale, sube prioridad
-
-Todos estos datos se pueden calcular a partir de `PracticaEntry` (que registra cada intento con `palabraId`, `acierto`, `tiempoMs` y `createdAt`).
-
-### Pendiente de definir
-- Mecánica exacta de Practica/gramática: los factores de priorización dependen de los tipos de ejercicio, que aún no están definidos. Se sabe que habrá que registrar qué tipo de palabra falló (S, O, V...) y si el error fue de orden o de identificación de signo.
-- Implementación del algoritmo de priorización en el frontend (servicio Angular que ordena las palabras antes de pasarlas al motor de ejercicios)
 
 ---
 
@@ -311,110 +288,330 @@ Para la memoria del TFG esto es perfectamente válido y defendible — el conten
 
 ---
 
-## [COMUNICACION_IMPLEMENTACION] Implementación de la sección teórica de gramática LSE
+## [BD_SETUP] Puesta en marcha de la base de datos — ordenador 2
 
-### Qué es este componente
-El componente `comunicacion` (`/aprende/comunicacion`) es la sección teórica de gramática de la app. Su función es enseñar cómo funciona la LSE antes de que el usuario practique. Es el equivalente a "leer la lección" antes de hacer los ejercicios.
+### Decisión: BD nueva en vez de migrar la de Graphicare
+Se optó por una base de datos limpia llamada `visualvoices`. Razones:
+- Los datos del equipo original no son relevantes para la nueva arquitectura
+- El esquema de `Palabra` cambió (+ `tiposLexicos`, `enMotor`, `gltf`, `clipName`)
+- El esquema de `Categoria` cambió (+ `modulo`)
+- Partir de cero evita datos corruptos o inconsistentes
 
-Se accede desde dos sitios:
-- Desde `/aprende` → card "Comunicación"
-- Desde `/practica/gramatica` → botón "Repasar teoría" en el panel derecho
+### Script seed.js
+Ejecutar con `node seed.js` desde `backend/`. Es idempotente.
 
-### Contenido que enseña (5 bloques)
-Los bloques están ordenados pedagógicamente: primero las normas de comunicación no lingüística (ENM), luego la gramática propiamente dicha.
+Inserta:
+- 1 usuario admin (`admin@visualvoices.com` / `Admin1234!`, `ROL_ADMIN`)
+- 11 categorías organizadas por módulo
+- 41 palabras del vocabulario con `tiposLexicos` clasificados
+- 27 letras del abecedario dactilológico (A–Z + CH)
+- Todas las palabras con `enMotor: false` y sin `gltf`/`clipName`
 
-1. **ENM — Expresión no manual** (3 sub-secciones): contacto visual, posición del cuerpo, llamar la atención
-2. **Orden SOV** (2 diapositivas): explicación + ejemplos adicionales
-3. **Preguntas** (2 sub-secciones): sin partícula interrogativa (sí/no) y con partícula (qué, quién, dónde...)
-4. **Género gramatical** (2 diapositivas): regla general + excepciones MADRE/PADRE
-5. **Presentaciones** (2 diapositivas): signo personal + deletreo del nombre
-
-Fuente: apuntes propios del curso SIGNOcampus básico (Fundación CNSE), pendiente de revisión por intérprete LSE antes de la entrega.
-
-### Cómo está implementado — arquitectura de datos
-El contenido es **completamente estático**: está hardcodeado en el propio TypeScript del componente como un array de objetos `readonly bloques: Bloque[]`. No hay llamadas al backend, no hay base de datos implicada.
-
-Esta decisión es intencionada: el contenido gramatical LSE básico es estable y curricular. Meterlo en BD añadiría complejidad sin ninguna ventaja real — nadie lo va a editar desde el panel admin.
-
-La estructura de tipos es:
-
-```typescript
-Bloque {
-  id: string
-  numero: number
-  titulo: string
-  subtitulo: string
-  subBloques?: SubBloque[]   // si tiene sub-secciones (ENM, Preguntas)
-  diapositivas?: Diapositiva[] // si va directo al contenido
-}
-
-SubBloque {
-  id: string
-  titulo: string
-  subtitulo: string
-  diapositivas: Diapositiva[]
-}
-
-Diapositiva {
-  tipo: 'layout-a' | 'layout-b'
-  titulo: string
-  tituloItalica?: string    // parte en cursiva naranja del título
-  lead: string              // párrafo principal explicativo
-  regla?: { label, texto }  // caja de regla destacada
-  schema?: { tokens, label } // los tokens S-O-V animables
-  textoExtra?: string
-  items?: ReglaItem[]       // lista de ok/no (para ENM)
-  highlight?: { titulo, texto } // caja destacada naranja
-  nota?: string             // nota al pie sutil
-  tip?: string              // caja de consejo amarilla
-  // para layout-b (con imagen en lugar de avatar):
-  imagenIzq?: string
-  captionIzq?: string
-  subtituloIzq?: string
-}
-
-Token { texto: string; rol: 'S' | 'O' | 'V' | 'ENM' | 'INT' }
+### Variables de entorno (.env)
+```
+PORT=3000
+DBCONNECTION=mongodb://localhost:27017/visualvoices
+JWTSECRET=<cadena aleatoria larga>
+NODE_ENV=development
 ```
 
-### Los dos layouts
-Hay dos tipos de diapositiva que controlan qué aparece en el panel izquierdo:
+---
 
-- **layout-a**: el panel izquierdo muestra el avatar 3D. Se usa para diapositivas con `schema` de tokens (SOV, preguntas, género) donde el avatar puede firmar el ejemplo.
-- **layout-b**: el panel izquierdo muestra un placeholder de imagen ilustrativa. Se usa para ENM, donde lo importante es la postura corporal y el contacto visual — el avatar no puede representarlo porque no tiene expresión facial.
+## [PRACTICA_VOCAB_BD] Conexión real del camino de práctica/vocabulario con la BD
 
-### Cómo se navega
-La navegación tiene tres niveles:
+### Problema que había
+1. Filtro incorrecto: `!c.modulo || c.modulo === 'vocabulario'` incluía categorías sin módulo.
+2. Conteo de palabras simulado con `Math.random()`.
 
-1. **Índice** (`vista = 'indice'`): lista los 5 bloques. El usuario clica uno.
-2. **Sub-índice** (`vista = 'subindice'`): solo aparece para bloques con `subBloques` (ENM y Preguntas). Muestra las sub-secciones del bloque.
-3. **Bloque** (`vista = 'bloque'`): muestra las diapositivas una a una con navegación Anterior/Siguiente.
+### Solución en el backend
+`backend/controllers/categorias.js` enriquece cada categoría con `totalPalabras` via agregación MongoDB:
+```js
+const conteos = await Palabra.aggregate([
+    { $group: { _id: '$categoria', total: { $sum: 1 } } }
+]);
+```
 
-El estado de navegación lo gestiona el propio componente con tres variables: `vista`, `bloqueActivo` y `subBloqueActivo`. No hay router ni rutas hijas.
+### Solución en el frontend
+- Filtro estricto: `c.modulo === 'vocabulario'`
+- Eliminado todo `Math.random()` y datos hardcodeados
+- Datos reales de `obtenerPalabrasPorCategoria`
 
-Al llegar a la última diapositiva de un bloque aparece un footer que enlaza al siguiente bloque (navegación lineal completa si el usuario lo desea).
+### Orden de las categorías
+Se muestran en orden de inserción en MongoDB, coherente con el orden en Aprende. Si en el futuro se necesita control explícito del orden: añadir campo `orden: Number` al modelo `Categoria`.
 
-### Cómo se muestran los tokens S-O-V
-Cada diapositiva de tipo layout-a puede tener un `schema` con un array de `tokens`. Cada token tiene un texto (la glosa LSE en mayúsculas) y un rol (`S`, `O`, `V`, `INT`, `ENM`). El rol determina el color del token en pantalla:
-- S (sujeto) → rojo-naranja `#E04A1A`
-- O (objeto) → amarillo `#F4A940`
-- V (verbo) → verde `#4CAF50`
-- INT (partícula interrogativa) → índigo `#6366F1`
-- ENM → púrpura `#8B5CF6`
+---
 
-Cuando el usuario pulsa "play" en la barra de herramientas, los tokens se van activando uno a uno (clase CSS `.active` + `translateY(-3px)`) con 800ms entre ellos, simulando el ritmo del signado. El avatar (cuando haya animaciones) firmará cada signo sincronizado con su token. Por ahora el temporizador está operativo aunque las animaciones no estén.
+## [CONTENIDO_GRAMATICAL_COMPLETO] Corpus gramatical completo de la sección Comunicación
 
-### Relación con practica-gramatica
-El componente `practica-gramatica` muestra el mapa gamificado de los 5 bloques de práctica. Tiene un botón "Repasar teoría" en el panel derecho que navega a `/aprende/comunicacion`. Es una referencia de navegación simple — los dos componentes son completamente independientes y no comparten estado.
+### Fuente
+Todo el contenido teórico procede de dos fuentes del mismo origen institucional:
 
-### Lo que falta (pendiente de implementar)
-- El panel izquierdo de `layout-b` muestra un placeholder gris en lugar de imágenes reales. Las imágenes ilustrativas de ENM (contacto visual, postura corporal) hay que crearlas o conseguirlas y enlazarlas en el campo `imagenIzq` de cada diapositiva.
-- El avatar por ahora no tiene animaciones para los schemas — el temporizador visual está listo pero las animaciones Blender de los signos del corpus (SOV, interrogativas...) están pendientes de producción.
-- El contenido de los 5 bloques está basado en apuntes propios y está **pendiente de validación por una intérprete LSE**. Hasta esa validación el contenido es provisional.
+1. **Curso básico SIGNOcampus** (Fundación CNSE) — nivel A1/A2. Material de las unidades de gramática del portal lsefamilias de la Fundación CNSE.
+2. **Curso de gramática LSE para familias** (Fundación CNSE / Huawei) — segundo nivel, mismo sistema pedagógico.
 
-### Decisión de diseño defendible para la memoria
-El hecho de que el contenido sea estático (hardcodeado en TypeScript) es una decisión de diseño consciente y documentada. El contenido gramatical LSE básico es curricular, estable y definido externamente por la CNSE — no requiere gestión dinámica. Separarlo en base de datos añadiría una capa de complejidad (modelo, controlador, ruta, llamada HTTP, manejo de loading/error) que no aporta ningún valor funcional para este nivel de contenido.
+Ambas fuentes son del mismo organismo (CNSE — Confederación Estatal de Personas Sordas) y comparten terminología, ejemplos e intérpretes. El contenido se recopiló manualmente mediante capturas de pantalla y PDFs de transcripción de los diálogos modelo. Posteriormente fue revisado, consolidado y verificado antes de incorporarlo a la app. Está pendiente de una revisión final por parte de la intérprete de LSE colaboradora del proyecto.
 
-Esta misma decisión la toman productos comerciales como Duolingo para sus secciones de "tips" gramaticales — el contenido pedagógico estático vive en el frontend, el contenido generado o variable vive en backend.
+### Estructura del corpus — 11 bloques
+
+El corpus se organizó en 11 bloques temáticos que reflejan el orden pedagógico del curso de referencia, pasando de los aspectos más básicos de la comunicación (ENM, contacto visual) a los más específicos de la gramática (verbos, tiempos, negación, énfasis).
+
+#### Bloque 1 — ENM: Expresión No Manual
+La expresión no manual (ENM) es todo aquello que acompaña al signo manual: expresión facial, mirada, postura corporal y movimiento de cabeza. Es tan constitutiva del signo como la configuración de la mano.
+
+Subcontenidos:
+- **Contacto visual**: imprescindible antes y durante toda comunicación. Desviar la mirada equivale a terminar la conversación. El receptor asiente suavemente con la cabeza para indicar que sigue el mensaje (equivalente al "ajá" oral).
+- **Posición del cuerpo**: la postura corporal es un marcador gramatical. Inclinarse hacia delante con cabeza y hombros activa la modalidad interrogativa en preguntas sin partícula.
+- **Llamar la atención**: antes de empezar a signar hay que asegurarse de que la persona sorda esté mirando. Métodos válidos: agitar la mano en su campo visual, tocar suavemente el hombro o el brazo, golpear la mesa o el suelo para generar vibración. Gritar o elevar la voz no tiene ningún efecto.
+
+#### Bloque 2 — Orden SOV
+El orden canónico de la frase en LSE es **Sujeto + Objeto + Verbo**, diferente al español (Sujeto + Verbo + Objeto). El verbo siempre cierra la frase.
+
+- Ejemplo: "Tú compras una puerta" → TÚ PUERTA COMPRAR
+- No existen artículos ni preposiciones en LSE: la frase TÚ PUERTA COMPRAR equivale a "tú compras una puerta" completa.
+- El orden SOV se mantiene también en frases con lugar: NOSOTROS CAMPING IR ("Nos vamos al camping").
+
+#### Bloque 3 — Preguntas
+Dos tipos con reglas distintas:
+
+**Sin partícula interrogativa (preguntas de sí/no)**
+- Misma estructura SOV que la afirmación. Lo único que cambia es la ENM.
+- Marcadores no manuales: cejas levantadas + cabeza y hombros inclinados ligeramente hacia delante.
+- Ejemplo: TÚ TRABAJAR con cejas altas = "¿Vas a trabajar?". TÚ TRABAJAR con expresión neutra = "Tú vas a trabajar".
+- Sin la expresión facial correcta, la frase es una afirmación, no una pregunta.
+
+**Con partícula interrogativa (qué, quién, dónde, cómo, cuántos...)**
+- La partícula interrogativa va SIEMPRE al final de la frase, no al principio.
+- Estructura: Sujeto + Verbo + Partícula.
+- Marcadores no manuales distintos: cejas fruncidas + nariz ligeramente arrugada + inclinación hacia delante.
+- Ejemplo: "¿Dónde vives?" → TÚ VIVIR DÓNDE.
+- Algunas preguntas omiten la partícula porque la expresión facial ya la sustituye: "¿Qué haces?" → solo HACER con expresión de pregunta; "¿Cuántos años tienes?" → TÚ AÑO con expresión.
+
+#### Bloque 4 — Género gramatical
+LSE no tiene morfema de género. Los signos no cambian de forma según el sexo del referente.
+
+- Para especificar sexo cuando sea necesario: sustantivo + HOMBRE o sustantivo + MUJER (después del sustantivo, no antes).
+- Excepción: MADRE y PADRE tienen cada uno su propio signo diferenciado, sin necesidad de clasificador.
+- Mismo principio para animales: GALLINA y GALLO tienen signo propio; en otros casos se añade HOMBRE/MUJER si la distinción es relevante.
+
+#### Bloque 5 — Presentaciones
+Protocolo de presentación en LSE:
+
+- Estructura: YO + PRESENTAR (verbo direccional yo-a-ti) + MI SIGNO "[signo personal]" + LLAMARSE + [nombre deletreado].
+- El signo personal siempre va antes que el nombre deletreado. Siempre.
+- El nombre y el apellido se deletrean con el abecedario dactilológico, letra a letra.
+- Respuesta a una presentación: ENCANTADO/A.
+- El signo personal lo asigna la comunidad sorda a partir de un rasgo físico o de personalidad visible. No lo elige uno mismo.
+- Si no se tiene signo personal todavía: se presenta directamente con LLAMARSE + deletreo.
+
+#### Bloque 6 — Los verbos
+Tres sublecciones:
+
+**Sin SER, ESTAR ni HACER (tiempo atmosférico)**
+- Estos tres verbos no tienen signo en LSE. Se omiten completamente.
+- La posición del adjetivo, adverbio o lugar en la frase sustituye al verbo: TU HIJO GUAPO = "Tu hijo es guapo". YO CERCA = "Estoy cerca". FRÍO = "Hace frío".
+- HABER y TENER sí tienen signo, pero pueden omitirse cuando la frase ya contiene un cuantificador: TÚ HIJO TRES = "Tienes tres hijos".
+
+**Posición del verbo**
+- El verbo siempre cierra la frase (coherente con SOV).
+- Con dos verbos: el verbo modal o de sentimiento va al final, después del verbo principal. "Debes ir al médico" → TÚ MÉDICO IR DEBER. "Me apetece ver la película" → YO PELÍCULA VER APETECER.
+- Excepción con QUERER intenso: el verbo va antes del objeto con expresión facial específica (boca cerrada, labios hacia fuera): YO QUERER VACACIONES.
+
+**Verbos direccionales**
+- Un subgrupo de verbos puede modificar su trayectoria espacial para indicar sujeto y receptor sin pronombres adicionales.
+- El movimiento empieza desde el espacio del sujeto y termina en el espacio del receptor.
+- Verbos direccionales más frecuentes: aconsejar, avisar, ayudar, burlarse, contar, contestar, cuidar, dar, decir, elegir, enseñar, entender, llamar, perseguir, pillar, preguntar, presentar, regalar, regañar, ver.
+- Excepción: INVITAR va en dirección inversa (del receptor hacia el sujeto).
+
+#### Bloque 7 — Tiempos verbales
+LSE no conjuga los verbos. El mismo signo vale para cualquier tiempo.
+
+- El tiempo se indica con un marcador temporal al principio de la frase, antes del sujeto: ANTES FUMAR MUCHO ("Antes fumaba mucho"). PRÓXIMO VERANO YO PLAYA IR ("El próximo verano iré a la playa").
+- Con más de un marcador temporal: primero el más general, luego el más concreto: PASADO SEMANA NOSOTROS PASEAR ("La semana pasada paseamos").
+
+#### Bloque 8 — La negación
+El signo NO se coloca siempre después del verbo o de la palabra que niega, nunca antes.
+
+- Estructura: Sujeto + Objeto + Verbo + NO.
+- Además del signo, es obligatorio mover la cabeza de lado a lado simultáneamente.
+- Ejemplos: NOSOTROS CHOCOLATE COMPRAR NO. YO ALTO NO. TU PIZZA COMER MÁS NO.
+- Verbos con negación incorporada: no apetecer, no conocer, no entender, no gustar, no haber, no poder, no querer, no saber.
+- "No pasa nada" tiene su propio signo único en LSE.
+
+#### Bloque 9 — Singular y plural
+LSE no tiene morfema de número.
+
+- El contexto y los cuantificadores aclaran el número: TÚ HIJO TRES = "Tienes tres hijos".
+- Algunos signos pueden repetirse con desplazamiento para indicar explícitamente el plural (notación ++): NIÑO++, SILLA++.
+- No todos los signos admiten la repetición.
+
+#### Bloque 10 — Los adverbios
+- **Adverbios de modo y cantidad**: van justo después del verbo o adjetivo al que acompañan. TÚ ESCRIBIR REGULAR. ÉL COMER BIEN BASTANTE.
+- **Adverbios de tiempo y lugar**: al principio si afectan a toda la oración (AYER YO TELEVISIÓN VER); al final si solo afectan a un elemento (YO TRABAJAR EMPEZAR PRONTO).
+
+#### Bloque 11 — Intensidad y énfasis
+La intensidad se gradúa con expresión facial y amplitud/repetición del movimiento, no con palabras adicionales.
+
+- **Énfasis positivo** (guapísimo, riquísimo): apretar los dientes + cerrar un poco los ojos.
+- **Énfasis negativo** (muy aburrido, mucho calor): inflar los carrillos + pequeño soplido.
+- **Menos intensidad** (un poco grande): arquear los labios + inclinar la cabeza.
+- **Intensidad máxima** en algunos signos: sacar un poco la lengua.
+- La intensidad se incorpora al propio signo: COMER-MUCHÍSIMO es un signo único.
+
+### Nota metodológica sobre la verificación del contenido
+Antes de incorporar el contenido a la app se realizó una auditoría interna de todos los ejemplos LSE contra el material fuente para detectar errores de persona, errores de orden, y roles gramaticales incorrectos en los esquemas visuales de tokens. Se corrigieron varios errores detectados en la primera versión, incluyendo el ejemplo "YO PIZZA" que en el material original es "TU PIZZA", y los tokens con rol 'O' (objeto) que en realidad eran predicados adjetivales o adverbios.
+
+---
+
+## [ARQUITECTURA_COMUNICACION] Arquitectura del componente Comunicación
+
+### Motivación del diseño
+La sección de gramática teórica se implementó como un componente Angular autónomo (`/aprende/comunicacion`) independiente de la sección de vocabulario. Esta separación refleja la diferencia conceptual entre aprender signos aislados (vocabulario) y entender las reglas que los combinan (gramática/comunicación).
+
+### Sistema de navegación en tres niveles
+```
+Índice de bloques
+  └── Subíndice de lecciones (solo en bloques con sublecciones: ENM, Preguntas, Verbos)
+        └── Secuencia de diapositivas
+```
+
+Los estados posibles de la vista: `'indice'` | `'subindice'` | `'portada'` | `'bloque'`.
+
+### Modelo de datos del contenido
+El contenido es completamente estático, definido como un array de objetos TypeScript en el propio componente. Esta decisión fue deliberada: el contenido gramatical es curricular y estable, no requiere gestión dinámica desde el panel admin, y la alternativa (BD + endpoints) añadiría complejidad sin beneficio real para el alcance del TFG.
+
+Cada bloque (`Bloque`) tiene la siguiente forma:
+```typescript
+interface Bloque {
+  id: string;           // coincide con bloqueId en ProgresoComun
+  numero: number;
+  titulo: string;
+  subtitulo: string;
+  subBloques?: SubBloque[];
+  diapositivas?: Diapositiva[];
+}
+```
+
+Cada diapositiva soporta dos layouts:
+- `layout-a`: avatar a la izquierda + contenido teórico a la derecha
+- `layout-b`: imagen ilustrativa a la izquierda + listas de reglas a la derecha
+
+### Sistema de tokens de frase LSE
+El componente incluye un visualizador de frases LSE basado en tokens con código de colores por rol gramatical:
+
+| Rol | Color | Significado |
+|-----|-------|-------------|
+| S | Naranja-rojo `#E04A1A` | Sujeto / pronombre |
+| O | Ámbar `#F4A940` | Objeto / sustantivo |
+| V | Verde `#4CAF50` | Verbo |
+| INT | Índigo `#6366F1` | Partícula interrogativa |
+| ENM | Violeta `#8B5CF6` | Marcador no manual / adverbio temporal / predicado adjetival |
+
+El rol ENM se usa también para predicados adjetivales (adjetivos que ocupan la posición del verbo omitido) y para adverbios, dado que en LSE estas categorías comparten la posición final de la frase con los marcadores no manuales propiamente dichos.
+
+Los tokens son interactivos: al reproducir el esquema de frase con el avatar, cada token se ilumina secuencialmente (clase `.active`) para indicar el signo que el avatar está realizando en ese momento.
+
+### Pantalla de portada de transición
+Al llegar a la última diapositiva de un bloque/lección y pulsar "Siguiente", aparece una pantalla de portada con etiqueta, título, subtítulo y botón "Empezar".
+
+**Diferenciación visual** entre los dos tipos de portada:
+- **Portada de bloque**: fondo `rgba(253, 232, 223, 0.55)` (naranja muy suave semitransparente), número decorativo gigante en naranja tenue, botón naranja sólido.
+- **Portada de lección**: fondo blanco con franja naranja lateral izquierda (`border-left: 4px solid #E04A1A`), botón suave `#FDE8DF` que se vuelve naranja sólido al hover.
+
+**Animación de entrada**: los cuatro elementos entran escalonados con `slide-up + fade-in` a 0.05s, 0.12s, 0.20s y 0.28s de retraso. Para garantizar que la animación se relanza cada vez, se usa un contador `portadaKey` que se incrementa con cada nueva portada, forzando la recreación completa del nodo DOM.
+
+---
+
+## [PROGRESO_COMUNICACION] Sistema de progreso y desbloqueo en la sección Comunicación
+
+### Decisión de arquitectura
+Se descartó añadir el progreso al modelo `Usuario` (ya sobrecargado) y se optó por una **colección separada**, siguiendo el patrón establecido por `PracticaEntry` y `PracticaSession`.
+
+### Modelo ProgresoComun
+```javascript
+// backend/models/progresoComun.js
+// Colección: progreso_comunicacion
+{
+  userId:          ObjectId ref Usuario
+  bloqueId:        String
+  fechaCompletado: Date
+}
+// Índice único: { userId, bloqueId } — upsert idempotente con findOneAndUpdate
+```
+
+### Endpoints
+```
+GET  /api/progreso-comunicacion           → array de { bloqueId, fechaCompletado } del usuario autenticado
+POST /api/progreso-comunicacion/completar → body: { bloqueId }
+```
+
+Ambos requieren JWT válido. La identidad del usuario se extrae del token (`req.uid`), no del body, para evitar que un usuario marque el progreso de otro.
+
+### Reglas de desbloqueo
+- **Bloque 1** (`enm`): siempre desbloqueado para todos los usuarios.
+- **Bloque N** (N > 1): desbloqueado si el bloque N-1 está en `bloquesCompletados`.
+- **Admins** (`ROL_ADMIN`): todos los bloques desbloqueados siempre, sin consultar la BD.
+
+### Trigger del desbloqueo — Opción B
+El guardado ocurre cuando el usuario pulsa "Siguiente bloque" o "Siguiente lección" desde la última diapositiva. Este es el punto más significativo: el usuario ha llegado al final del contenido y ha tomado la decisión activa de continuar.
+
+Se descartaron:
+- Trigger en la primera diapositiva del siguiente bloque (demasiado anticipado).
+- Trigger automático al llegar a la última diapositiva sin acción del usuario (no confirma lectura activa).
+
+Si la llamada al backend falla, el sistema continúa de forma degradada: añade el `bloqueId` al conjunto local `bloquesCompletados` y muestra la portada igualmente.
+
+### Flujo completo
+```
+Usuario en última diapositiva del Bloque X
+  → Pulsa "Siguiente bloque"
+  → POST /api/progreso-comunicacion/completar  { bloqueId: 'X' }
+  → Backend guarda/actualiza en progreso_comunicacion
+  → Frontend añade 'X' a bloquesCompletados local
+  → Se muestra portada del Bloque X+1
+  → Usuario pulsa "Empezar"
+  → Se abre la primera diapositiva del Bloque X+1
+
+En /practica/gramatica:
+  → GET /api/progreso-comunicacion al cargar
+  → Bloque X: 'completado'
+  → Bloque X+1: 'activo'
+  → Bloques X+2...: 'bloqueados'
+```
+
+### Integración en practica-gramatica
+- Al iniciar, detecta si el usuario es admin (todo desbloqueado) o normal (consulta BD).
+- Construye el estado de cada bloque a partir del conjunto de `bloqueId`s completados.
+- Los 11 bloques tienen los mismos `id`s en `comunicacion.component.ts` y en `practica-gramatica.component.ts`, garantizando coherencia entre las dos secciones.
+
+### Notas sobre el progreso de los subbloques
+Los bloques con sublecciones (ENM, Preguntas, Verbos) guardan el progreso a nivel de sublección individual. El `bloqueId` que se guarda al completar una sublección es el `id` de la sublección (p.ej. `'enm-contacto'`, `'enm-cuerpo'`). El bloque padre se marca como completado al completar la última sublección y avanzar al bloque siguiente.
+
+---
+
+## [CONVENCION_NOMBRES_BACKEND] Convención de nombres en el backend
+
+Los archivos del backend siguen la convención de nombre simple sin sufijo de tipo:
+- `backend/models/progresoComun.js` (no `progresoComun.model.js`)
+- `backend/controllers/progresoComun.js` (no `progresoComun.controller.js`)
+- `backend/routes/progresoComun.js` (no `progresoComun.routes.js`)
+
+La ubicación dentro de la carpeta (`models/`, `controllers/`, `routes/`) ya indica el tipo. Esta convención es la misma que siguen todos los archivos preexistentes.
+
+---
+
+## [STATS_SERVICE_AMPLIADO] Ampliación del StatsService
+
+El servicio `StatsService` centraliza todas las llamadas HTTP relacionadas con estadísticas y progreso. Con la incorporación del sistema de progreso de comunicación se añadieron dos métodos:
+
+```typescript
+// Obtiene los bloques de comunicación completados por el usuario autenticado
+getProgresoComunicacion(): Observable<{ bloqueId: string, fechaCompletado: string }[]>
+
+// Marca un bloque de comunicación como completado
+completarBloqueComun(bloqueId: string): Observable<{ ok: boolean, bloqueId: string }>
+```
+
+Ambos usan `environment.apiUrl` directamente (no `this.statsUrl`) ya que apuntan a `/api/progreso-comunicacion` y no a `/api/stats`. Patrón consistente con otros endpoints fuera de `/stats` en el mismo servicio.
 
 ---
 <!-- Añadir nuevas secciones aquí siguiendo el mismo formato -->
