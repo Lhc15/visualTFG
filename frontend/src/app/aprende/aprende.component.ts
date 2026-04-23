@@ -7,6 +7,8 @@ import { CategoriasService } from '../services/categorias.service';
 import { UsuariosService } from '../services/usuarios.service';
 import { environment } from '../../environments/environment';
 import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
+import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-tooltip.component';
+import { DescripcionService } from '../services/descripcion.service';
 
 // vista: 'selector' | 'vocabulario' | 'comunicacion'
 type Vista = 'selector' | 'vocabulario' | 'comunicacion';
@@ -14,7 +16,7 @@ type Vista = 'selector' | 'vocabulario' | 'comunicacion';
 @Component({
   selector: 'app-aprende',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, FormsModule, ToolMenuComponent],
+  imports: [CommonModule, CanvasComponent, FormsModule, ToolMenuComponent, DescripcionTooltipComponent],
   templateUrl: './aprende.component.html',
   styleUrls: ['./aprende.component.css']
 })
@@ -51,7 +53,8 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private descripcionService: DescripcionService
   ) {}
 
   ngOnInit(): void {
@@ -156,6 +159,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLooping = false;
     const loopCb = document.getElementById('toggleLoop') as HTMLInputElement;
     if (loopCb) loopCb.checked = false;
+    this.descripcionService.hide();
     this.selectedWord = palabra;
     if (!this.hasClickedWord) { this.toolMenuOpen = true; this.hasClickedWord = true; }
   }
@@ -175,7 +179,14 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLooping = loop;
   }
 
-  onPlayClicked(): void { this.isLooping = false; this.isPlaying = true; this.reproducirAnimacion(false); }
+  onPlayClicked(): void {
+    this.isLooping = false;
+    this.isPlaying = true;
+    this.reproducirAnimacion(false);
+    if (this.selectedWord?.usarDescripcion && this.selectedWord?.descripcion) {
+      this.descripcionService.show(this.selectedWord.descripcion);
+    }
+  }
   onAnimationEnded(): void { this.isPlaying = false; }
   setPlaybackRate(rate: number): void { this.currentPlaybackRate = rate; this.canvasRef?.setPlaybackRate(rate); }
 

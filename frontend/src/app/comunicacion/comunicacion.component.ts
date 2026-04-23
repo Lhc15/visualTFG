@@ -8,8 +8,10 @@ import { StatsService } from '../services/stats.service';
 import { UsuariosService } from '../services/usuarios.service';
 import { EnmService } from '../services/enm.service';
 import { EnmPackId } from '../services/enm.types';
+import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-tooltip.component';
+import { DescripcionService } from '../services/descripcion.service';
 
-export type RolToken = 'S' | 'O' | 'V' | 'ENM' | 'INT';
+export type RolToken = 'S' | 'O' | 'V' | 'ENM' | 'INT' | 'ADV';
 export type DerechoTipo = 'lista' | 'highlight' | 'reglas';
 export type LayoutTipo = 'layout-a' | 'layout-b';
 
@@ -56,7 +58,7 @@ export interface Bloque {
 @Component({
   selector: 'app-comunicacion',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, ToolMenuComponent],
+  imports: [CommonModule, CanvasComponent, ToolMenuComponent, DescripcionTooltipComponent],
   templateUrl: './comunicacion.component.html',
   styleUrls: ['./comunicacion.component.css']
 })
@@ -356,7 +358,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Sin', tituloItalica: 'conjugación',
           lead: 'En LSE los verbos no se conjugan. El mismo signo vale para presente, pasado y futuro. Para indicar el tiempo, se añade un marcador temporal al principio de la frase.',
           regla: { label: 'Estructura temporal', texto: 'Marcador temporal + Sujeto + Objeto + Verbo. El marcador temporal siempre al principio, antes de todo lo demás.' },
-          schema: { tokens: [{ texto: 'ANTES', rol: 'ENM' }, { texto: 'YO', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }], label: '"Antes dormía (mucho)" en LSE — marcador temporal al inicio' },
+          schema: { tokens: [{ texto: 'ANTES', rol: 'ADV' }, { texto: 'YO', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }], label: '"Antes dormía (mucho)" en LSE — marcador temporal al inicio' },
           textoExtra: 'Otros marcadores: PRÓXIMO (futuro próximo) · ESTE MES / ESTA SEMANA · AYER · MAÑANA · AÑO PASADO · AÑO 2000...'
         },
         {
@@ -364,7 +366,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Varios', tituloItalica: 'marcadores',
           lead: 'Cuando hay más de un marcador temporal (como "dentro de un mes", "la semana pasada"), primero se coloca el más general y después el más concreto.',
           regla: { label: 'Orden de marcadores', texto: 'General → Concreto. Primero el marco más amplio (PASADO, FUTURO), luego el detalle (SEMANA, MES, DÍA).' },
-          schema: { tokens: [{ texto: 'AYER', rol: 'ENM' }, { texto: 'NOSOTROS', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Ayer compramos" en LSE — AYER al inicio marca el tiempo' },
+          schema: { tokens: [{ texto: 'AYER', rol: 'ADV' }, { texto: 'NOSOTROS', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Ayer compramos" en LSE — AYER al inicio marca el tiempo' },
           textoExtra: 'Más ejemplos: MAÑANA TÚ CASA COMPRAR ("Mañana compras la casa") · ANTES TÚ VIVIR DÓNDE ("¿Dónde vivías antes?")") · AYER TODO-EL-DÍA YO TRABAJAR ("Ayer trabajé todo el día").'
         }
       ]
@@ -439,7 +441,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Adverbios de', tituloItalica: 'modo y cantidad',
           lead: 'Los adverbios acompañan a verbos o adjetivos para añadir significado (cómo, cuánto, dónde...). En LSE se colocan justo después del verbo o del adjetivo al que acompañan.',
           regla: { label: 'Posición general', texto: 'Verbo/Adjetivo + Adverbio. Si el verbo es "ser", "estar" o "tener/haber", el adverbio va después del sujeto.' },
-          schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'REGULAR', rol: 'ENM' }], label: '"Vives regular" en LSE — adverbio después del verbo' },
+          schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'REGULAR', rol: 'ADV' }], label: '"Vives regular" en LSE — adverbio después del verbo' },
           textoExtra: 'Más ejemplos: ÉL/ELLA COMER BIEN ("Come bien") · YO DORMIR REGULAR ("Duermo regular") · YO TRABAJAR PRONTO ("Empiezo a trabajar pronto").'
         },
         {
@@ -447,7 +449,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           titulo: 'Adverbios de', tituloItalica: 'tiempo y lugar',
           lead: 'Los adverbios de tiempo y lugar tienen una posición flexible: van al principio si afectan a toda la oración, y al final si solo afectan a una parte concreta.',
           regla: { label: 'Inicio vs final', texto: 'Al principio: cuando el tiempo o lugar enmarca toda la frase (contexto global). Al final: cuando solo afecta al elemento que precede.' },
-          schema: { tokens: [{ texto: 'AYER', rol: 'ENM' }, { texto: 'YO', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Ayer compré" en LSE — adverbio temporal al inicio' },
+          schema: { tokens: [{ texto: 'AYER', rol: 'ADV' }, { texto: 'YO', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }], label: '"Ayer compré" en LSE — adverbio temporal al inicio' },
           textoExtra: 'Mismo principio con tiempo: AYER YO DORMIR BIEN = "Ayer dormí bien". El marcador temporal al inicio enmarca toda la frase. AQUÍ GENTE MUCHO TRABAJAR = "Aquí trabaja mucha gente" (lugar al inicio, contexto global). YO TRABAJAR EMPEZAR PRONTO = "Empiezo a trabajar pronto" (adverbio al final, afecta solo al verbo).'
         }
       ]
@@ -491,7 +493,8 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
   constructor(private router: Router, private cdr: ChangeDetectorRef,
               private statsService: StatsService,
               private usuariosService: UsuariosService,
-              private enmService: EnmService) {}
+              private enmService: EnmService,
+              private descripcionService: DescripcionService) {}
 
   ngOnInit(): void {
     this.cargarUsuarioYProgreso();
@@ -608,6 +611,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.subBloqueActivo = null;
     this.diapositivaIdx = 0;
     this.resetAvatar();
+    this.descripcionService.hide();
     this.vista = bloque.subBloques?.length ? 'subindice' : 'bloque';
     if (!bloque.subBloques?.length) this.syncEnm();
   }

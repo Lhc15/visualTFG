@@ -6,14 +6,15 @@ import { PalabrasService } from '../services/palabras.service';
 import { CategoriasService } from '../services/categorias.service';
 import { GltfService } from '../services/gltf.service';
 
-const TIPOS_LEXICOS = ['S', 'O', 'V', 'ADJ', 'INT', 'FX'];
+const TIPOS_LEXICOS = ['S', 'O', 'V', 'ADJ', 'INT', 'FX', 'ADV'];
 const TIPOS_LABELS: Record<string, string> = {
   S:   'Sujeto',
   O:   'Objeto',
   V:   'Verbo',
   ADJ: 'Adjetivo',
   INT: 'Partícula int.',
-  FX:  'Fórmula fija'
+  FX:  'Fórmula fija',
+  ADV: 'Adverbio'
 };
 
 @Component({
@@ -91,8 +92,14 @@ const TIPOS_LABELS: Record<string, string> = {
         </div>
 
         <div class="form-group">
-          <label>Explicación</label>
-          <textarea [(ngModel)]="nuevaPalabra.explicacion" name="explicacion" rows="3"></textarea>
+          <label style="display:flex; align-items:center; gap:8px;">
+            Descripción manual
+            <input type="checkbox" [(ngModel)]="nuevaPalabra.usarDescripcion" name="usarDescripcion"
+              style="width:16px;height:16px;cursor:pointer;" title="Mostrar al reproducir">
+            <small class="text-muted" style="font-weight:400;">Mostrar al reproducir</small>
+          </label>
+          <textarea [(ngModel)]="nuevaPalabra.descripcion" name="descripcion" rows="3"
+            placeholder="Texto que aparecerá al reproducir la animación (opcional)"></textarea>
         </div>
 
         <div class="form-group">
@@ -101,11 +108,6 @@ const TIPOS_LABELS: Record<string, string> = {
             <option [ngValue]="null">Sin categoría</option>
             <option *ngFor="let c of categorias" [ngValue]="c._id">{{ c.nombre }}</option>
           </select>
-        </div>
-
-        <div class="form-group">
-          <label>Nivel</label>
-          <input type="number" [(ngModel)]="nuevaPalabra.nivel" name="nivel" />
         </div>
 
         <div class="form-group">
@@ -189,8 +191,8 @@ export class AdminPalabrasComponent implements OnInit {
   palabraId: string | null = null;
 
   nuevaPalabra: any = {
-    palabra: '', explicacion: '', categoria: null,
-    nivel: 1, orden: 0, tiposLexicos: [], enMotor: false
+    palabra: '', descripcion: '', usarDescripcion: false, categoria: null,
+    orden: 0, tiposLexicos: [], enMotor: false
   };
 
   showAnimacionesModal = false;
@@ -260,7 +262,7 @@ export class AdminPalabrasComponent implements OnInit {
     if (!this.showModal) {
       this.isEditing = false;
       this.palabraId = null;
-      this.nuevaPalabra = { palabra: '', explicacion: '', categoria: null, nivel: 1, orden: 0, tiposLexicos: [], enMotor: false };
+      this.nuevaPalabra = { palabra: '', descripcion: '', usarDescripcion: false, categoria: null, orden: 0, tiposLexicos: [], enMotor: false };
     }
   }
 
@@ -290,13 +292,13 @@ export class AdminPalabrasComponent implements OnInit {
     this.isEditing  = true;
     this.palabraId  = palabra._id;
     this.nuevaPalabra = {
-      palabra:      palabra.palabra,
-      explicacion:  palabra.explicacion  || '',
-      categoria:    palabra.categoria?._id || null,
-      nivel:        palabra.nivel  || 1,
-      orden:        palabra.orden  || 0,
-      tiposLexicos: [...(palabra.tiposLexicos || [])],
-      enMotor:      palabra.enMotor || false
+      palabra:          palabra.palabra,
+      descripcion:      palabra.descripcion      || '',
+      usarDescripcion:  palabra.usarDescripcion  || false,
+      categoria:        palabra.categoria?._id   || null,
+      orden:            palabra.orden  || 0,
+      tiposLexicos:     [...(palabra.tiposLexicos || [])],
+      enMotor:          palabra.enMotor || false
     };
     this.toggleModal();
   }

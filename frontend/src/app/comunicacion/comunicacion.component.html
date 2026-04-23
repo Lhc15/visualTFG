@@ -52,6 +52,7 @@
         </app-tool-menu>
         <div class="vv-canvas-wrap">
           <app-canvas [cameraZ]="4.3" (animationEnded)="onAnimationEnded()"></app-canvas>
+          <app-descripcion-tooltip></app-descripcion-tooltip>
         </div>
         <div class="vv-webcam-wrap" *ngIf="showWebcam">
           <video #videoElement class="vv-webcam-video" autoplay></video>
@@ -185,6 +186,7 @@
                 <div class="com-leg"><div class="com-leg-dot v"></div>Verbo</div>
                 <div class="com-leg"><div class="com-leg-dot int"></div>Partícula</div>
                 <div class="com-leg"><div class="com-leg-dot enm"></div>ENM</div>
+                <div class="com-leg"><div class="com-leg-dot adv"></div>Adverbio</div>
               </div>
             </div>
 

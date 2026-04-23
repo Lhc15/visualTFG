@@ -10,6 +10,8 @@ import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
+import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-tooltip.component';
+import { DescripcionService } from '../services/descripcion.service';
 
 type Pantalla = 'aprende' | 'nombre';
 
@@ -26,7 +28,7 @@ const LETRAS: LetraInfo[] = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').map(l => ({
 @Component({
   selector: 'app-abecedario',
   standalone: true,
-  imports: [CommonModule, FormsModule, CanvasComponent, ToolMenuComponent],
+  imports: [CommonModule, FormsModule, CanvasComponent, ToolMenuComponent, DescripcionTooltipComponent],
   templateUrl: './abecedario.component.html',
   styleUrl: './abecedario.component.css'
 })
@@ -70,7 +72,8 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private router: Router,
     private usuariosService: UsuariosService,
-    private statsService: StatsService
+    private statsService: StatsService,
+    private descripcionService: DescripcionService
   ) {}
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -226,6 +229,7 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
     this.stopCurrentAnim();
     this.isLooping = false;
     this.isPlaying = false;
+    this.descripcionService.hide();
     this.respawnLetrasFlotantes();
   }
 
