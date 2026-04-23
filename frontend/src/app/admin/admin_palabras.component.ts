@@ -104,7 +104,7 @@ const TIPOS_LABELS: Record<string, string> = {
 
         <div class="form-group">
           <label>Categoría</label>
-          <select [(ngModel)]="nuevaPalabra.categoria" name="categoria">
+          <select [(ngModel)]="nuevaPalabra.categoria" name="categoria" [compareWith]="compareCat">
             <option [ngValue]="null">Sin categoría</option>
             <option *ngFor="let c of categorias" [ngValue]="c._id">{{ c.nombre }}</option>
           </select>
@@ -216,6 +216,11 @@ export class AdminPalabrasComponent implements OnInit {
     this.cargarAllAnimaciones();
   }
 
+  compareCat(a: any, b: any): boolean {
+    if (!a || !b) return a === b;
+    return a.toString() === b.toString();
+  }
+
   toggleTipo(tipo: string) {
     const idx = this.nuevaPalabra.tiposLexicos.indexOf(tipo);
     if (idx === -1) {
@@ -293,7 +298,7 @@ export class AdminPalabrasComponent implements OnInit {
     this.palabraId  = palabra._id;
     this.nuevaPalabra = {
       palabra:          palabra.palabra,
-      descripcion:      palabra.descripcion      || '',
+      descripcion:      palabra.descripcion || palabra.explicacion || '',
       usarDescripcion:  palabra.usarDescripcion  || false,
       categoria:        palabra.categoria?._id   || null,
       orden:            palabra.orden  || 0,

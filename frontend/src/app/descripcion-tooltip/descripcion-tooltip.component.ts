@@ -8,7 +8,7 @@ import { DescripcionService } from '../services/descripcion.service';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="desc-tooltip" *ngIf="texto" [@slideIn]>
+    <div class="desc-tooltip" *ngIf="texto">
       <button class="desc-close" (click)="cerrar()" aria-label="Cerrar">✕</button>
       <p class="desc-texto">{{ texto }}</p>
     </div>
@@ -16,34 +16,35 @@ import { DescripcionService } from '../services/descripcion.service';
   styles: [`
     .desc-tooltip {
       position: absolute;
-      bottom: 16px;
-      left: 16px;
-      max-width: 240px;
-      background: rgba(28, 14, 10, 0.88);
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      max-width: 280px;
+      background: rgba(20, 20, 20, 0.82);
+      backdrop-filter: blur(6px);
       color: #F9F6F3;
-      border-left: 3px solid #E04A1A;
-      border-radius: 8px;
-      padding: 10px 36px 10px 12px;
+      border-radius: 10px;
+      padding: 10px 32px 10px 14px;
       font-family: 'DM Sans', sans-serif;
-      font-size: 0.82rem;
-      line-height: 1.45;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.35);
-      z-index: 20;
-      animation: descIn 0.22s ease;
+      font-size: 0.83rem;
+      line-height: 1.5;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      z-index: 50;
+      animation: descIn 0.2s ease;
     }
     @keyframes descIn {
-      from { opacity: 0; transform: translateY(8px); }
+      from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
     }
     .desc-close {
       position: absolute;
-      top: 6px;
-      right: 8px;
+      top: 7px;
+      right: 9px;
       background: none;
       border: none;
       color: #F9F6F3;
-      opacity: 0.6;
-      font-size: 0.75rem;
+      opacity: 0.5;
+      font-size: 0.7rem;
       cursor: pointer;
       line-height: 1;
       padding: 0;

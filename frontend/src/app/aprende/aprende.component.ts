@@ -182,10 +182,10 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   onPlayClicked(): void {
     this.isLooping = false;
     this.isPlaying = true;
-    this.reproducirAnimacion(false);
     if (this.selectedWord?.usarDescripcion && this.selectedWord?.descripcion) {
       this.descripcionService.show(this.selectedWord.descripcion);
     }
+    this.reproducirAnimacion(false);
   }
   onAnimationEnded(): void { this.isPlaying = false; }
   setPlaybackRate(rate: number): void { this.currentPlaybackRate = rate; this.canvasRef?.setPlaybackRate(rate); }
