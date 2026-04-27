@@ -277,6 +277,8 @@
 }
 .vv-word-row:hover { border-color: rgba(244,169,64,.35); background: #f0fdf4; }
 .vv-word-active { border-color: #F4A940 !important; background: #f0fdf4 !important; }
+.vv-word-vista .vv-word-status { background: #e8f5e9; color: #2e7d32; }
+.vv-word-vista .vv-word-name { color: #2e7d32; }
 
 .vv-word-status {
   width: 20px; height: 20px;

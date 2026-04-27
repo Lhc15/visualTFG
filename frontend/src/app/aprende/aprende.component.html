@@ -145,10 +145,12 @@
               class="vv-word-row"
               *ngFor="let palabra of filteredWordsInSelectedCategory"
               [class.vv-word-active]="selectedWord?.palabra === palabra.palabra"
+              [class.vv-word-vista]="palabrasVistas.has(palabra._id)"
               (click)="seleccionarPalabra(palabra)">
               <div class="vv-word-status" [class.vv-status-signing]="selectedWord?.palabra === palabra.palabra">
                 <span *ngIf="selectedWord?.palabra === palabra.palabra">▶</span>
-                <span *ngIf="selectedWord?.palabra !== palabra.palabra">○</span>
+                <span *ngIf="selectedWord?.palabra !== palabra.palabra && palabrasVistas.has(palabra._id)">✓</span>
+                <span *ngIf="selectedWord?.palabra !== palabra.palabra && !palabrasVistas.has(palabra._id)">○</span>
               </div>
               <div class="vv-word-name">{{ palabra.palabra }}</div>
               <button class="vv-sign-cta">

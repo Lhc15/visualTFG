@@ -12,15 +12,18 @@ import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
 import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-tooltip.component';
 import { DescripcionService } from '../services/descripcion.service';
+import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
+import { HttpClient } from '@angular/common/http';
 
 type Pantalla = 'aprende' | 'nombre';
 
 interface LetraInfo {
   letra: string;
   gltf: string;
+  _id?: string;
 }
 
-const LETRAS: LetraInfo[] = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').map(l => ({
+const LETRAS_FALLBACK: LetraInfo[] = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').map(l => ({
   letra: l,
   gltf: `${l.toLowerCase()}_lse.gltf`
 }));
@@ -43,7 +46,8 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
   // 4 canvas para Quiz B
   // Estado general
   pantalla: Pantalla = 'aprende';
-  readonly letras = LETRAS;
+  letras: LetraInfo[] = LETRAS_FALLBACK;
+  palabrasVistas = new Set<string>(); // IDs de letras reproducidas
   letrasvistas = new Set<string>();
   letraActiva: LetraInfo | null = null;
   cellSize = 0; // tamaño cuadrado calculado para cada celda de letra
@@ -73,7 +77,9 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private usuariosService: UsuariosService,
     private statsService: StatsService,
-    private descripcionService: DescripcionService
+    private descripcionService: DescripcionService,
+    private progresoVocabService: ProgresoVocabularioService,
+    private http: HttpClient
   ) {}
 
   // ══════════════════════════════════════════════════════════════════════════
@@ -81,12 +87,32 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
   // ══════════════════════════════════════════════════════════════════════════
 
   ngOnInit(): void {
+    // Cargar letras desde backend para obtener _id real
+    this.http.get<{ ok: boolean; palabras: any[] }>(
+      `${environment.apiUrl}/palabras/por-modulo?modulo=abecedario`,
+      { withCredentials: true }
+    ).subscribe({
+      next: (res) => {
+        if (res.ok && res.palabras.length > 0) {
+          // Mapear a LetraInfo enriquecido con _id
+          this.letras = res.palabras.map((p: any) => ({
+            letra: p.palabra,
+            gltf: p.gltf || `${p.palabra.toLowerCase()}_lse.gltf`,
+            _id: p._id
+          }));
+        }
+      }
+    });
+
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: resp => {
         this.userId = resp.usuario.uid;
         this.statsService.startMode(this.userId, 'abecedario').subscribe({
           next: r => { this.currentStatsId = r.statsId; },
           error: e => console.error(e)
+        });
+        this.progresoVocabService.obtenerProgreso('abecedario').subscribe({
+          next: (vistas) => { this.palabrasVistas = new Set(vistas); }
         });
       },
       error: e => console.error(e)
@@ -242,6 +268,10 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.letraActiva) return;
     this.isLooping = false;
     this.isPlaying = true;
+    if (this.letraActiva._id && !this.palabrasVistas.has(this.letraActiva._id)) {
+      this.palabrasVistas.add(this.letraActiva._id);
+      this.progresoVocabService.marcarVista(this.letraActiva._id, 'abecedario').subscribe();
+    }
     this.reproducirLetra(this.letraActiva, false);
   }
 

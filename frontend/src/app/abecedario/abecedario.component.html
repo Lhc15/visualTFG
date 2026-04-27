@@ -102,9 +102,11 @@
                   *ngFor="let l of letras; trackBy: trackByLetra"
                   class="vv-letter-cell"
                   [class.vv-letter-done]="letrasvistas.has(l.letra)"
+                  [class.vv-letter-played]="l._id && palabrasVistas.has(l._id)"
                   [class.vv-letter-active]="letraActiva?.letra === l.letra"
                   (click)="seleccionarLetra(l)">
                   {{ l.letra }}
+                  <span class="vv-letter-check" *ngIf="l._id && palabrasVistas.has(l._id)">✓</span>
                 </div>
               </div>
 

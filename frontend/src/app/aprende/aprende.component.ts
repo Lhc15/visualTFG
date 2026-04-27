@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
 import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-tooltip.component';
 import { DescripcionService } from '../services/descripcion.service';
+import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
 
 // vista: 'selector' | 'vocabulario' | 'comunicacion'
 type Vista = 'selector' | 'vocabulario' | 'comunicacion';
@@ -49,17 +50,24 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   selectedTool: string | null = null;
 
   userId = '';
+  palabrasVistas = new Set<string>();
 
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
     private usuariosService: UsuariosService,
-    private descripcionService: DescripcionService
+    private descripcionService: DescripcionService,
+    private progresoVocabService: ProgresoVocabularioService
   ) {}
 
   ngOnInit(): void {
     this.usuariosService.getAuthenticatedUser().subscribe({
-      next: (resp) => { this.userId = resp.usuario.uid; },
+      next: (resp) => {
+        this.userId = resp.usuario.uid;
+        this.progresoVocabService.obtenerProgreso('vocabulario').subscribe({
+          next: (vistas) => { this.palabrasVistas = new Set(vistas); }
+        });
+      },
       error: (err) => console.error('Error user:', err)
     });
     document.addEventListener('click', this.handleClickOutside.bind(this));
@@ -184,6 +192,10 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isPlaying = true;
     if (this.selectedWord?.usarDescripcion && this.selectedWord?.descripcion) {
       this.descripcionService.show(this.selectedWord.descripcion);
+    }
+    if (this.selectedWord?._id && !this.palabrasVistas.has(this.selectedWord._id)) {
+      this.palabrasVistas.add(this.selectedWord._id);
+      this.progresoVocabService.marcarVista(this.selectedWord._id, 'vocabulario').subscribe();
     }
     this.reproducirAnimacion(false);
   }

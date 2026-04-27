@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CategoriasService } from '../services/categorias.service';
 import { PalabrasService } from '../services/palabras.service';
+import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
 
 export interface CategoriaNodo {
   id: string;
@@ -34,7 +35,8 @@ export class PracticaVocabularioComponent implements OnInit {
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
-    private palabrasService: PalabrasService
+    private palabrasService: PalabrasService,
+    private progresoVocabService: ProgresoVocabularioService
   ) {}
 
   ngOnInit(): void {
@@ -42,33 +44,31 @@ export class PracticaVocabularioComponent implements OnInit {
   }
 
   private cargarCategorias(): void {
-    this.categoriasService.obtenerCategorias().subscribe({
-      next: (cats: any[]) => {
-        // Filtrar SOLO las de modulo vocabulario — las que crea el admin con ese modulo
-        // Sin reordenar: se respeta el orden de insercion en MongoDB,
-        // que es el mismo que usa Aprende, garantizando coherencia entre secciones.
-        const vocab = cats.filter((c: any) => c.modulo === 'vocabulario');
+    // Cargamos progreso real y categorías en paralelo
+    Promise.all([
+      this.progresoVocabService.obtenerProgreso('vocabulario').toPromise().then(v => v ?? []).catch(() => [] as string[]),
+      this.categoriasService.obtenerCategorias().toPromise().then(c => c ?? []).catch(() => [])
+    ]).then(([vistas, cats]) => {
+      const vocab = (cats as any[]).filter((c: any) => c.modulo === 'vocabulario');
+      const palabrasVistas = new Set<string>(vistas as string[]);
 
-        if (vocab.length === 0) {
-          this.cargando = false;
-          return;
-        }
+      if (vocab.length === 0) {
+        this.cargando = false;
+        return;
+      }
 
-        // Cargar palabras de cada categoria para obtener los nombres reales
-        // Usamos forkJoin para esperar todas las peticiones
-        const peticiones = vocab.map((cat: any) =>
-          this.categoriasService.obtenerPalabrasPorCategoria(cat._id).toPromise()
-            .then((palabras: any[]) => palabras ?? [])
-            .catch(() => [])
-        );
+      const peticiones = vocab.map((cat: any) =>
+        this.categoriasService.obtenerPalabrasPorCategoria(cat._id).toPromise()
+          .then((palabras: any) => palabras ?? [])
+          .catch(() => [])
+      );
 
-        Promise.all(peticiones).then((resultados: any[][]) => {
-          this.categorias = vocab.map((cat: any, idx: number) => {
-            const palabrasDeCat: any[] = resultados[idx] ?? [];
-            const total = palabrasDeCat.length;
-            // Por ahora palabrasEstudiadas = 0, se conectará al sistema
-            // de desbloqueo cuando esté implementado (PracticaEntry)
-            const estudiadas = 0;
+      Promise.all(peticiones).then((resultados: any[][]) => {
+        this.categorias = vocab.map((cat: any, idx: number) => {
+          const palabrasDeCat: any[] = resultados[idx] ?? [];
+          const total = palabrasDeCat.length;
+          // Cuenta cuántas palabras de esta categoría ha reproducido el usuario
+          const estudiadas = palabrasDeCat.filter((p: any) => palabrasVistas.has(p._id?.toString())).length;
             const estado = this.calcularEstado(idx, estudiadas, total);
             const estrellas = this.calcularEstrellas(estudiadas, total, estado);
 
@@ -89,18 +89,14 @@ export class PracticaVocabularioComponent implements OnInit {
             this.categorias[0] = { ...this.categorias[0], estado: 'activo' };
           }
 
-          this.categoriaActiva = this.categorias.find(c => c.estado === 'activo')
-            ?? this.categorias.find(c => c.estado === 'completado')
-            ?? this.categorias[0]
-            ?? null;
+        this.categoriaActiva = this.categorias.find(c => c.estado === 'activo')
+          ?? this.categorias.find(c => c.estado === 'completado')
+          ?? this.categorias[0]
+          ?? null;
 
-          this.cargando = false;
-        });
-      },
-      error: () => {
         this.cargando = false;
-      }
-    });
+      });
+    }).catch(() => { this.cargando = false; });
   }
 
   private calcularEstado(idx: number, estudiadas: number, total: number): 'completado' | 'activo' | 'bloqueado' {
