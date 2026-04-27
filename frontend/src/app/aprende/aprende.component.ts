@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+
+declare const confetti: any;
 import { CategoriasService } from '../services/categorias.service';
 import { UsuariosService } from '../services/usuarios.service';
 import { environment } from '../../environments/environment';
@@ -51,6 +53,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   userId = '';
   palabrasVistas = new Set<string>();
+  categoriasCompletadas = new Set<string>();
 
   constructor(
     private router: Router,
@@ -65,7 +68,12 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
       next: (resp) => {
         this.userId = resp.usuario.uid;
         this.progresoVocabService.obtenerProgreso('vocabulario').subscribe({
-          next: (vistas) => { this.palabrasVistas = new Set(vistas); }
+          next: (vistas) => {
+            this.palabrasVistas = new Set(vistas);
+            // Cargar qué categorías ya celebramos (para no repetir la animación)
+            const guardadas = localStorage.getItem(`vv_cats_completadas_${resp.usuario.uid}`);
+            if (guardadas) this.categoriasCompletadas = new Set(JSON.parse(guardadas));
+          }
         });
       },
       error: (err) => console.error('Error user:', err)
@@ -159,6 +167,12 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     return cat.palabras.slice(0, this.numeroPalabrasResumen).map((p: any) => p.palabra).join(', ');
   }
 
+  getProgresoCat(cat: any): number {
+    if (!cat.palabras?.length) return 0;
+    const vistas = cat.palabras.filter((p: any) => this.palabrasVistas.has(p._id)).length;
+    return Math.round((vistas / cat.palabras.length) * 100);
+  }
+
   // ── Palabra seleccionada ──────────────────────────────────
   seleccionarPalabra(palabra: any): void {
     if (this.canvasRef) this.canvasRef.stopLoop(true);
@@ -195,9 +209,52 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     }
     if (this.selectedWord?._id && !this.palabrasVistas.has(this.selectedWord._id)) {
       this.palabrasVistas.add(this.selectedWord._id);
-      this.progresoVocabService.marcarVista(this.selectedWord._id, 'vocabulario').subscribe();
+      this.progresoVocabService.marcarVista(this.selectedWord._id, 'vocabulario').subscribe({
+        next: () => { this.comprobarCompletadoCategoria(); }
+      });
     }
     this.reproducirAnimacion(false);
+  }
+
+  private comprobarCompletadoCategoria(): void {
+    if (!this.selectedCategory) return;
+    const catId = this.selectedCategory._id;
+    if (this.categoriasCompletadas.has(catId)) return;
+    if (this.categoriaActualCompletada) {
+      this.categoriasCompletadas.add(catId);
+      if (this.userId) {
+        localStorage.setItem(
+          `vv_cats_completadas_${this.userId}`,
+          JSON.stringify([...this.categoriasCompletadas])
+        );
+      }
+      this.lanzarConfeti();
+    }
+  }
+
+  private lanzarConfeti(): void {
+    if (typeof confetti === 'undefined') return;
+    const colores = ['#E04A1A', '#F4A940', '#1C0E0A', '#F9F6F3', '#F0997B'];
+    const base = {
+      spread: 70,
+      colors: colores,
+      gravity: 1.1,
+      scalar: 1.1,
+      ticks: 350
+    };
+    // Salva inicial — dos cañones
+    confetti({ ...base, particleCount: 120, angle: 60,  startVelocity: 60, origin: { x: 0, y: 0.65 } });
+    confetti({ ...base, particleCount: 120, angle: 120, startVelocity: 60, origin: { x: 1, y: 0.65 } });
+    // Segunda ráfaga a los 400ms
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 80, angle: 70,  startVelocity: 50, origin: { x: 0, y: 0.7 } });
+      confetti({ ...base, particleCount: 80, angle: 110, startVelocity: 50, origin: { x: 1, y: 0.7 } });
+    }, 400);
+    // Tercera ráfaga a los 900ms
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 50, angle: 65,  startVelocity: 45, origin: { x: 0, y: 0.6 } });
+      confetti({ ...base, particleCount: 50, angle: 115, startVelocity: 45, origin: { x: 1, y: 0.6 } });
+    }, 900);
   }
   onAnimationEnded(): void { this.isPlaying = false; }
   setPlaybackRate(rate: number): void { this.currentPlaybackRate = rate; this.canvasRef?.setPlaybackRate(rate); }
@@ -232,6 +289,11 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.searchText.trim()) return this.palabrasDeCategoriaSeleccionada;
     const s = this.searchText.toLowerCase();
     return this.palabrasDeCategoriaSeleccionada.filter(p => p.palabra.toLowerCase().includes(s));
+  }
+
+  get categoriaActualCompletada(): boolean {
+    if (!this.selectedCategory || this.palabrasDeCategoriaSeleccionada.length === 0) return false;
+    return this.palabrasDeCategoriaSeleccionada.every(p => this.palabrasVistas.has(p._id));
   }
 
   handleClickOutside(): void { if (this.isOpen) this.isOpen = false; }

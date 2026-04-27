@@ -126,11 +126,17 @@
         <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
           <h1 class="vv-title">Elige una <em>categoría</em></h1>
           <div class="vv-cat-grid">
-            <div class="vv-cat-card" *ngFor="let cat of categorias" (click)="onCategoryClick(cat)">
-              <div class="vv-cat-title">{{ cat.nombre }}</div>
+            <div class="vv-cat-card"
+              *ngFor="let cat of categorias"
+              [class.vv-cat-completada]="categoriasCompletadas.has(cat._id)"
+              (click)="onCategoryClick(cat)">
+              <div class="vv-cat-title">
+                {{ cat.nombre }}
+                <span *ngIf="categoriasCompletadas.has(cat._id)" class="vv-cat-done-badge">✓</span>
+              </div>
               <div class="vv-cat-sub">{{ getPrimerasPalabras(cat) }}</div>
               <div class="vv-cat-progress-track">
-                <div class="vv-cat-progress-fill" style="width: 0%"></div>
+                <div class="vv-cat-progress-fill" [style.width]="getProgresoCat(cat) + '%'"></div>
               </div>
             </div>
           </div>
@@ -159,14 +165,22 @@
               </button>
             </div>
           </div>
-          <div class="vv-exercises-divider"><span>Practica este tema</span></div>
-          <div class="vv-exercises-banner">
-            <div class="vv-exercises-text">
-              <div class="vv-exercises-title">¡Pon a prueba lo aprendido!</div>
-              <div class="vv-exercises-sub">Ejercicios de {{ selectedCategory.nombre }}</div>
+          <ng-container *ngIf="categoriaActualCompletada || categoriasCompletadas.has(selectedCategory._id)">
+            <div class="vv-cat-completada-pill">
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <polyline points="2,7 5.5,10.5 12,3.5" stroke="#F9F6F3" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              ¡Categoría completada!
             </div>
-            <button class="vv-exercises-cta">Ir a Practica</button>
-          </div>
+            <div class="vv-exercises-divider"><span>Practica este tema</span></div>
+            <div class="vv-exercises-banner">
+              <div class="vv-exercises-text">
+                <div class="vv-exercises-title">¡Pon a prueba lo aprendido!</div>
+                <div class="vv-exercises-sub">Ejercicios de {{ selectedCategory.nombre }}</div>
+              </div>
+              <button class="vv-exercises-cta">Ir a Practica</button>
+            </div>
+          </ng-container>
         </ng-container>
 
         <!-- ══ PANTALLA 3: COMUNICACIÓN (placeholder) ══ -->
