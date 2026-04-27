@@ -2,6 +2,7 @@ import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CanvasComponent } from '../canvas/canvas.component';
+import { HeaderComponent } from '../header/header.component';
 
 interface SeccionPractica {
   id: string; nombre: string; subtitulo: string; deco: string; progreso: number;
@@ -11,7 +12,7 @@ interface SeccionPractica {
 @Component({
   selector: 'app-practica',
   standalone: true,
-  imports: [CommonModule, CanvasComponent],
+  imports: [CommonModule, CanvasComponent, HeaderComponent],
   templateUrl: './practica.component.html',
   styleUrls: ['./practica.component.css']
 })

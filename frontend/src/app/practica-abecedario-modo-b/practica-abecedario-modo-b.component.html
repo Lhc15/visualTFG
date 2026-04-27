@@ -1,24 +1,8 @@
 <div class="vv-layout">
 
-  <!-- TOPNAV -->
-  <div class="vv-topnav">
-    <button class="vv-back-btn" (click)="volver()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Abecedario
-    </button>
-    <div class="vv-breadcrumb">
-      <span class="vv-bc-dim" (click)="volver()">Practica</span>
-      <span class="vv-bc-sep">›</span>
-      <span class="vv-bc-dim" (click)="volver()">Abecedario</span>
-      <span class="vv-bc-sep">›</span>
-      <span>Modo B</span>
-    </div>
-    <div class="vv-nav-right">
-      <button class="vv-avatar-btn">L</button>
-    </div>
-  </div>
+  <app-header></app-header>
 
-  <!-- SPLIT: panel izquierdo con 4 celdas -->
+    <!-- SPLIT: panel izquierdo con 4 celdas -->
   <div class="vv-split">
 
     <!-- 4 AVATARES -->
@@ -51,6 +35,11 @@
 
     <!-- ACTION PANEL -->
     <div class="vv-action-panel">
+      <div class="vv-panel-nav">
+        <span class="vv-pnav-back" (click)="volver()">Abecedario</span>
+        <span class="vv-pnav-sep">›</span>
+        <span class="vv-pnav-cur">Modo B</span>
+      </div>
       <div class="vv-action-scroll">
 
         <div class="vv-badge-strip">

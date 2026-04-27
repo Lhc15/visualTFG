@@ -1,20 +1,6 @@
 <div class="vv-layout">
 
-  <!-- TOPNAV -->
-  <div class="vv-topnav">
-    <button class="vv-back-btn" (click)="volver()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      Practica
-    </button>
-    <div class="vv-breadcrumb">
-      <span class="vv-bc-dim" (click)="volver()">Practica</span>
-      <span class="vv-bc-sep">›</span>
-      <span>Gramática</span>
-    </div>
-    <div class="vv-nav-right">
-      <button class="vv-avatar-btn">L</button>
-    </div>
-  </div>
+  <app-header></app-header>
 
   <!-- CUERPO -->
   <div class="vv-body">
@@ -81,6 +67,12 @@
 
     <!-- PANEL DERECHO -->
     <div class="vv-info-panel">
+      <div class="vv-panel-nav">
+        <span class="vv-pnav-back" (click)="volver()">Practica
+        </span>
+        <span class="vv-pnav-sep">›</span>
+        <span class="vv-pnav-cur">Gramática</span>
+      </div>
 
       <ng-container *ngIf="bloqueActivo">
 

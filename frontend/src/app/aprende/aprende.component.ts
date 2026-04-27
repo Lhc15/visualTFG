@@ -12,6 +12,7 @@ import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
 import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-tooltip.component';
 import { DescripcionService } from '../services/descripcion.service';
 import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
+import { HeaderComponent } from '../header/header.component';
 
 // vista: 'selector' | 'vocabulario' | 'comunicacion'
 type Vista = 'selector' | 'vocabulario' | 'comunicacion';
@@ -19,7 +20,7 @@ type Vista = 'selector' | 'vocabulario' | 'comunicacion';
 @Component({
   selector: 'app-aprende',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, FormsModule, ToolMenuComponent, DescripcionTooltipComponent],
+  imports: [CommonModule, CanvasComponent, FormsModule, ToolMenuComponent, DescripcionTooltipComponent, HeaderComponent],
   templateUrl: './aprende.component.html',
   styleUrls: ['./aprende.component.css']
 })
@@ -115,8 +116,9 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.vista = 'comunicacion';
   }
 
-  volverASelector(): void {
-    this.vista = 'selector';
+  irAModos(): void { this.router.navigate(['/modos']); }
+
+  volverASelector(): void {    this.vista = 'selector';
     this.selectedCategory = null;
     this.palabrasDeCategoriaSeleccionada = [];
     this.selectedWord = null;

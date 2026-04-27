@@ -1,32 +1,6 @@
 <div class="vv-layout">
 
-  <!-- TOPNAV -->
-  <div class="vv-topnav">
-    <button class="vv-back-btn" (click)="volver()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-      {{ breadcrumbBack }}
-    </button>
-    <div class="vv-breadcrumb">
-      <span [class.vv-bc-dim]="vista !== 'indice'" (click)="vista !== 'indice' && volverAIndice()">Comunicación</span>
-      <ng-container *ngIf="vista === 'portada'">
-        <span class="vv-bc-sep">›</span>
-        <span>{{ portadaTitulo }}</span>
-      </ng-container>
-      <ng-container *ngIf="vista === 'subindice' && bloqueActivo">
-        <span class="vv-bc-sep">›</span>
-        <span>{{ bloqueActivo.titulo }}</span>
-      </ng-container>
-      <ng-container *ngIf="vista === 'bloque' && bloqueActivo">
-        <span class="vv-bc-sep">›</span>
-        <span *ngIf="bloqueActivo.subBloques?.length" class="vv-bc-dim" (click)="volverASubIndice()">{{ bloqueActivo.titulo }}</span>
-        <span *ngIf="!bloqueActivo.subBloques?.length">{{ bloqueActivo.titulo }}</span>
-        <ng-container *ngIf="subBloqueActivo">
-          <span class="vv-bc-sep">›</span>
-          <span>{{ subBloqueActivo.titulo }}</span>
-        </ng-container>
-      </ng-container>
-    </div>
-  </div>
+  <app-header></app-header>
 
   <!-- SPLIT -->
   <div class="vv-split">
@@ -77,6 +51,19 @@
 
     <!-- ══ PANEL DERECHO ══ -->
     <div class="vv-action-panel">
+      <div class="vv-panel-nav">
+        <span class="vv-pnav-back" (click)="volver()">Aprende</span>
+        <span class="vv-pnav-sep">›</span>
+        <span *ngIf="vista === 'indice'" class="vv-pnav-cur">Comunicación</span>
+        <ng-container *ngIf="vista !== 'indice' && bloqueActivo">
+          <span class="vv-pnav-back" (click)="volverAIndice()">Comunicación</span>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-cur">{{ subBloqueActivo?.titulo || bloqueActivo.titulo }}</span>
+        </ng-container>
+        <ng-container *ngIf="vista !== 'indice' && !bloqueActivo">
+          <span class="vv-pnav-cur">Comunicación</span>
+        </ng-container>
+      </div>
       <div class="vv-action-scroll">
 
         <!-- ── ÍNDICE PRINCIPAL ── -->

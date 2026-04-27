@@ -9,6 +9,7 @@ import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
+import { HeaderComponent } from '../header/header.component';
 
 interface LetraInfo {
   letra: string;
@@ -23,7 +24,7 @@ const LETRAS: LetraInfo[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({
 @Component({
   selector: 'app-practica-abecedario-modo-a',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, ToolMenuComponent],
+  imports: [CommonModule, CanvasComponent, ToolMenuComponent, HeaderComponent],
   templateUrl: './practica-abecedario-modo-a.component.html',
   styleUrl: './practica-abecedario-modo-a.component.css'
 })

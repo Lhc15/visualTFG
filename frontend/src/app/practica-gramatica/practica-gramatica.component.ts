@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
+import { HeaderComponent } from '../header/header.component';
 
 export interface BloquGramatica {
   id: string;
@@ -168,7 +169,7 @@ const BLOQUES_GRAMATICA: Omit<BloquGramatica, 'estado' | 'estrellas' | 'ejercici
 @Component({
   selector: 'app-practica-gramatica',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HeaderComponent],
   templateUrl: './practica-gramatica.component.html',
   styleUrl: './practica-gramatica.component.css'
 })

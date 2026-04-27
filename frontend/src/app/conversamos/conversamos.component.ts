@@ -8,6 +8,7 @@ import { CanvasComponent } from '../canvas/canvas.component';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
+import { HeaderComponent } from '../header/header.component';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -133,7 +134,7 @@ const SITUACIONES: Situacion[] = [
 @Component({
   selector: 'app-conversamos',
   standalone: true,
-  imports: [CommonModule, CanvasComponent],
+  imports: [CommonModule, CanvasComponent, HeaderComponent],
   templateUrl: './conversamos.component.html',
   styleUrl: './conversamos.component.css'
 })

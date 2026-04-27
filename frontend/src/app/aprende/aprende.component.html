@@ -1,29 +1,6 @@
 <div class="vv-layout">
 
-  <!-- TOPNAV -->
-  <div class="vv-topnav">
-    <button class="vv-back-btn" (click)="onBackClick()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M19 12H5M12 5l-7 7 7 7"/>
-      </svg>
-      {{ breadcrumbBack }}
-    </button>
-    <div class="vv-breadcrumb">
-      <span [class.vv-bc-dim]="vista !== 'selector'" (click)="vista !== 'selector' && volverASelector()">Aprende</span>
-      <ng-container *ngIf="vista === 'vocabulario'">
-        <span class="vv-bc-sep">›</span>
-        <span [class.vv-bc-dim]="!!selectedCategory" (click)="selectedCategory && volverAListaCategorias()">Vocabulario</span>
-        <ng-container *ngIf="selectedCategory">
-          <span class="vv-bc-sep">›</span>
-          <span>{{ selectedCategory.nombre }}</span>
-        </ng-container>
-      </ng-container>
-      <ng-container *ngIf="vista === 'comunicacion'">
-        <span class="vv-bc-sep">›</span>
-        <span>Comunicación</span>
-      </ng-container>
-    </div>
-  </div>
+  <app-header></app-header>
 
   <!-- SPLIT -->
   <div class="vv-split">
@@ -62,6 +39,30 @@
 
     <!-- ACTION PANEL -->
     <div class="vv-action-panel">
+      <!-- Breadcrumb en panel derecho -->
+      <div class="vv-panel-nav">
+        <ng-container *ngIf="vista === 'selector'">
+          <span class="vv-pnav-back" (click)="irAModos()">Inicio
+          </span>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-cur">Aprende</span>
+        </ng-container>
+        <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
+          <span class="vv-pnav-back" (click)="volverASelector()">Aprende</span>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-cur">Vocabulario</span>
+        </ng-container>
+        <ng-container *ngIf="vista === 'vocabulario' && selectedCategory">
+          <span class="vv-pnav-back" (click)="volverAListaCategorias()">Vocabulario</span>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-cur">{{ selectedCategory.nombre }}</span>
+        </ng-container>
+        <ng-container *ngIf="vista === 'comunicacion'">
+          <span class="vv-pnav-back" (click)="volverASelector()">Aprende</span>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-cur">Comunicación</span>
+        </ng-container>
+      </div>
       <div class="vv-action-scroll">
 
         <!-- ══ PANTALLA 0: SELECTOR ══ -->

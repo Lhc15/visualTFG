@@ -23,13 +23,13 @@
   font-family: 'Fraunces', serif;
   font-size: 1.4rem;
   font-weight: 700;
-  color: var(--color-text, #1C2B2A);
   letter-spacing: -0.02em;
 }
-
-.logo-accent {
-  color: var(--color-brand, #8B00A8);
-}
+.lg-negro   { color: #1C0E0A; }
+.lg-azul    { color: #4F9CF9; }
+.lg-amarillo{ color: #F4A940; }
+.lg-verde   { color: #1B7A0A; }
+.lg-lila    { color: #8B00A8; }
 
 .modos2-nav {
   display: flex;

@@ -10,6 +10,7 @@ import { EnmService } from '../services/enm.service';
 import { EnmPackId } from '../services/enm.types';
 import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-tooltip.component';
 import { DescripcionService } from '../services/descripcion.service';
+import { HeaderComponent } from '../header/header.component';
 
 export type RolToken = 'S' | 'O' | 'V' | 'ENM' | 'INT' | 'ADV';
 export type DerechoTipo = 'lista' | 'highlight' | 'reglas';
@@ -58,7 +59,7 @@ export interface Bloque {
 @Component({
   selector: 'app-comunicacion',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, ToolMenuComponent, DescripcionTooltipComponent],
+  imports: [CommonModule, CanvasComponent, ToolMenuComponent, DescripcionTooltipComponent, HeaderComponent],
   templateUrl: './comunicacion.component.html',
   styleUrls: ['./comunicacion.component.css']
 })

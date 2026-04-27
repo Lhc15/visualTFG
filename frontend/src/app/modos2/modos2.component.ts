@@ -2,6 +2,7 @@ import { Component, AfterViewInit, QueryList, ViewChildren, ElementRef } from '@
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CanvasComponent } from '../canvas/canvas.component';
+import { HeaderComponent } from '../header/header.component';
 
 export interface ModoCard {
   id: string;
@@ -17,7 +18,7 @@ export interface ModoCard {
 @Component({
   selector: 'app-modos2',
   standalone: true,
-  imports: [CommonModule, RouterModule, CanvasComponent],
+  imports: [CommonModule, RouterModule, CanvasComponent, HeaderComponent],
   templateUrl: './modos2.component.html',
   styleUrls: ['./modos2.component.css'],
 })

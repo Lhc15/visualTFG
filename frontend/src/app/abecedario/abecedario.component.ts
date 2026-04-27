@@ -14,6 +14,7 @@ import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-
 import { DescripcionService } from '../services/descripcion.service';
 import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
 import { HttpClient } from '@angular/common/http';
+import { HeaderComponent } from '../header/header.component';
 
 type Pantalla = 'aprende' | 'nombre';
 
@@ -31,7 +32,7 @@ const LETRAS_FALLBACK: LetraInfo[] = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ'.split('').ma
 @Component({
   selector: 'app-abecedario',
   standalone: true,
-  imports: [CommonModule, FormsModule, CanvasComponent, ToolMenuComponent, DescripcionTooltipComponent],
+  imports: [CommonModule, FormsModule, CanvasComponent, ToolMenuComponent, DescripcionTooltipComponent, HeaderComponent],
   templateUrl: './abecedario.component.html',
   styleUrl: './abecedario.component.css'
 })

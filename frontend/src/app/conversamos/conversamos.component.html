@@ -1,24 +1,6 @@
 <div class="vv-layout">
 
-  <!-- === TOPNAV === -->
-  <div class="vv-topnav">
-    <button class="vv-back-btn" (click)="pantalla === 'selector' ? volverAModos() : volverAlSelector()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-        <path d="M19 12H5M12 5l-7 7 7 7"/>
-      </svg>
-      {{ pantalla === 'selector' ? 'Inicio' : '¿Conversamos?' }}
-    </button>
-    <div class="vv-breadcrumb">
-      <span *ngIf="pantalla === 'selector'">¿Conversamos?</span>
-      <ng-container *ngIf="pantalla === 'conversacion'">
-        <span class="vv-bc-sep">›</span>
-        <span>{{ situacionActiva?.nombre }}</span>
-      </ng-container>
-    </div>
-    <div class="vv-nav-right">
-      <button class="vv-avatar-btn">L</button>
-    </div>
-  </div>
+  <app-header></app-header>
 
   <!-- === SPLIT === -->
   <div class="vv-split">
@@ -49,6 +31,12 @@
 
     <!-- ----------- PANTALLA 1: SELECTOR ----------- -->
     <div class="vv-action-panel" *ngIf="pantalla === 'selector'">
+      <div class="vv-panel-nav">
+        <span class="vv-pnav-back" (click)="volverAModos()">Inicio
+        </span>
+        <span class="vv-pnav-sep">›</span>
+        <span class="vv-pnav-cur">¿Conversamos?</span>
+      </div>
 
       <!-- Cabecera -->
       <div class="vv-sel-head">
@@ -124,6 +112,12 @@
 
     <!-- ----------- PANTALLA 2: CONVERSACIÓN ----------- -->
     <div class="vv-action-panel vv-conv-panel" *ngIf="pantalla === 'conversacion'">
+      <div class="vv-panel-nav">
+        <span class="vv-pnav-back" (click)="volverAlSelector()">¿Conversamos?
+        </span>
+        <span class="vv-pnav-sep">›</span>
+        <span class="vv-pnav-cur">{{ situacionActiva?.nombre }}</span>
+      </div>
 
       <!-- Cabecera de progreso -->
       <div class="vv-conv-head">

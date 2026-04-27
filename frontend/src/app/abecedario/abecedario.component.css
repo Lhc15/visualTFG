@@ -1,3 +1,14 @@
+.vv-panel-nav {
+  display: flex; align-items: center; gap: .3rem;
+  padding: .55rem 1.25rem; border-bottom: 1px solid rgba(0,0,0,.06);
+  flex-shrink: 0; font-family: var(--font-body, 'DM Sans', sans-serif);
+}
+.vv-pnav-back { font-size: .72rem; color: #9ca3af; cursor: pointer; background: none; border: none; display:flex;align-items:center;gap:4px; padding: 0; font-family: inherit; transition: color .15s; }
+.vv-pnav-back:hover { color: #1C0E0A; }
+.vv-pnav-back svg { width: 11px; height: 11px; }
+.vv-pnav-sep { font-size: .7rem; color: #d1d5db; }
+.vv-pnav-cur { font-size: .72rem; font-weight: 500; color: #1C0E0A; }
+
 /* ═══════════════════════════════════════
    ABECEDARIO — LSE
    Acento: azul #00B4D8
@@ -30,63 +41,10 @@
 }
 
 /* ── TOPNAV ── */
-.vv-topnav {
-  display: flex;
-  align-items: center;
-  gap: .75rem;
-  padding: 0.75rem 2rem;
-  background: #ffffff;
-  border-bottom: 1px solid rgba(0,0,0,.06);
-  flex-shrink: 0;
-  z-index: 10;
-}
 
-.vv-back-btn {
-  display: flex;
-  align-items: center;
-  gap: .35rem;
-  font-size: .85rem;
-  font-weight: 500;
-  color: #4a5568;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: .35rem .75rem;
-  border-radius: 999px;
-  font-family: var(--font-body, 'DM Sans', sans-serif);
-  transition: background .15s;
-}
-.vv-back-btn:hover { background: var(--color-bg, #F9F6F3); }
-.vv-back-btn svg { width: 13px; height: 13px; }
 
-.vv-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: .35rem;
-  font-size: .85rem;
-  color: #9ca3af;
-  font-family: var(--font-body, 'DM Sans', sans-serif);
-}
 .vv-breadcrumb span:last-child { color: #1C2B2A; font-weight: 500; }
-.vv-bc-dim { cursor: pointer; }
-.vv-bc-dim:hover { color: #1C2B2A; }
-.vv-bc-sep { color: #9ca3af; }
 
-.vv-nav-right { margin-left: auto; }
-.vv-avatar-btn {
-  width: 2.2rem;
-  height: 2.2rem;
-  border-radius: 50%;
-  background: #8B00A8;
-  color: #fff;
-  font-weight: 700;
-  font-size: .85rem;
-  display: grid;
-  place-items: center;
-  border: none;
-  cursor: pointer;
-  font-family: var(--font-body, 'DM Sans', sans-serif);
-}
 
 /* ── SPLIT ── */
 .vv-split {
@@ -1021,19 +979,6 @@
 }
 
 /* ── FOOTER ── */
-.vv-footer {
-  border-top: 1px solid rgba(0,0,0,.07);
-  padding: .65rem 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  background: var(--color-bg, #F9F6F3);
-  flex-shrink: 0;
-  font-family: var(--font-body, 'DM Sans', sans-serif);
-}
-.vv-footer-stat { font-size: .75rem; color: #6b7280; }
-.vv-footer-val { font-weight: 600; color: #1C2B2A; }
-.vv-footer-sep { width: 1px; height: 1rem; background: rgba(0,0,0,.1); flex-shrink: 0; }
 .vv-switch-mode {
   cursor: pointer;
   color: var(--abc);

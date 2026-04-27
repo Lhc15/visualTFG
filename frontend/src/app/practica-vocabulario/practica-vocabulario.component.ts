@@ -5,6 +5,7 @@ import { CategoriasService } from '../services/categorias.service';
 import { PalabrasService } from '../services/palabras.service';
 import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
 import { UsuariosService } from '../services/usuarios.service';
+import { HeaderComponent } from '../header/header.component';
 
 export interface CategoriaNodo {
   id: string;
@@ -20,7 +21,7 @@ export interface CategoriaNodo {
 @Component({
   selector: 'app-practica-vocabulario',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HeaderComponent],
   templateUrl: './practica-vocabulario.component.html',
   styleUrl: './practica-vocabulario.component.css'
 })

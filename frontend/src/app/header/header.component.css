@@ -1,83 +1,58 @@
-/* header.component.css */
-.header {
-  position: fixed;       /* Se mantiene en la parte superior */
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 20px 20px;     /* Espacio alrededor */
-  background: transparent; /* O el color que prefieras */
+.vv-global-header {
   display: flex;
   align-items: center;
-  border: none;  /* Asegura que no haya borde */
-  box-shadow: none; /* Evita cualquier sombra */
+  justify-content: space-between;
+  padding: .75rem 2rem;
+  background: #F9F6F3;
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  flex-shrink: 0;
+  z-index: 100;
 }
 
-.logo-container {
-  display: flex;
-  align-items: center;
-}
-
-.logo {
-  width: 200px;         /* Aumenta este valor para un logo más grande */
-  height: auto;
+.vv-global-logo {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -.02em;
   cursor: pointer;
+  user-select: none;
 }
+.lg-negro  { color: #1C0E0A; }
+.lg-azul   { color: #4F9CF9; }
+.lg-amarillo { color: #F4A940; }
+.lg-verde  { color: #1B7A0A; }
+.lg-lila   { color: #8B00A8; }
 
-
-
-
-/* @font-face {
-  font-family: "ChauPhilomene";
-  src: url("../../assets/fonts/chauphilomene.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Lexend";
-  src: url("../../assets/fonts/lexend.ttf") format("truetype");
-  font-weight: normal;
-  font-style: normal;
-}
-
-.header {
+.vv-global-nav {
   display: flex;
+  gap: .25rem;
   align-items: center;
-  justify-content: flex-start;
-  width: 100%;
-  padding: 20px 40px;
-  background-color: transparent;
-  box-sizing: border-box;
-  position: relative;
-  top: 0;
-  left: 0;
-  border-bottom: none !important;
 }
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  margin-right: 20px;
+.vv-global-nav a {
+  font-size: .82rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-decoration: none;
+  padding: .32rem .72rem;
+  border-radius: 999px;
+  transition: background .15s, color .15s;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
 }
+.vv-global-nav a:hover { background: rgba(28,14,10,.06); color: #1C0E0A; }
 
-.logo {
-  width: 70px;
-  height: auto;
+.vv-global-avatar {
+  width: 2.1rem;
+  height: 2.1rem;
+  border-radius: 50%;
+  background: #8B00A8;
+  color: #fff;
+  font-weight: 700;
+  font-size: .82rem;
+  border: none;
   cursor: pointer;
+  display: grid;
+  place-items: center;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  transition: opacity .15s;
 }
-
-.text-container {
-  display: flex;
-  align-items: center;
-  font-family: 'ChauPhilomene', sans-serif;
-  gap: 12px;
-  flex-direction: row;
-}
-
-.main-title {
-  font-size: 32px;
-  font-weight: bold;
-  margin: 0;
-  color: #000;
-  white-space: nowrap;
-} */
+.vv-global-avatar:hover { opacity: .85; }

@@ -8,6 +8,7 @@ import { CanvasComponent } from '../canvas/canvas.component';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
+import { HeaderComponent } from '../header/header.component';
 
 interface LetraInfo {
   letra: string;
@@ -24,7 +25,7 @@ const QUIZ_B_COLORS = ['#00B4D8', '#E04A1A', '#2A7A4A', '#D4A017'];
 @Component({
   selector: 'app-practica-abecedario-modo-b',
   standalone: true,
-  imports: [CommonModule, CanvasComponent],
+  imports: [CommonModule, CanvasComponent, HeaderComponent],
   templateUrl: './practica-abecedario-modo-b.component.html',
   styleUrl: './practica-abecedario-modo-b.component.css'
 })

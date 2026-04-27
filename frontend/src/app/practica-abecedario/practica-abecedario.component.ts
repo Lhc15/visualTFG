@@ -2,11 +2,12 @@ import { Component, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CanvasComponent } from '../canvas/canvas.component';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-practica-abecedario',
   standalone: true,
-  imports: [CommonModule, CanvasComponent],
+  imports: [CommonModule, CanvasComponent, HeaderComponent],
   templateUrl: './practica-abecedario.component.html',
   styleUrl: './practica-abecedario.component.css'
 })
