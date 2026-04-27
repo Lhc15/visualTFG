@@ -19,6 +19,7 @@ export interface MensajeChat {
   de: 'avatar' | 'usuario' | 'correccion';
   texto: string;
   estado?: 'correcto' | 'incorrecto';
+  respondido?: boolean;
 }
 
 export interface Turno {
@@ -261,6 +262,10 @@ export class ConversamosComponent implements OnInit, OnDestroy, AfterViewInit {
     const turno = this.situacionActiva.turnos[this.turnoIdx];
     const esCorrecta = idx === turno.correcta;
 
+    // Revelar el texto del último mensaje del avatar
+    const ultimoAvatar = [...this.chat].reverse().find(m => m.de === 'avatar');
+    if (ultimoAvatar) ultimoAvatar.respondido = true;
+
     if (esCorrecta) {
       this.aciertos++;
       this.estado = 'correcto';
@@ -340,7 +345,7 @@ export class ConversamosComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   get subtituloVisible(): boolean {
-    return this.isAvatarSignando && !!this.turnoActual;
+    return false;
   }
 
   get subtituloTexto(): string {

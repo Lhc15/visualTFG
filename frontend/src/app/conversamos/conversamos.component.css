@@ -464,6 +464,34 @@
   color: var(--color-text, #1C0E0A);
   font-family: var(--font-body, 'DM Sans', sans-serif);
 }
+.vv-bubble-oculta {
+  background: rgba(242,237,232,.5);
+  border-style: dashed;
+}
+.vv-bubble-placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: .8rem;
+}
+.vv-bubble-avatar span { animation: fadeInText .3s ease; }
+@keyframes fadeInText {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.vv-bubble-oculta {
+  background: rgba(242,237,232,.5);
+  border-style: dashed;
+}
+.vv-bubble-placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  font-size: .8rem;
+}
+.vv-bubble-avatar span { animation: fadeInText .3s ease; }
+@keyframes fadeInText {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
 /* Burbuja usuario */
 .vv-msg-user {

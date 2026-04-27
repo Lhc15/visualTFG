@@ -4,7 +4,12 @@
     padding: 0;
     box-sizing: border-box;
   }
-  
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+}
+
   body {
     margin: 0;
     padding: 0;
@@ -59,3 +64,13 @@ app-canvas
     display: flex;
     width: 50vw;
 }
+
+/* ── Scrollbars discretas en toda la app ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb transparent;
+}
+*::-webkit-scrollbar { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: #e5e7eb; border-radius: 99px; }
+*::-webkit-scrollbar-thumb:hover { background: #d1d5db; }

@@ -94,8 +94,17 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
     private progresoEjercicioService: ProgresoEjercicioService
   ) {}
 
+  // Modo ejercicio forzado desde config global ('A'|'B'|'ambos'|null=aleatorio)
+  modoForzado: 'A' | 'B' | 'ambos' | null = null;
+  // IDs de categorías en modo global
+  private catIds: string[] = [];
+
   ngOnInit(): void {
     this.categoriaId = this.route.snapshot.paramMap.get('categoriaId') ?? '';
+    const queryModo = this.route.snapshot.queryParamMap.get('modo');
+    this.modoForzado = (queryModo as any) ?? null;
+    const queryCats = this.route.snapshot.queryParamMap.get('cats');
+    this.catIds = queryCats ? queryCats.split(',') : [];
 
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: resp => {
@@ -103,16 +112,69 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
         this.statsService.startMode(this.userId, 'practica-vocabulario').subscribe({
           next: r => { this.currentStatsId = r.statsId; }
         });
-        // Cargar historial de ejercicios y palabras en paralelo
-        Promise.all([
-          this.progresoEjercicioService.obtenerProgreso(this.categoriaId).toPromise().catch(() => [] as RegistroEjercicio[]),
-          this.categoriasService.obtenerPalabrasPorCategoria(this.categoriaId).toPromise().catch(() => [])
-        ]).then(([registros, lista]) => {
-          this.procesarCarga(registros ?? [], lista ?? []);
-        });
+        if (this.categoriaId === 'global') {
+          this.cargarGlobal();
+        } else {
+          Promise.all([
+            this.progresoEjercicioService.obtenerProgreso(this.categoriaId).toPromise().catch(() => [] as RegistroEjercicio[]),
+            this.categoriasService.obtenerPalabrasPorCategoria(this.categoriaId).toPromise().catch(() => [])
+          ]).then(([registros, lista]) => {
+            this.procesarCarga(registros ?? [], lista ?? []);
+          });
+        }
       },
       error: e => console.error(e)
     });
+  }
+
+  private cargarGlobal(): void {
+    if (this.catIds.length === 0) { this.cargando = false; return; }
+    this.categoriaNombre = 'Modo Global';
+
+    Promise.all(
+      this.catIds.map(id =>
+        Promise.all([
+          this.categoriasService.obtenerPalabrasPorCategoria(id).toPromise().catch(() => []),
+          this.progresoEjercicioService.obtenerProgreso(id).toPromise().catch(() => [] as RegistroEjercicio[])
+        ])
+      )
+    ).then(resultados => {
+      let todasPalabras: any[] = [];
+      let todosRegistros: RegistroEjercicio[] = [];
+
+      resultados.forEach(([palabras, registros], idx) => {
+        const catId = this.catIds[idx];
+        // Calcular estrellas de la categoría para el multiplicador
+        const regs = registros as RegistroEjercicio[];
+        const estrellas = this.calcularEstrellasCat(regs);
+        const multiplicador = estrellas === 0 ? 3 : estrellas === 1 ? 2 : 1;
+        // Añadir palabras multiplicadas según rendimiento de categoría
+        for (let i = 0; i < multiplicador; i++) {
+          todasPalabras = todasPalabras.concat(palabras as any[]);
+        }
+        todosRegistros = todosRegistros.concat(regs);
+      });
+
+      // Deduplicar historial (tomar el peor registro por palabra)
+      const histMap = new Map<string, RegistroEjercicio>();
+      todosRegistros.forEach(r => {
+        const ex = histMap.get(r.palabraId);
+        if (!ex || r.vecesFallada > ex.vecesFallada) histMap.set(r.palabraId, r);
+      });
+
+      this.procesarCarga([...histMap.values()], todasPalabras);
+    });
+  }
+
+  private calcularEstrellasCat(registros: RegistroEjercicio[]): number {
+    if (!registros.length) return 0;
+    const total = registros.reduce((s, r) => s + r.vecesAcertada + r.vecesFallada, 0);
+    if (total === 0) return 0;
+    const pct = registros.reduce((s, r) => s + r.vecesAcertada, 0) / total;
+    if (pct >= 0.8) return 3;
+    if (pct >= 0.6) return 2;
+    if (pct >= 0.4) return 1;
+    return 0;
   }
 
   ngAfterViewInit(): void {
@@ -189,7 +251,11 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   // ── Elegir modo aleatorio y generar pregunta ──────────────────────────────
 
   private elegirModoYPregunta(): void {
-    if (this.palabras.length < 4) {
+    if (this.modoForzado === 'A') {
+      this.modo = 'A';
+    } else if (this.modoForzado === 'B' && this.palabras.length >= 4) {
+      this.modo = 'B';
+    } else if (this.palabras.length < 4) {
       this.modo = 'A';
     } else {
       this.modo = Math.random() < 0.5 ? 'A' : 'B';

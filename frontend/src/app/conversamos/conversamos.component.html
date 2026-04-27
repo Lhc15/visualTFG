@@ -87,22 +87,7 @@
       </div>
 
       <!-- Footer stats -->
-      <div class="vv-footer">
-        <div class="vv-footer-stat">
-          <div class="vv-footer-val">{{ totalSituacionesCompletadas }}/{{ situaciones.length }}</div>
-          <div class="vv-footer-lbl">Situaciones</div>
-        </div>
-        <div class="vv-footer-sep"></div>
-        <div class="vv-footer-stat">
-          <div class="vv-footer-val">—</div>
-          <div class="vv-footer-lbl">Precisión global</div>
-        </div>
-        <div class="vv-footer-sep"></div>
-        <div class="vv-footer-stat">
-          <div class="vv-footer-val">—</div>
-          <div class="vv-footer-lbl">Respuestas correctas</div>
-        </div>
-      </div>
+
 
     </div>
 
@@ -146,7 +131,10 @@
 
           <div class="vv-msg-avatar" *ngIf="msg.de === 'avatar'">
             <div class="vv-av-icon"><div class="vv-av-icon-inner"></div></div>
-            <div class="vv-bubble-avatar">{{ msg.texto }}</div>
+            <div class="vv-bubble-avatar" [class.vv-bubble-oculta]="!msg.respondido">
+              <span *ngIf="msg.respondido">{{ msg.texto }}</span>
+              <span *ngIf="!msg.respondido" class="vv-bubble-placeholder">Signando…</span>
+            </div>
           </div>
 
           <div class="vv-msg-user" *ngIf="msg.de === 'usuario'">
@@ -249,22 +237,7 @@
 
 
       <!-- Footer stats conversación -->
-      <div class="vv-footer">
-        <div class="vv-footer-stat">
-          <div class="vv-footer-val">{{ aciertos }}</div>
-          <div class="vv-footer-lbl">Correctas</div>
-        </div>
-        <div class="vv-footer-sep"></div>
-        <div class="vv-footer-stat">
-          <div class="vv-footer-val">{{ errores }}</div>
-          <div class="vv-footer-lbl">Incorrectas</div>
-        </div>
-        <div class="vv-footer-sep" *ngIf="aciertos + errores > 0"></div>
-        <div class="vv-footer-stat" *ngIf="aciertos + errores > 0">
-          <div class="vv-footer-val">{{ precision }}%</div>
-          <div class="vv-footer-lbl">Precisión</div>
-        </div>
-      </div>
+
 
     </div>
 
