@@ -51,7 +51,6 @@
           class="vv-station"
           [class.vv-st-done]="sit.estado === 'completada'"
           [class.vv-st-active]="sit.estado === 'disponible'"
-          [class.vv-st-locked]="sit.estado === 'bloqueada'"
           (click)="iniciarSituacion(sit)">
 
           <!-- Número de fondo -->
@@ -65,7 +64,7 @@
             <div class="vv-st-text">
               <div class="vv-st-label">
                 Situación 0{{ sit.id }} ·
-                {{ sit.estado === 'completada' ? 'Completada' : sit.estado === 'disponible' ? 'Disponible' : 'Bloqueada' }}
+                {{ sit.estado === 'completada' ? 'Completada' : 'Disponible' }}
               </div>
               <div class="vv-st-name">{{ sit.nombre }}</div>
               <div class="vv-st-tags">
@@ -73,13 +72,12 @@
               </div>
             </div>
             <div class="vv-st-right">
-              <button class="vv-st-cta" *ngIf="sit.estado !== 'bloqueada'">
+              <button class="vv-st-cta">
                 {{ sit.estado === 'completada' ? 'Repetir →' : 'Empezar →' }}
               </button>
               <div class="vv-st-badge">
                 <span *ngIf="sit.estado === 'completada'">✓</span>
-                <span *ngIf="sit.estado === 'disponible'">▶</span>
-                <span *ngIf="sit.estado === 'bloqueada'">🔒</span>
+                <span *ngIf="sit.estado !== 'completada'">▶</span>
               </div>
             </div>
           </div>

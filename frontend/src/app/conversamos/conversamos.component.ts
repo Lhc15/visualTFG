@@ -123,7 +123,7 @@ const SITUACIONES: Situacion[] = [
   {
     id: 3,
     nombre: 'Despedirse',
-    estado: 'bloqueada',
+    estado: 'disponible',
     tags: ['Adiós', 'Hasta luego', 'Hasta mañana'],
     turnos: []
   }
@@ -212,7 +212,7 @@ export class ConversamosComponent implements OnInit, OnDestroy, AfterViewInit {
   // ── Navegación selector → conversación ───────────────────────────────────
 
   iniciarSituacion(sit: Situacion): void {
-    if (sit.estado === 'bloqueada') return;
+    if (!sit) return;
     this.situacionActiva = sit;
     this.turnoIdx = 0;
     this.estado = 'avatar-signando';
