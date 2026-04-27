@@ -73,14 +73,15 @@
     ══════════════════════════════════════ -->
     <div class="vv-action-panel">
       <div class="vv-panel-nav">
-        <span class="vv-pnav-back" (click)="navigateTo('modos')">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-          Inicio
-        </span>
-        <span class="vv-pnav-sep">›</span>
-        <span *ngIf="pantalla === 'aprende'" class="vv-pnav-cur">Abecedario</span>
+        <ng-container *ngIf="pantalla === 'aprende'">
+          <button class="vv-pnav-volver" (click)="navigateTo('modos')">Volver</button>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-cur">Abecedario</span>
+        </ng-container>
         <ng-container *ngIf="pantalla !== 'aprende'">
-          <span class="vv-pnav-back" (click)="irA('aprende')">Abecedario</span>
+          <button class="vv-pnav-volver" (click)="irA('aprende')">Volver</button>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-dim">Abecedario</span>
           <span class="vv-pnav-sep">›</span>
           <span class="vv-pnav-cur">Signa tu nombre</span>
         </ng-container>

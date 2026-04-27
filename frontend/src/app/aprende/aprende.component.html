@@ -42,23 +42,28 @@
       <!-- Breadcrumb en panel derecho -->
       <div class="vv-panel-nav">
         <ng-container *ngIf="vista === 'selector'">
-          <span class="vv-pnav-back" (click)="irAModos()">Inicio
-          </span>
+          <button class="vv-pnav-volver" (click)="irAModos()">Volver</button>
           <span class="vv-pnav-sep">›</span>
           <span class="vv-pnav-cur">Aprende</span>
         </ng-container>
         <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
-          <span class="vv-pnav-back" (click)="volverASelector()">Aprende</span>
+          <button class="vv-pnav-volver" (click)="volverASelector()">Volver</button>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-dim">Aprende</span>
           <span class="vv-pnav-sep">›</span>
           <span class="vv-pnav-cur">Vocabulario</span>
         </ng-container>
         <ng-container *ngIf="vista === 'vocabulario' && selectedCategory">
-          <span class="vv-pnav-back" (click)="volverAListaCategorias()">Vocabulario</span>
+          <button class="vv-pnav-volver" (click)="volverAListaCategorias()">Volver</button>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-dim">Vocabulario</span>
           <span class="vv-pnav-sep">›</span>
           <span class="vv-pnav-cur">{{ selectedCategory.nombre }}</span>
         </ng-container>
         <ng-container *ngIf="vista === 'comunicacion'">
-          <span class="vv-pnav-back" (click)="volverASelector()">Aprende</span>
+          <button class="vv-pnav-volver" (click)="volverASelector()">Volver</button>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-dim">Aprende</span>
           <span class="vv-pnav-sep">›</span>
           <span class="vv-pnav-cur">Comunicación</span>
         </ng-container>

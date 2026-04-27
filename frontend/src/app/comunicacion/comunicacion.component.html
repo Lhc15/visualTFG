@@ -52,15 +52,23 @@
     <!-- ══ PANEL DERECHO ══ -->
     <div class="vv-action-panel">
       <div class="vv-panel-nav">
-        <span class="vv-pnav-back" (click)="volver()">Aprende</span>
-        <span class="vv-pnav-sep">›</span>
-        <span *ngIf="vista === 'indice'" class="vv-pnav-cur">Comunicación</span>
+        <ng-container *ngIf="vista === 'indice'">
+          <button class="vv-pnav-volver" (click)="volver()">Volver</button>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-dim">Aprende</span>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-cur">Comunicación</span>
+        </ng-container>
         <ng-container *ngIf="vista !== 'indice' && bloqueActivo">
-          <span class="vv-pnav-back" (click)="volverAIndice()">Comunicación</span>
+          <button class="vv-pnav-volver" (click)="volverAIndice()">Volver</button>
+          <span class="vv-pnav-sep">›</span>
+          <span class="vv-pnav-dim">Comunicación</span>
           <span class="vv-pnav-sep">›</span>
           <span class="vv-pnav-cur">{{ subBloqueActivo?.titulo || bloqueActivo.titulo }}</span>
         </ng-container>
         <ng-container *ngIf="vista !== 'indice' && !bloqueActivo">
+          <button class="vv-pnav-volver" (click)="volver()">Volver</button>
+          <span class="vv-pnav-sep">›</span>
           <span class="vv-pnav-cur">Comunicación</span>
         </ng-container>
       </div>
