@@ -124,10 +124,14 @@
 
         <!-- ══ PANTALLA 1: CATEGORÍAS ══ -->
         <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
+          <div class="vv-search-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" [(ngModel)]="searchText" placeholder="Buscar categoría…">
+          </div>
           <h1 class="vv-title">Elige una <em>categoría</em></h1>
           <div class="vv-cat-grid">
             <div class="vv-cat-card"
-              *ngFor="let cat of categorias"
+              *ngFor="let cat of filteredCategorias"
               [class.vv-cat-completada]="categoriasCompletadas.has(cat._id)"
               (click)="onCategoryClick(cat)">
               <div class="vv-cat-title">
@@ -144,6 +148,10 @@
 
         <!-- ══ PANTALLA 2: PALABRAS ══ -->
         <ng-container *ngIf="vista === 'vocabulario' && selectedCategory">
+          <div class="vv-search-bar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input type="text" [(ngModel)]="searchText" placeholder="Buscar signo…">
+          </div>
           <h2 class="vv-title">{{ selectedCategory.nombre }}</h2>
           <div class="vv-section-label">Signos del tema</div>
           <div class="vv-word-list">
@@ -191,20 +199,6 @@
 
       </div>
 
-      <!-- FOOTER -->
-      <div class="vv-footer">
-        <ng-container *ngIf="vista === 'selector'">
-          <div class="vv-footer-stat">Nivel <span class="vv-footer-val">A1</span></div>
-          <div class="vv-footer-sep"></div>
-          <div class="vv-footer-stat">Fuente <span class="vv-footer-val">SIGNOcampus · CNSE</span></div>
-        </ng-container>
-        <ng-container *ngIf="vista === 'vocabulario' && !selectedCategory">
-          <div class="vv-footer-stat"><span class="vv-footer-val">{{ categorias.length }}</span> categorías</div>
-        </ng-container>
-        <ng-container *ngIf="vista === 'vocabulario' && selectedCategory">
-          <div class="vv-footer-stat"><span class="vv-footer-val">{{ filteredWordsInSelectedCategory.length }}</span> signos</div>
-        </ng-container>
-      </div>
     </div>
 
   </div>

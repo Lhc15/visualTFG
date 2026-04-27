@@ -203,21 +203,6 @@
 
       </div><!-- /vv-action-scroll -->
 
-      <!-- ── FOOTER STATS ── -->
-      <div class="vv-footer">
-        <ng-container *ngIf="pantalla === 'aprende'">
-          <div class="vv-footer-stat"><span class="vv-footer-val">{{ letrasvistas.size }}</span> / {{ letras.length }} letras</div>
-          <div class="vv-footer-sep"></div>
-          <div class="vv-footer-stat">Progreso: <span class="vv-footer-val">{{ progresoLetrasPct }}%</span></div>
-        </ng-container>
-        <ng-container *ngIf="pantalla === 'nombre'">
-          <div class="vv-footer-stat">Letras: <span class="vv-footer-val">{{ letrasNombreValidas.length }}</span></div>
-          <div class="vv-footer-sep" *ngIf="signandoNombre"></div>
-          <div class="vv-footer-stat" *ngIf="signandoNombre">Signando: <span class="vv-footer-val">{{ letraSignandoIdx + 1 }} / {{ letrasNombreValidas.length }}</span></div>
-        </ng-container>
-
-      </div>
-
     </div><!-- /vv-action-panel -->
 
   </div><!-- /vv-split -->

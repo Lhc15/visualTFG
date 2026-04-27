@@ -146,6 +146,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onCategoryClick(cat: any): void {
+    this.searchText = '';
     this.selectedCategory = cat;
     this.categoriasService.obtenerPalabrasPorCategoria(cat._id).subscribe({
       next: (palabras) => { this.palabrasDeCategoriaSeleccionada = palabras; },
@@ -154,6 +155,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   volverAListaCategorias(): void {
+    this.searchText = '';
     this.selectedCategory = null;
     this.palabrasDeCategoriaSeleccionada = [];
     this.selectedWord = null;
@@ -285,6 +287,21 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   // ── Búsqueda ──────────────────────────────────────────────
+  get filteredCategorias(): any[] {
+    const s = this.searchText.trim().toLowerCase();
+    if (!s) return this.categorias;
+    return this.categorias.filter(c => {
+      // Coincide con el nombre de la categoría
+      if (c.nombre.toLowerCase().includes(s)) return true;
+      // O con alguna palabra dentro de la categoría
+      if (c.palabras?.some((p: any) => {
+        const nombre = typeof p === 'string' ? p : p.palabra ?? '';
+        return nombre.toLowerCase().includes(s);
+      })) return true;
+      return false;
+    });
+  }
+
   get filteredWordsInSelectedCategory(): any[] {
     if (!this.searchText.trim()) return this.palabrasDeCategoriaSeleccionada;
     const s = this.searchText.toLowerCase();
