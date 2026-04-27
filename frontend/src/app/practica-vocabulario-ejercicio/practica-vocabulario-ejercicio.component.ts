@@ -10,6 +10,8 @@ import { CategoriasService } from '../services/categorias.service';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { environment } from '../../environments/environment';
+import { HeaderComponent } from '../header/header.component';
+import { ProgresoEjercicioService, RegistroEjercicio } from '../services/progreso-ejercicio.service';
 
 export interface PalabraEjercicio {
   id: string;
@@ -25,7 +27,7 @@ const COLORES_B = ['#F4A940', '#E04A1A', '#2A7A4A', '#8B00A8'];
 @Component({
   selector: 'app-practica-vocabulario-ejercicio',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, ToolMenuComponent],
+  imports: [CommonModule, CanvasComponent, ToolMenuComponent, HeaderComponent],
   templateUrl: './practica-vocabulario-ejercicio.component.html',
   styleUrl: './practica-vocabulario-ejercicio.component.css'
 })
@@ -44,7 +46,17 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   palabras: PalabraEjercicio[] = [];
   cargando = true;
 
-  // Modo actual (alterna aleatoriamente)
+  // ── Motor de priorización ─────────────────────────────────────
+  // Cola de preguntas de la sesión (palabras ordenadas por prioridad)
+  private cola: PalabraEjercicio[] = [];
+  // Cuántas veces ha aparecido cada palabra en esta sesión
+  private apariciones: Map<string, number> = new Map();
+  // Total de preguntas de la sesión (palabras.length + fallos, máx +3)
+  totalPreguntas = 0;
+  private fallosExtra = 0;
+  private historial: Map<string, RegistroEjercicio> = new Map();
+
+  // Modo actual
   modo: ModoEjercicio = 'A';
 
   // Estado modo A
@@ -78,19 +90,25 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
     private router: Router,
     private categoriasService: CategoriasService,
     private usuariosService: UsuariosService,
-    private statsService: StatsService
+    private statsService: StatsService,
+    private progresoEjercicioService: ProgresoEjercicioService
   ) {}
 
   ngOnInit(): void {
     this.categoriaId = this.route.snapshot.paramMap.get('categoriaId') ?? '';
-    this.cargarPalabras();
 
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: resp => {
         this.userId = resp.usuario.uid;
         this.statsService.startMode(this.userId, 'practica-vocabulario').subscribe({
-          next: r => { this.currentStatsId = r.statsId; },
-          error: e => console.error(e)
+          next: r => { this.currentStatsId = r.statsId; }
+        });
+        // Cargar historial de ejercicios y palabras en paralelo
+        Promise.all([
+          this.progresoEjercicioService.obtenerProgreso(this.categoriaId).toPromise().catch(() => [] as RegistroEjercicio[]),
+          this.categoriasService.obtenerPalabrasPorCategoria(this.categoriaId).toPromise().catch(() => [])
+        ]).then(([registros, lista]) => {
+          this.procesarCarga(registros ?? [], lista ?? []);
         });
       },
       error: e => console.error(e)
@@ -107,45 +125,75 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
     }
   }
 
-  private cargarPalabras(): void {
-    this.categoriasService.obtenerPalabrasPorCategoria(this.categoriaId).subscribe({
-      next: (resp: any) => {
-        const lista = Array.isArray(resp) ? resp : resp.palabras ?? [];
-        this.palabras = lista
-          .filter((p: any) => p.gltf) // solo palabras con animación
-          .map((p: any) => ({
-            id: p._id,
-            palabra: p.palabra,
-            gltf: p.gltf,
-            clipName: p.clipName
-          }));
-        this.categoriaNombre = lista[0]?.categoria?.nombre ?? '';
-        this.cargando = false;
+  private procesarCarga(registros: RegistroEjercicio[], resp: any): void {
+    const lista = Array.isArray(resp) ? resp : resp.palabras ?? [];
+    this.palabras = lista.map((p: any) => ({
+      id: p._id,
+      palabra: p.palabra,
+      gltf: p.gltf ?? null,
+      clipName: p.clipName ?? null
+    }));
+    this.categoriaNombre = lista[0]?.categoria?.nombre ?? this.categoriaId;
 
-        if (this.palabras.length >= 2) {
-          this.iniciarEjercicio();
-        }
-      },
-      error: () => {
-        this.cargando = false;
-      }
-    });
+    // Construir mapa de historial indexado por palabraId
+    this.historial = new Map(registros.map(r => [r.palabraId, r]));
+
+    this.cargando = false;
+    if (this.palabras.length >= 2) {
+      this.construirCola();
+      this.totalPreguntas = this.palabras.length;
+      this.elegirModoYPregunta();
+    }
   }
 
-  private iniciarEjercicio(): void {
-    this.elegirModoYPregunta();
+  // ── Motor de priorización ─────────────────────────────────────────────────
+  // Prioridad: nunca vista (0) > más fallos (1+) > más aciertos (negativo score)
+  private prioridadPalabra(p: PalabraEjercicio): number {
+    const h = this.historial.get(p.id);
+    if (!h) return -1000; // nunca vista → máxima prioridad (más negativo = antes)
+    // Fallos suman prioridad (más fallos = número más negativo = antes)
+    // Aciertos restan prioridad
+    return h.vecesAcertada - h.vecesFallada * 2;
+  }
+
+  private construirCola(): void {
+    // Agrupar por nivel de prioridad y mezclar dentro de cada grupo
+    const ordenadas = [...this.palabras].sort((a, b) => {
+      const pa = this.prioridadPalabra(a);
+      const pb = this.prioridadPalabra(b);
+      if (pa !== pb) return pa - pb;
+      return Math.random() - 0.5; // mismo nivel → aleatorio
+    });
+    this.cola = ordenadas;
+    this.apariciones = new Map();
+  }
+
+  private siguienteDeCola(): PalabraEjercicio | null {
+    // Devuelve la primera palabra de la cola que no haya aparecido 2 veces
+    const idx = this.cola.findIndex(p => (this.apariciones.get(p.id) ?? 0) < 2);
+    if (idx === -1) return null;
+    const p = this.cola.splice(idx, 1)[0];
+    this.apariciones.set(p.id, (this.apariciones.get(p.id) ?? 0) + 1);
+    return p;
+  }
+
+  private reencolar(p: PalabraEjercicio): void {
+    // Solo reencola si no ha aparecido 2 veces y hay margen de +3
+    if ((this.apariciones.get(p.id) ?? 0) >= 2) return;
+    if (this.fallosExtra >= 3) return;
+    this.fallosExtra++;
+    this.totalPreguntas++;
+    this.cola.push(p); // va al final
   }
 
   // ── Elegir modo aleatorio y generar pregunta ──────────────────────────────
 
   private elegirModoYPregunta(): void {
-    // Con menos de 4 palabras solo podemos hacer modo A
     if (this.palabras.length < 4) {
       this.modo = 'A';
     } else {
       this.modo = Math.random() < 0.5 ? 'A' : 'B';
     }
-
     if (this.modo === 'A') {
       this.nuevaPreguntaA();
     } else {
@@ -158,8 +206,9 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
 
   nuevaPreguntaA(): void {
     this.seleccionA = null;
-    const idx = Math.floor(Math.random() * this.palabras.length);
-    this.palabraCorrecta = this.palabras[idx];
+    const siguiente = this.siguienteDeCola();
+    if (!siguiente) { this.volver(); return; }
+    this.palabraCorrecta = siguiente;
 
     const pool = this.palabras.filter(p => p.id !== this.palabraCorrecta!.id);
     const distractores = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
@@ -182,7 +231,7 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   }
 
   private async reproducirA(p: PalabraEjercicio, loop: boolean): Promise<void> {
-    if (!this.mainCanvasRef) return;
+    if (!this.mainCanvasRef || !p.gltf) return;
     this.mainCanvasRef.stopClip();
     const url = `${environment.apiUrl}/gltf/animaciones/${p.gltf}`;
     if (this.mainCanvasRef.currentModel !== url) await this.mainCanvasRef.loadSkinModel(url);
@@ -197,8 +246,16 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   elegirOpcionA(p: PalabraEjercicio): void {
     if (this.seleccionA !== null) return;
     this.seleccionA = p.id;
-    if (p.id === this.palabraCorrecta?.id) this.correctas++;
-    else this.errores++;
+    const acertada = p.id === this.palabraCorrecta?.id;
+    if (acertada) {
+      this.correctas++;
+    } else {
+      this.errores++;
+      if (this.palabraCorrecta) this.reencolar(this.palabraCorrecta);
+    }
+    if (this.palabraCorrecta) {
+      this.progresoEjercicioService.registrar(this.palabraCorrecta.id, this.categoriaId, acertada).subscribe();
+    }
   }
 
   esCorrectaA(p: PalabraEjercicio): boolean {
@@ -225,8 +282,9 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
 
   nuevaPreguntaB(): void {
     this.seleccionB = null;
-    const idx = Math.floor(Math.random() * this.palabras.length);
-    this.palabraPreguntaB = this.palabras[idx];
+    const siguiente = this.siguienteDeCola();
+    if (!siguiente) { this.volver(); return; }
+    this.palabraPreguntaB = siguiente;
 
     const pool = this.palabras.filter(p => p.id !== this.palabraPreguntaB!.id);
     this.distractoresB = [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
@@ -279,8 +337,16 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   elegirCeldaB(cellIdx: number): void {
     if (this.seleccionB !== null) return;
     this.seleccionB = cellIdx;
-    if (this.esCorrecto(cellIdx)) this.correctas++;
-    else this.errores++;
+    const acertada = this.esCorrecto(cellIdx);
+    if (acertada) {
+      this.correctas++;
+    } else {
+      this.errores++;
+      if (this.palabraPreguntaB) this.reencolar(this.palabraPreguntaB);
+    }
+    if (this.palabraPreguntaB) {
+      this.progresoEjercicioService.registrar(this.palabraPreguntaB.id, this.categoriaId, acertada).subscribe();
+    }
   }
 
   celdaEsCorrectaB(i: number): boolean { return this.seleccionB !== null && this.esCorrecto(i); }
@@ -291,6 +357,11 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   // ── Siguiente pregunta (alterna modo) ─────────────────────────────────────
 
   siguiente(): void {
+    if (this.preguntaNum >= this.totalPreguntas) {
+      // Sesión completada — volver a vocabulario
+      this.volver();
+      return;
+    }
     this.preguntaNum++;
     this.elegirModoYPregunta();
   }
