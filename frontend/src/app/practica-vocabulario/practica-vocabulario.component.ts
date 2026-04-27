@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { CategoriasService } from '../services/categorias.service';
 import { PalabrasService } from '../services/palabras.service';
 import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
+import { UsuariosService } from '../services/usuarios.service';
 
 export interface CategoriaNodo {
   id: string;
@@ -28,19 +29,27 @@ export class PracticaVocabularioComponent implements OnInit {
   categorias: CategoriaNodo[] = [];
   categoriaActiva: CategoriaNodo | null = null;
   cargando = true;
-
-  readonly shifts = ['shift-r', 'shift-l', 'shift-r', 'shift-l', 'shift-r', 'shift-l',
-                     'shift-r', 'shift-l', 'shift-r', 'shift-l', 'shift-r', 'shift-l'];
+  private categoriasCompletadas = new Set<string>();
+  private userId = '';
 
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
     private palabrasService: PalabrasService,
-    private progresoVocabService: ProgresoVocabularioService
+    private progresoVocabService: ProgresoVocabularioService,
+    private usuariosService: UsuariosService
   ) {}
 
   ngOnInit(): void {
-    this.cargarCategorias();
+    this.usuariosService.getAuthenticatedUser().subscribe({
+      next: (resp) => {
+        this.userId = resp.usuario.uid;
+        const guardadas = localStorage.getItem(`vv_cats_completadas_${this.userId}`);
+        if (guardadas) this.categoriasCompletadas = new Set(JSON.parse(guardadas));
+        this.cargarCategorias();
+      },
+      error: () => { this.cargarCategorias(); }
+    });
   }
 
   private cargarCategorias(): void {
@@ -69,7 +78,7 @@ export class PracticaVocabularioComponent implements OnInit {
           const total = palabrasDeCat.length;
           // Cuenta cuántas palabras de esta categoría ha reproducido el usuario
           const estudiadas = palabrasDeCat.filter((p: any) => palabrasVistas.has(p._id?.toString())).length;
-            const estado = this.calcularEstado(idx, estudiadas, total);
+            const estado = this.calcularEstado(idx, cat._id, estudiadas, total);
             const estrellas = this.calcularEstrellas(estudiadas, total, estado);
 
             return {
@@ -84,11 +93,6 @@ export class PracticaVocabularioComponent implements OnInit {
             } as CategoriaNodo;
           });
 
-          // La primera categoria siempre activa (desbloqueo real viene después)
-          if (this.categorias.length > 0 && this.categorias[0].estado === 'bloqueado') {
-            this.categorias[0] = { ...this.categorias[0], estado: 'activo' };
-          }
-
         this.categoriaActiva = this.categorias.find(c => c.estado === 'activo')
           ?? this.categorias.find(c => c.estado === 'completado')
           ?? this.categorias[0]
@@ -99,14 +103,16 @@ export class PracticaVocabularioComponent implements OnInit {
     }).catch(() => { this.cargando = false; });
   }
 
-  private calcularEstado(idx: number, estudiadas: number, total: number): 'completado' | 'activo' | 'bloqueado' {
-    if (idx === 0) return estudiadas >= total && total > 0 ? 'completado' : 'activo';
+  private calcularEstado(idx: number, catId: string, estudiadas: number, total: number): 'completado' | 'activo' | 'bloqueado' {
+    // Una categoría está completada si el usuario la completó en Aprende
+    const estaCompletada = this.categoriasCompletadas.has(catId);
+    if (estaCompletada) return 'completado';
+    // La primera siempre activa
+    if (idx === 0) return 'activo';
+    // Las siguientes: activas si la anterior está completada
     const anterior = this.categorias[idx - 1];
     if (!anterior) return 'bloqueado';
-    if (anterior.estado === 'completado' || anterior.palabrasEstudiadas > 0) {
-      return estudiadas >= total && total > 0 ? 'completado' : 'activo';
-    }
-    return 'bloqueado';
+    return anterior.estado === 'completado' ? 'activo' : 'bloqueado';
   }
 
   private calcularEstrellas(estudiadas: number, total: number, estado: string): number {
@@ -116,6 +122,14 @@ export class PracticaVocabularioComponent implements OnInit {
     if (pct >= 0.6) return 2;
     if (pct >= 0.3) return 1;
     return 0;
+  }
+
+  get categoriasDesbloqueadas(): CategoriaNodo[] {
+    return this.categorias.filter(c => c.estado !== 'bloqueado');
+  }
+
+  get categoriasBloqueadas(): CategoriaNodo[] {
+    return this.categorias.filter(c => c.estado === 'bloqueado');
   }
 
   seleccionarCategoria(cat: CategoriaNodo): void {
