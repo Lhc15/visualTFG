@@ -49,6 +49,8 @@ const CategoriaSchema = new Schema({
 const PalabraSchema = new Schema({
   palabra:     { type: String, required: true },
   explicacion: String,
+  descripcion: String,
+  usarDescripcion: { type: Boolean, default: false },
   categoria:   { type: Schema.Types.ObjectId, ref: 'Categoria' },
   gltf:        String,
   clipName:    String,
@@ -56,7 +58,7 @@ const PalabraSchema = new Schema({
   orden:       { type: Number, default: 0, required: true },
   tiposLexicos: {
     type: [String],
-    enum: ['S', 'O', 'V', 'ADJ', 'INT', 'FX'],
+    enum: ['S', 'O', 'V', 'ADJ', 'INT', 'FX', 'ADV'],
     default: []
   },
   enMotor: { type: Boolean, default: false }
@@ -378,21 +380,21 @@ const PALABRAS_DATA = [
     explicacion: 'Marcador temporal de pasado reciente. Va al inicio de la frase: AYER YO COMPRAR.',
     cat: 'Tiempo y adverbios',
     nivel: 1, orden: 1,
-    tiposLexicos: ['ENM']
+    tiposLexicos: ['ADV']
   },
   {
     palabra: 'ANTES',
     explicacion: 'Marcador temporal de pasado habitual. Va al inicio: ANTES YO DORMIR.',
     cat: 'Tiempo y adverbios',
     nivel: 1, orden: 2,
-    tiposLexicos: ['ENM']
+    tiposLexicos: ['ADV']
   },
   {
     palabra: 'MANANA',
     explicacion: 'Marcador temporal de futuro proximo. Va al inicio: MANANA TU COMPRAR.',
     cat: 'Tiempo y adverbios',
     nivel: 1, orden: 3,
-    tiposLexicos: ['ENM']
+    tiposLexicos: ['ADV']
   },
 
   // ── INTERROGATIVOS ────────────────────────────────────────────────────────

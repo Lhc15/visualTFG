@@ -1,4 +1,3 @@
-
 /*
 Ruta base: /api/palabras
 */
@@ -13,6 +12,7 @@ const {
     asociarCategoria,
     obtenerPalabrasPorCategoria,
     obtenerPalabrasPorNivel,
+    obtenerPalabrasPorModulo,
     editarAnimacion
 } = require('../controllers/palabras');
 const { check } = require('express-validator');
@@ -24,8 +24,9 @@ const router = Router();
 
 // Rutas públicas
 router.get('/', obtenerPalabras);
-router.get('/categoria', obtenerPalabrasPorCategoria); // Devuelve palabras por categoría
-router.get('/por-nivel', obtenerPalabrasPorNivel); //Devuelve palabras por nivel
+router.get('/categoria', obtenerPalabrasPorCategoria);
+router.get('/por-nivel', obtenerPalabrasPorNivel);
+router.get('/por-modulo', obtenerPalabrasPorModulo);
 router.get('/:id', obtenerPalabra);
 
 // Rutas restringidas a administradores

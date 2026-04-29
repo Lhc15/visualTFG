@@ -228,6 +228,27 @@ const editarAnimacion = async (req, res) => {
   }
 };
 
+// GET /api/palabras/por-modulo?modulo=abecedario
+// Devuelve todas las palabras cuya categoría tenga el módulo indicado
+const obtenerPalabrasPorModulo = async (req, res) => {
+  const { modulo } = req.query;
+  try {
+    if (!modulo) {
+      return res.status(400).json({ ok: false, msg: 'El parámetro "modulo" es obligatorio' });
+    }
+    const Categoria = require('../models/categorias');
+    const cats = await Categoria.find({ modulo });
+    const catIds = cats.map(c => c._id);
+    const palabras = await Palabra.find({ categoria: { $in: catIds } })
+      .populate('categoria', 'nombre modulo')
+      .sort({ orden: 1 });
+    res.json({ ok: true, palabras });
+  } catch (err) {
+    console.error('obtenerPalabrasPorModulo:', err);
+    res.status(500).json({ ok: false, msg: 'Error al obtener palabras por módulo' });
+  }
+};
+
 module.exports = {
     obtenerPalabras,
     obtenerPalabra,
@@ -237,5 +258,6 @@ module.exports = {
     asociarCategoria,
     obtenerPalabrasPorCategoria,
     obtenerPalabrasPorNivel,
+    obtenerPalabrasPorModulo,
     editarAnimacion
 };

@@ -18,6 +18,14 @@ const PalabraSchema = Schema({
         type: String,
         required: false,
     },
+    descripcion: {
+        type: String,
+        required: false,
+    },
+    usarDescripcion: {
+        type: Boolean,
+        default: false
+    },
     categoria: {
         type: Schema.Types.ObjectId,
         ref: 'Categoria', // Referencia al modelo Categoría
@@ -41,7 +49,7 @@ const PalabraSchema = Schema({
     //          "ADJ" (adjetivo) | "INT" (particula interrogativa) | "FX" (formula fija)
     tiposLexicos: {
         type: [String],
-        enum: ['S', 'O', 'V', 'ADJ', 'INT', 'FX'],
+        enum: ['S', 'O', 'V', 'ADJ', 'INT', 'FX', 'ADV'],
         default: []
     },
     // Flag operativo: true solo cuando la animacion Blender esta lista
