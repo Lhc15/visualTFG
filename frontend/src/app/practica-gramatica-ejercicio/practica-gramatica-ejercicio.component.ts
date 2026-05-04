@@ -95,10 +95,12 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
   }
 
   ngAfterViewChecked(): void {
-    if (!this.canvasResized && this.mainCanvasRef?.skinReady && this.avatarPanel) {
+    if (!this.canvasResized && this.mainCanvasRef && this.avatarPanel) {
       const { clientWidth: w, clientHeight: h } = this.avatarPanel.nativeElement;
       if (w > 0 && h > 0) {
-        this.mainCanvasRef.resizeToContainer(w, h);
+        try {
+          this.mainCanvasRef.resizeToContainer(w, h);
+        } catch (_) { /* canvas aún no inicializado */ }
         this.canvasResized = true;
       }
     }

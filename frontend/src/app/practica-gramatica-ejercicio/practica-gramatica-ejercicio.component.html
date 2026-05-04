@@ -49,7 +49,7 @@
       </app-tool-menu>
 
       <div class="vv-canvas-wrap">
-        <app-canvas #mainCanvas [cameraZ]="4.3" (animationEnded)="onAnimationEnded()"></app-canvas>
+        <app-canvas #mainCanvas [standalone]="true" [cameraZ]="4.3" (animationEnded)="onAnimationEnded()"></app-canvas>
       </div>
 
       <!-- Fichas signadas sobre el avatar (solo ejercicios de frase) -->
