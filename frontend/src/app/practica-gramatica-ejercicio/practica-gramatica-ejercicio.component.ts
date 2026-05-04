@@ -1,4 +1,7 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component, OnInit, OnDestroy, AfterViewInit,
+  ViewChild, ElementRef, ChangeDetectorRef, ChangeDetectionStrategy
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderComponent } from '../header/header.component';
@@ -32,9 +35,12 @@ export const ENM_OPCIONES: { id: EnmOpcion; label: string }[] = [
   standalone: true,
   imports: [CommonModule, HeaderComponent, CanvasComponent, ToolMenuComponent, EnmOverlayComponent],
   templateUrl: './practica-gramatica-ejercicio.component.html',
-  styles: [],
+  styleUrls: ['./practica-gramatica-ejercicio.component.css'],
 })
-export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy {
+export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, AfterViewInit {
+
+  @ViewChild('mainCanvas') mainCanvasRef!: CanvasComponent;
+  @ViewChild('avatarPanel') avatarPanel!: ElementRef<HTMLElement>;
 
   bloqueId = '';
   bloque: BloqueEjercicios | null = null;
@@ -47,6 +53,7 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy {
 
   zonaFichas: string[] = [];
   bancoBarajado: Ficha[] = [];
+  fichasEnBancoActual: Ficha[] = [];
 
   opcionesBarajadas: string[] = [];
   opcionSeleccionada: string | null = null;
@@ -56,6 +63,13 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy {
 
   resultadoOrden: boolean | null = null;
   resultadoEnm: boolean | null = null;
+  todoCorrecto = false;
+  puedeConfirmarActual = false;
+  mensajeFeedbackActual = '';
+
+  esFichasActual = false;
+  esOpcionesActual = false;
+  esFraseActual = false;
 
   isPlaying = false;
   isLooping = false;
@@ -67,6 +81,7 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy {
     private router: Router,
     private enmService: EnmService,
     private statsService: StatsService,
+    private cdr: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -77,152 +92,31 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy {
     this.prepararEjercicio();
   }
 
+  ngAfterViewInit(): void {
+    this.waitForSkinAndResize();
+  }
+
   ngOnDestroy(): void { this.enmService.hide(); }
 
-  get ejercicioActual(): Ejercicio | null { return this.ejerciciosBarajados[this.preguntaIdx] ?? null; }
-  get esFichas(): boolean { return this.ejercicioActual?.tipo === 'fichas'; }
-  get esOpciones(): boolean { return this.ejercicioActual?.tipo === 'opciones'; }
-  get esFrase(): boolean {
-    return this.ejercicioActual?.tipo === 'opciones' &&
-           !!(this.ejercicioActual as EjercicioOpciones).fichasSig?.length;
+  private waitForSkinAndResize(attempts = 0): void {
+    if (attempts > 50) return;
+    if (!this.mainCanvasRef?.skinReady) {
+      setTimeout(() => this.waitForSkinAndResize(attempts + 1), 100);
+      return;
+    }
+    if (!this.avatarPanel) return;
+    const { clientWidth: w, clientHeight: h } = this.avatarPanel.nativeElement;
+    this.mainCanvasRef.resizeToContainer(w, h);
   }
+
+  // ── Acceso tipado al ejercicio actual ─────────────────────
+  get ejercicioActual(): Ejercicio | null { return this.ejerciciosBarajados[this.preguntaIdx] ?? null; }
   get comoFichas(): EjercicioFichas { return this.ejercicioActual as EjercicioFichas; }
   get comoOpciones(): EjercicioOpciones { return this.ejercicioActual as EjercicioOpciones; }
   get totalPreguntas(): number { return this.ejerciciosBarajados.length; }
   get progresoPct(): number { return Math.round((this.preguntaIdx / this.totalPreguntas) * 100); }
-
-  private prepararEjercicio(): void {
-    this.zonaFichas = [];
-    this.opcionSeleccionada = null;
-    this.enmSeleccionado = 'ninguna';
-    this.confirmado = false;
-    this.resultadoOrden = null;
-    this.resultadoEnm = null;
-    this.enmService.hide();
-
-    const ej = this.ejercicioActual;
-    if (!ej) return;
-
-    if (ej.tipo === 'fichas') {
-      this.bancoBarajado = [...ej.fichas, ...ej.distractores].sort(() => Math.random() - 0.5);
-    }
-
-    if (ej.tipo === 'opciones') {
-      const correcta = ej.opciones[0];
-      const resto = ej.opciones.slice(1).sort(() => Math.random() - 0.5);
-      this.opcionesBarajadas = [correcta, ...resto].sort(() => Math.random() - 0.5);
-      if (ej.enmAbreAvatar) {
-        setTimeout(() => this.enmService.show(ej.enmAbreAvatar!), 200);
-      }
-    }
-  }
-
-  get fichasEnBanco(): Ficha[] {
-    return this.bancoBarajado.filter(f => !this.zonaFichas.includes(f.texto));
-  }
-
-  addFicha(texto: string): void {
-    if (!this.confirmado && !this.zonaFichas.includes(texto)) {
-      this.zonaFichas = [...this.zonaFichas, texto];
-    }
-  }
-
-  quitarFicha(texto: string): void {
-    if (!this.confirmado) {
-      this.zonaFichas = this.zonaFichas.filter(t => t !== texto);
-    }
-  }
-
-  getRolFicha(texto: string): string {
-    if (!this.esFichas) return '';
-    const todas = [...this.comoFichas.fichas, ...this.comoFichas.distractores];
-    return todas.find(x => x.texto === texto)?.rol ?? '';
-  }
-
-  elegirOpcion(opcion: string): void {
-    if (!this.confirmado) this.opcionSeleccionada = opcion;
-  }
-
-  claseOpcion(opcion: string): string {
-    if (!this.confirmado) return this.opcionSeleccionada === opcion ? 'vv-choice-selected' : '';
-    if (!this.esOpciones) return '';
-    const correcta = this.comoOpciones.opciones[0];
-    if (opcion === correcta) return 'vv-choice-correct';
-    if (opcion === this.opcionSeleccionada) return 'vv-choice-wrong';
-    return '';
-  }
-
-  seleccionarEnm(id: EnmOpcion): void {
-    if (this.confirmado) return;
-    this.enmSeleccionado = id;
-    if (id !== 'ninguna') {
-      this.enmService.show(id as EnmPackId);
-    } else {
-      const ej = this.ejercicioActual;
-      if (ej?.tipo === 'opciones' && ej.enmAbreAvatar) return;
-      this.enmService.hide();
-    }
-  }
-
-  get puedeConfirmar(): boolean {
-    if (this.confirmado) return false;
-    const ej = this.ejercicioActual;
-    if (!ej) return false;
-    if (ej.tipo === 'fichas') return this.zonaFichas.length === ej.fichas.length;
-    return this.opcionSeleccionada !== null;
-  }
-
-  confirmar(): void {
-    if (!this.puedeConfirmar) return;
-    this.confirmado = true;
-    const ej = this.ejercicioActual!;
-
-    if (ej.tipo === 'fichas') {
-      this.resultadoOrden = JSON.stringify(this.zonaFichas) === JSON.stringify(ej.ordenCorrecto);
-      this.resultadoEnm = ej.conEnm
-        ? (this.enmSeleccionado === (ej.enmCorrecto ?? 'ninguna'))
-        : true;
-    } else {
-      this.resultadoOrden = this.opcionSeleccionada === ej.opciones[0];
-      this.resultadoEnm = ej.conEnm
-        ? (this.enmSeleccionado === ej.enmCorrecto)
-        : true;
-    }
-
-    if (this.resultadoOrden && this.resultadoEnm) this.correctas++;
-  }
-
-  get todoCorrecto(): boolean { return this.resultadoOrden === true && this.resultadoEnm === true; }
-
-  get mensajeFeedback(): string {
-    if (!this.confirmado) return '';
-    if (this.todoCorrecto) return '¡Correcto!';
-    if (this.resultadoOrden && !this.resultadoEnm)
-      return this.esFichas
-        ? 'Orden correcto, pero la expresión no manual no era la indicada.'
-        : 'Respuesta correcta, pero la expresión no manual no era la indicada.';
-    if (!this.resultadoOrden && this.esFichas) return 'El orden no es correcto. Recuerda la regla del bloque.';
-    return 'No es correcto.';
-  }
-
-  siguiente(): void {
-    this.enmService.hide();
-    if (this.preguntaIdx + 1 >= this.totalPreguntas) {
-      this.finalizar();
-    } else {
-      this.preguntaIdx++;
-      this.prepararEjercicio();
-    }
-  }
-
-  private finalizar(): void {
-    this.finalizado = true;
-    this.enmService.hide();
-    if (this.correctas / this.totalPreguntas >= 0.6) {
-      this.statsService.completarBloqueComun(this.bloqueId).subscribe();
-    }
-  }
-
+  get estrellasArray(): number[] { return Array(this.estrellas).fill(0); }
+  get estrellasVaciasArray(): number[] { return Array(3 - this.estrellas).fill(0); }
   get estrellas(): number {
     const pct = this.correctas / this.totalPreguntas;
     if (pct >= 1) return 3;
@@ -231,8 +125,169 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy {
     return 0;
   }
 
-  get estrellasArray(): number[] { return Array(this.estrellas).fill(0); }
-  get estrellasVaciasArray(): number[] { return Array(3 - this.estrellas).fill(0); }
+  // ── Preparar ejercicio ────────────────────────────────────
+  private prepararEjercicio(): void {
+    this.zonaFichas = [];
+    this.opcionSeleccionada = null;
+    this.enmSeleccionado = 'ninguna';
+    this.confirmado = false;
+    this.resultadoOrden = null;
+    this.resultadoEnm = null;
+    this.todoCorrecto = false;
+    this.mensajeFeedbackActual = '';
+    this.enmService.hide();
+
+    const ej = this.ejercicioActual;
+    if (!ej) return;
+
+    this.esFichasActual = ej.tipo === 'fichas';
+    this.esOpcionesActual = ej.tipo === 'opciones';
+    this.esFraseActual = ej.tipo === 'opciones' && !!((ej as EjercicioOpciones).fichasSig?.length);
+
+    if (ej.tipo === 'fichas') {
+      this.bancoBarajado = [...ej.fichas, ...ej.distractores].sort(() => Math.random() - 0.5);
+      this.fichasEnBancoActual = [...this.bancoBarajado];
+    }
+
+    if (ej.tipo === 'opciones') {
+      const correcta = ej.opciones[0];
+      const resto = ej.opciones.slice(1).sort(() => Math.random() - 0.5);
+      this.opcionesBarajadas = [correcta, ...resto].sort(() => Math.random() - 0.5);
+      if (ej.enmAbreAvatar) {
+        setTimeout(() => { this.enmService.show(ej.enmAbreAvatar!); this.cdr.detectChanges(); }, 200);
+      }
+    }
+
+    this.recalcular();
+    this.cdr.detectChanges();
+  }
+
+  private recalcular(): void {
+    const ej = this.ejercicioActual;
+    if (!ej) { this.puedeConfirmarActual = false; return; }
+
+    // puedeConfirmar
+    if (this.confirmado) {
+      this.puedeConfirmarActual = false;
+    } else if (ej.tipo === 'fichas') {
+      this.puedeConfirmarActual = this.zonaFichas.length === ej.fichas.length;
+    } else {
+      this.puedeConfirmarActual = this.opcionSeleccionada !== null;
+    }
+
+    // fichasEnBanco
+    if (ej.tipo === 'fichas') {
+      this.fichasEnBancoActual = this.bancoBarajado.filter(f => !this.zonaFichas.includes(f.texto));
+    }
+  }
+
+  // ── Fichas ────────────────────────────────────────────────
+  addFicha(texto: string): void {
+    if (this.confirmado || this.zonaFichas.includes(texto)) return;
+    this.zonaFichas = [...this.zonaFichas, texto];
+    this.recalcular();
+    this.cdr.detectChanges();
+  }
+
+  quitarFicha(texto: string): void {
+    if (this.confirmado) return;
+    this.zonaFichas = this.zonaFichas.filter(t => t !== texto);
+    this.recalcular();
+    this.cdr.detectChanges();
+  }
+
+  getRolFicha(texto: string): string {
+    if (!this.esFichasActual) return '';
+    const todas = [...this.comoFichas.fichas, ...this.comoFichas.distractores];
+    return todas.find(x => x.texto === texto)?.rol ?? '';
+  }
+
+  // ── Opciones ──────────────────────────────────────────────
+  elegirOpcion(opcion: string): void {
+    if (this.confirmado) return;
+    this.opcionSeleccionada = opcion;
+    this.recalcular();
+    this.cdr.detectChanges();
+  }
+
+  claseOpcion(opcion: string): string {
+    if (!this.confirmado) {
+      return this.opcionSeleccionada === opcion ? 'vv-choice-selected' : '';
+    }
+    const correcta = this.comoOpciones.opciones[0];
+    if (opcion === correcta) return 'vv-choice-correct';
+    if (opcion === this.opcionSeleccionada) return 'vv-choice-wrong';
+    return '';
+  }
+
+  // ── ENM ───────────────────────────────────────────────────
+  seleccionarEnm(id: EnmOpcion): void {
+    if (this.confirmado) return;
+    this.enmSeleccionado = id;
+    if (id !== 'ninguna') {
+      this.enmService.show(id as EnmPackId);
+    } else {
+      const ej = this.ejercicioActual;
+      if (ej?.tipo === 'opciones' && ej.enmAbreAvatar) { /* no cerrar */ } else {
+        this.enmService.hide();
+      }
+    }
+    this.cdr.detectChanges();
+  }
+
+  // ── Confirmar ─────────────────────────────────────────────
+  confirmar(): void {
+    if (!this.puedeConfirmarActual) return;
+    this.confirmado = true;
+    const ej = this.ejercicioActual!;
+
+    if (ej.tipo === 'fichas') {
+      this.resultadoOrden = JSON.stringify(this.zonaFichas) === JSON.stringify(ej.ordenCorrecto);
+      this.resultadoEnm = ej.conEnm
+        ? (this.enmSeleccionado === ((ej.enmCorrecto as any) ?? 'ninguna'))
+        : true;
+    } else {
+      this.resultadoOrden = this.opcionSeleccionada === ej.opciones[0];
+      this.resultadoEnm = ej.conEnm
+        ? (this.enmSeleccionado === (ej.enmCorrecto as any))
+        : true;
+    }
+
+    this.todoCorrecto = this.resultadoOrden === true && this.resultadoEnm === true;
+    if (this.todoCorrecto) this.correctas++;
+
+    // Mensaje feedback
+    if (this.todoCorrecto) {
+      this.mensajeFeedbackActual = '¡Correcto!';
+    } else if (this.resultadoOrden && !this.resultadoEnm) {
+      this.mensajeFeedbackActual = this.esFichasActual
+        ? 'Orden correcto, pero la expresión no manual no era la indicada.'
+        : 'Respuesta correcta, pero la expresión no manual no era la indicada.';
+    } else if (!this.resultadoOrden && this.esFichasActual) {
+      this.mensajeFeedbackActual = 'El orden no es correcto. Recuerda la regla del bloque.';
+    } else {
+      this.mensajeFeedbackActual = 'No es correcto.';
+    }
+
+    this.puedeConfirmarActual = false;
+    this.cdr.detectChanges();
+  }
+
+  // ── Siguiente / Finalizar ─────────────────────────────────
+  siguiente(): void {
+    this.enmService.hide();
+    if (this.preguntaIdx + 1 >= this.totalPreguntas) {
+      this.finalizado = true;
+      this.enmService.hide();
+      if (this.correctas / this.totalPreguntas >= 0.6) {
+        this.statsService.completarBloqueComun(this.bloqueId).subscribe();
+      }
+    } else {
+      this.preguntaIdx++;
+      this.prepararEjercicio();
+    }
+    this.cdr.detectChanges();
+  }
 
   volverAGramatica(): void { this.router.navigate(['/practica/gramatica']); }
 
@@ -244,8 +299,8 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy {
     this.prepararEjercicio();
   }
 
-  onPlayClicked(): void { this.isPlaying = true; }
-  onAnimationEnded(): void { this.isPlaying = false; }
+  onPlayClicked(): void { this.isPlaying = true; this.cdr.detectChanges(); }
+  onAnimationEnded(): void { this.isPlaying = false; this.cdr.detectChanges(); }
   setPlaybackRate(r: number): void { this.currentPlaybackRate = r; }
   handleLoop(c: boolean): void { this.isLooping = c; }
   toggleWebcam(): void { this.showWebcam = !this.showWebcam; }
