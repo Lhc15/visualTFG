@@ -1,8 +1,10 @@
-import { Component, AfterViewInit, QueryList, ViewChildren, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, OnInit, QueryList, ViewChildren, ElementRef } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { HeaderComponent } from '../header/header.component';
+import { DesbloqueoService } from '../services/desbloqueo.service';
+import { UsuariosService } from '../services/usuarios.service';
 
 export interface ModoCard {
   id: string;
@@ -22,7 +24,7 @@ export interface ModoCard {
   templateUrl: './modos2.component.html',
   styleUrls: ['./modos2.component.css'],
 })
-export class Modos2Component implements AfterViewInit {
+export class Modos2Component implements AfterViewInit, OnInit {
 
   @ViewChildren(CanvasComponent) canvasComponents!: QueryList<CanvasComponent>;
   @ViewChildren('avatarStage') avatarStages!: QueryList<ElementRef<HTMLElement>>;
@@ -64,13 +66,39 @@ export class Modos2Component implements AfterViewInit {
       sublabel: 'Conversaciones simuladas',
       accentColor: '#8B00A8',
       progress: 0,
-      locked: false,
+      locked: true,
       ctaLabel: 'Empezar',
       route: '/conversamos',
     },
   ];
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private desbloqueoService: DesbloqueoService,
+    private usuariosService: UsuariosService
+  ) {}
+
+  ngOnInit(): void {
+    this.usuariosService.getAuthenticatedUser().subscribe({
+      next: (resp) => {
+        const esAdmin = resp.usuario?.rol === 'ROL_ADMIN';
+        if (esAdmin) {
+          this.desbloquearConversamos();
+        } else {
+          this.desbloqueoService.obtenerEstado().subscribe({
+            next: (estado) => {
+              if (estado.todosComunicacionCompletos) this.desbloquearConversamos();
+            }
+          });
+        }
+      }
+    });
+  }
+
+  private desbloquearConversamos(): void {
+    const c = this.modos.find(m => m.id === 'conv');
+    if (c) c.locked = false;
+  }
 
   ngAfterViewInit(): void {
     this.canvasComponents.changes.subscribe(() => this.waitForSkinAndResize());

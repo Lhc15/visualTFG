@@ -61,31 +61,32 @@
           class="prac-ac-wrap"
           *ngFor="let s of secciones"
           [class.activo]="activoId === s.id"
+          [class.prac-ac-wrap--locked]="s.locked"
           (mouseenter)="activar(s.id)"
           (mouseleave)="desactivar()">
           <!-- Punto de notificacion sobresaliente — fuera del item para no ser recortado -->
-          <div class="prac-ac-notif-dot" *ngIf="s.novedad"></div>
-          <div class="prac-ac-item" (click)="irA(s.id)">
-            <div class="prac-ac-deco">{{ s.deco }}</div>
+          <div class="prac-ac-notif-dot" *ngIf="s.novedad && !s.locked"></div>
+          <div class="prac-ac-item" (click)="irA(s)">
+            <div class="prac-ac-deco">{{ s.locked ? '🔒' : s.deco }}</div>
             <div class="prac-ac-expanded">
-              <div class="prac-ac-pct">{{ s.progreso }}%</div>
-              <div class="prac-ac-sub">{{ s.subtitulo }}</div>
-              <div class="prac-ac-bar-wrap">
+              <div class="prac-ac-pct">{{ s.locked ? '—' : s.progreso + '%' }}</div>
+              <div class="prac-ac-sub">{{ s.locked ? 'Completa el Bloque 1 de Comunicación para desbloquear' : s.subtitulo }}</div>
+              <div class="prac-ac-bar-wrap" *ngIf="!s.locked">
                 <div class="prac-ac-bar"><div class="prac-ac-bar-fill" [style.width.%]="s.progreso"></div></div>
                 <div class="prac-ac-bar-label">{{ s.progreso }}% completado</div>
               </div>
-              <div class="prac-ac-novedad" *ngIf="s.novedad">
+              <div class="prac-ac-novedad" *ngIf="s.novedad && !s.locked">
                 <div class="prac-ac-novedad-dot"></div>
                 {{ s.novedad }}
               </div>
-              <div class="prac-ac-cta">
+              <div class="prac-ac-cta" *ngIf="!s.locked">
                 Ir a practicar
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
               </div>
             </div>
             <div class="prac-ac-collapsed">
               <div class="prac-ac-name">{{ s.nombre }}</div>
-              <div class="prac-ac-pct-small">{{ s.progreso }}%</div>
+              <div class="prac-ac-pct-small">{{ s.locked ? '🔒' : s.progreso + '%' }}</div>
             </div>
           </div>
         </div>

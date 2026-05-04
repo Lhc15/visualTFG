@@ -13,6 +13,7 @@ import { DescripcionTooltipComponent } from '../descripcion-tooltip/descripcion-
 import { DescripcionService } from '../services/descripcion.service';
 import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
 import { HeaderComponent } from '../header/header.component';
+import { DesbloqueoService } from '../services/desbloqueo.service';
 
 // vista: 'selector' | 'vocabulario' | 'comunicacion'
 type Vista = 'selector' | 'vocabulario' | 'comunicacion';
@@ -56,26 +57,40 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   palabrasVistas = new Set<string>();
   categoriasCompletadas = new Set<string>();
 
+  // ── Desbloqueo ──
+  esAdmin = false;
+  comunicacionDesbloqueada = false;
+
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
     private usuariosService: UsuariosService,
     private descripcionService: DescripcionService,
-    private progresoVocabService: ProgresoVocabularioService
+    private progresoVocabService: ProgresoVocabularioService,
+    private desbloqueoService: DesbloqueoService
   ) {}
 
   ngOnInit(): void {
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: (resp) => {
         this.userId = resp.usuario.uid;
+        this.esAdmin = resp.usuario?.rol === 'ROL_ADMIN';
         this.progresoVocabService.obtenerProgreso('vocabulario').subscribe({
           next: (vistas) => {
             this.palabrasVistas = new Set(vistas);
-            // Cargar qué categorías ya celebramos (para no repetir la animación)
             const guardadas = localStorage.getItem(`vv_cats_completadas_${resp.usuario.uid}`);
             if (guardadas) this.categoriasCompletadas = new Set(JSON.parse(guardadas));
           }
         });
+        if (this.esAdmin) {
+          this.comunicacionDesbloqueada = true;
+        } else {
+          this.desbloqueoService.obtenerEstado().subscribe({
+            next: (estado) => {
+              this.comunicacionDesbloqueada = estado.vocabularioCompleto;
+            }
+          });
+        }
       },
       error: (err) => console.error('Error user:', err)
     });
@@ -112,6 +127,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   irAComunicacion(): void {
+    if (!this.comunicacionDesbloqueada) return;
     this.router.navigate(['/aprende/comunicacion']); return;
     this.vista = 'comunicacion';
   }

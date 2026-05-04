@@ -102,10 +102,14 @@
                 </div>
               </div>
 
-              <div class="apr-card apr-card--c" (click)="irAComunicacion()">
+              <div class="apr-card apr-card--c" [class.apr-card--locked]="!comunicacionDesbloqueada" (click)="irAComunicacion()">
                 <div class="apr-deco">C</div>
                 <div class="apr-card-top">
                   <span class="apr-pill apr-pill--c">Comunicación</span>
+                  <span *ngIf="!comunicacionDesbloqueada" class="apr-lock-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="14" height="14"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Completa Vocabulario primero
+                  </span>
                 </div>
                 <div class="apr-card-body">
                   <div class="apr-card-title">Gramática y normas de la LSE</div>
@@ -116,9 +120,10 @@
                       <span class="apr-topic apr-topic--c">ENM</span>
                       <span class="apr-topic apr-topic--c">Género</span>
                     </div>
-                    <button class="apr-cta apr-cta--c">
-                      Aprender
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                    <button class="apr-cta apr-cta--c" [disabled]="!comunicacionDesbloqueada">
+                      {{ comunicacionDesbloqueada ? 'Aprender' : 'Bloqueado' }}
+                      <svg *ngIf="comunicacionDesbloqueada" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                      <svg *ngIf="!comunicacionDesbloqueada" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     </button>
                   </div>
                 </div>

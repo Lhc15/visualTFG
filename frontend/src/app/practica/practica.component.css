@@ -325,3 +325,7 @@
 @media (max-width: 1600px) {
   .prac-panel { max-width: 1200px; }
 }
+/* ── Estado bloqueado ── */
+.prac-ac-wrap--locked { opacity: 0.55; filter: grayscale(0.3); }
+.prac-ac-wrap--locked .prac-ac-item { cursor: not-allowed; }
+.prac-ac-wrap--locked:hover .prac-ac-item { background: inherit; }
