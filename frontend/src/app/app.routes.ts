@@ -28,6 +28,7 @@ import { PracticaAbecedarioModoBComponent } from './practica-abecedario-modo-b/p
 import { PracticaVocabularioComponent } from './practica-vocabulario/practica-vocabulario.component';
 import { PracticaGramaticaComponent } from './practica-gramatica/practica-gramatica.component';
 import { PracticaVocabularioEjercicioComponent } from './practica-vocabulario-ejercicio/practica-vocabulario-ejercicio.component';
+import { PracticaGramaticaEjercicioComponent } from './practica-gramatica-ejercicio/practica-gramatica-ejercicio.component';
 
 export const routes: Routes = [
   { path: '',        component: LandingComponent },
@@ -44,6 +45,7 @@ export const routes: Routes = [
   { path: 'practica/vocabulario',              component: PracticaVocabularioComponent },
   { path: 'practica/vocabulario/:categoriaId', component: PracticaVocabularioEjercicioComponent },
   { path: 'practica/gramatica',                component: PracticaGramaticaComponent },
+  { path: 'practica/gramatica/:bloqueId',      component: PracticaGramaticaEjercicioComponent },
 
   // Aprende
   { path: 'aprende',              component: AprendeComponent },

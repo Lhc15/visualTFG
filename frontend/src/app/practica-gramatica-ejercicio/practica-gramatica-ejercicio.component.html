@@ -1,0 +1,175 @@
+<div class="vv-layout">
+
+  <app-header></app-header>
+  <app-enm-overlay></app-enm-overlay>
+
+  <!-- CARGANDO / ERROR -->
+  <div class="vv-loading-screen" *ngIf="!bloque">
+    <div class="vv-loading-text">Bloque no encontrado.</div>
+    <button class="vv-back-cta" (click)="volverAGramatica()">Volver a Gramática</button>
+  </div>
+
+  <!-- PANTALLA FINAL -->
+  <div class="vv-final-screen" *ngIf="finalizado && bloque">
+    <div class="vv-final-card">
+      <div class="vv-final-bloque">{{ bloque.nombre }}</div>
+      <div class="vv-final-titulo">
+        {{ estrellas === 3 ? '¡Perfecto!' : estrellas >= 2 ? '¡Bien hecho!' : estrellas === 1 ? 'Sigue practicando' : 'Inténtalo de nuevo' }}
+      </div>
+      <div class="vv-final-estrellas">
+        <span *ngFor="let s of estrellasArray" class="vv-estrella vv-estrella--llena">★</span>
+        <span *ngFor="let s of estrellasVaciasArray" class="vv-estrella vv-estrella--vacia">★</span>
+      </div>
+      <div class="vv-final-score">{{ correctas }} / {{ totalPreguntas }} correctas</div>
+      <div class="vv-final-acciones">
+        <button class="vv-final-btn vv-final-btn--sec" (click)="repetir()">Repetir bloque</button>
+        <button class="vv-final-btn vv-final-btn--pri" (click)="volverAGramatica()">Volver a Gramática</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- EJERCICIO: un único vv-split siempre en el DOM cuando hay ejercicio activo -->
+  <div class="vv-split" *ngIf="!finalizado && bloque && ejercicioActual">
+
+    <!-- PANEL IZQUIERDO: avatar -->
+    <div class="vv-avatar-panel">
+      <div class="vv-avatar-glow"></div>
+
+      <app-tool-menu
+        *ngIf="esFrase"
+        [isPlaying]="isPlaying"
+        [currentPlaybackRate]="currentPlaybackRate"
+        (rateChange)="setPlaybackRate($event)"
+        [isLooping]="isLooping"
+        [showWebcam]="showWebcam"
+        [disabled]="false"
+        (playClicked)="onPlayClicked()"
+        (loopToggled)="handleLoop($event)"
+        (webcamToggled)="toggleWebcam()">
+      </app-tool-menu>
+
+      <div class="vv-canvas-wrap">
+        <app-canvas [cameraZ]="4.3" (animationEnded)="onAnimationEnded()"></app-canvas>
+        <div class="vv-no-anim" *ngIf="false"></div>
+      </div>
+
+      <!-- Fichas signadas sobre el avatar (solo ejercicios de tipo frase) -->
+      <div class="vv-fichas-sig" *ngIf="esFrase">
+        <span *ngFor="let f of comoOpciones.fichasSig" class="vv-ficha vv-ficha--sig">
+          {{ f.texto }}
+          <span class="vv-ficha-rol">{{ f.rol }}</span>
+        </span>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO: toda la interacción -->
+    <div class="vv-action-panel">
+      <div class="vv-panel-nav">
+        <button class="vv-pnav-volver" (click)="volverAGramatica()">Volver</button>
+        <span class="vv-pnav-sep">›</span>
+        <span class="vv-pnav-dim">Gramática</span>
+        <span class="vv-pnav-sep">›</span>
+        <span class="vv-pnav-cur">{{ bloque.nombre }}</span>
+      </div>
+      <div class="vv-action-scroll">
+
+        <div class="vv-badge-strip">
+          <div class="vv-badge vv-badge-gram">{{ bloque.nombre }}</div>
+          <div class="vv-badge vv-badge-score">{{ correctas }} pts</div>
+        </div>
+
+        <div class="vv-quiz-progress">
+          <div class="vv-quiz-progress-fill" [style.width.%]="progresoPct"></div>
+        </div>
+
+        <div class="vv-section-label">Pregunta {{ preguntaIdx + 1 }}</div>
+
+        <!-- ── FORMATO B: ordenar fichas ── -->
+        <ng-container *ngIf="esFichas">
+          <div class="vv-title">Construye esta frase <em>en LSE</em></div>
+
+          <div class="vv-frase-esp">
+            <div class="vv-frase-esp-label">En español</div>
+            <div class="vv-frase-esp-text">{{ comoFichas.pregunta }}</div>
+          </div>
+
+          <div class="vv-dropzone" [class.vv-dropzone--tiene]="zonaFichas.length > 0">
+            <span class="vv-zona-label">Tu respuesta en LSE</span>
+            <span class="vv-zona-ph" *ngIf="zonaFichas.length === 0">Pulsa las fichas para añadirlas aquí…</span>
+            <span
+              *ngFor="let t of zonaFichas"
+              class="vv-ficha vv-ficha--zona"
+              (click)="quitarFicha(t)">
+              {{ t }}<span class="vv-ficha-rol">{{ getRolFicha(t) }}</span>
+            </span>
+          </div>
+
+          <div class="vv-banco-wrap">
+            <div class="vv-banco-label">Fichas disponibles</div>
+            <div class="vv-banco">
+              <span
+                *ngFor="let f of fichasEnBanco"
+                class="vv-ficha"
+                (click)="addFicha(f.texto)">
+                {{ f.texto }}<span class="vv-ficha-rol">{{ f.rol }}</span>
+              </span>
+              <span class="vv-banco-vacio" *ngIf="fichasEnBanco.length === 0">Todas colocadas</span>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ── FORMATO A: opciones múltiple ── -->
+        <ng-container *ngIf="esOpciones">
+          <div class="vv-title" [innerHTML]="comoOpciones.pregunta"></div>
+          <div class="vv-quiz-choices" [class.vv-quiz-choices--col1]="!esFrase">
+            <div
+              *ngFor="let op of opcionesBarajadas"
+              class="vv-quiz-choice"
+              [ngClass]="claseOpcion(op)"
+              (click)="elegirOpcion(op)">
+              {{ op }}
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- ── ENM chips (si el ejercicio lo requiere) ── -->
+        <div class="vv-enm-section" *ngIf="ejercicioActual.conEnm">
+          <div class="vv-enm-label">¿Qué expresión no manual acompaña esta frase?</div>
+          <div class="vv-enm-chips">
+            <span
+              *ngFor="let op of enmOpciones"
+              class="vv-enm-chip"
+              [class.vv-enm-chip--sel]="enmSeleccionado === op.id"
+              [class.vv-enm-chip--pack]="enmSeleccionado === op.id && op.id !== 'ninguna'"
+              (click)="seleccionarEnm(op.id)">
+              <span class="vv-enm-dot" *ngIf="op.id !== 'ninguna'"></span>
+              {{ op.label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- ── Resultado ── -->
+        <div class="vv-result-banner" *ngIf="confirmado"
+             [class.correct]="todoCorrecto" [class.wrong]="!todoCorrecto">
+          {{ todoCorrecto ? '✓' : '✗' }} {{ mensajeFeedback }}
+        </div>
+
+        <!-- ── Botones ── -->
+        <button class="vv-next-btn"
+                *ngIf="!confirmado"
+                [disabled]="!puedeConfirmar"
+                (click)="confirmar()">
+          Confirmar →
+        </button>
+        <button class="vv-next-btn"
+                *ngIf="confirmado"
+                (click)="siguiente()">
+          {{ preguntaIdx + 1 < totalPreguntas ? 'Siguiente pregunta →' : 'Ver resultado →' }}
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
