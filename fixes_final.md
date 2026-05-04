@@ -110,3 +110,118 @@ No requiere ningún cambio en el backend. Todo se calcula en frontend a partir d
 - La decisión de calcularlo en el frontend (sin endpoint nuevo) es deliberada: los tres endpoints consultados ya existían y son ligeros. El coste de red de `combineLatest` es mínimo comparado con añadir lógica al backend.
 - El bloqueo es informativo, no de seguridad: si un usuario navega directamente a `/practica/gramatica` por URL, llegará igualmente. Para el TFG esto es suficiente; un sistema de producción añadiría un guard de ruta.
 - Posible mejora futura: `CanActivate` guard que consulte `DesbloqueoService` y redirija si la ruta no está desbloqueada.
+
+
+---
+
+---
+
+# Practica → Gramática: sistema de ejercicios
+
+## Descripción general
+
+La sección Practica → Gramática es la parte práctica que complementa los 11 bloques teóricos de Aprende → Comunicación. Cada bloque teórico tiene su bloque de práctica equivalente: una vez que el usuario ha estudiado, por ejemplo, el orden SOV en la teoría, puede reforzarlo con ejercicios interactivos en esta sección.
+
+La pantalla de selección de bloque (`PracticaGramaticaComponent`) lista los 11 bloques en el mismo orden que en la teoría, mostrando el estado de cada uno (bloqueado, activo, completado) y las estrellas obtenidas. Al seleccionar un bloque se navega a `/practica/gramatica/:bloqueId`, donde se ejecutan los ejercicios.
+
+---
+
+## Contenido estático: la misma decisión de diseño que Comunicación
+
+El contenido de los ejercicios —las preguntas, las frases, las fichas y las opciones— está definido como datos estáticos en TypeScript, en el archivo `ejercicios-gramatica.data.ts`. Esta decisión sigue exactamente el mismo patrón que los bloques de Aprende → Comunicación, donde el contenido curricular también es TypeScript estático en lugar de estar en base de datos.
+
+La justificación es la misma que se aplica a los bloques teóricos: el contenido pedagógico de una plataforma de aprendizaje de lengua de signos es estable, validado por una intérprete, y no necesita un CMS. Es el patrón que Duolingo denomina "tips": contenido curricular fijo que solo cambia con actualizaciones deliberadas de la aplicación, no con entradas de usuarios. Mantenerlo en TypeScript simplifica la arquitectura (sin endpoint de contenido, sin modelo MongoDB adicional), facilita la revisión académica del corpus, y permite que el intérprete validador pueda revisar el fichero directamente.
+
+En total el archivo contiene **74 ejercicios** distribuidos en los 11 bloques, con entre 4 y 10 ejercicios por bloque según la riqueza pedagógica de cada tema.
+
+---
+
+## Tipos de ejercicio y criterio de asignación
+
+Existen dos formatos de ejercicio, y la asignación de uno u otro a cada pregunta no es aleatoria: depende de qué habilidad se está evaluando en ese bloque concreto.
+
+### Formato A — Opción múltiple (`tipo: 'opciones'`)
+
+El usuario lee una pregunta y elige entre cuatro respuestas. Tiene dos variantes:
+
+**Variante A1 — Pregunta teórica.** La pregunta evalúa comprensión conceptual del bloque: reglas gramaticales, posición de elementos, diferencias entre construcciones. Ejemplo: *"¿Dónde va el signo NO en LSE?"* o *"¿Qué mecanismo no verbal sirve para marcar el énfasis?"*. Se usa en bloques donde la regla no tiene una representación directa en forma de frase construible con el corpus (ENM, Género, Plural, Intensidad).
+
+**Variante A2 — Frase signada.** El avatar muestra una secuencia de fichas de signos y el usuario identifica su significado en español. Ejemplo: el avatar muestra `TÚ VIVIR DÓNDE` y el usuario elige entre *"¿Dónde vives?"*, *"Tú vives aquí."*, etc. Esta variante aparece en bloques donde existe una frase concreta que practicar (Preguntas, Verbos, Adverbios) y evalúa la comprensión receptiva: reconocer una frase en LSE y entender su significado.
+
+### Formato B — Ordenar fichas (`tipo: 'fichas'`)
+
+El usuario ve una frase en español y debe construir su equivalente en LSE pulsando fichas para ordenarlas en la zona de construcción. El banco incluye las fichas correctas más uno o dos distractores del mismo tipo léxico para añadir dificultad. Ejemplo: para *"No compramos la casa"* el banco incluye `NOSOTROS`, `CASA`, `COMPRAR`, `NO` y el distractor `VIVIR`.
+
+Este formato evalúa la producción estructural: el conocimiento activo de las reglas de orden (SOV, marcador temporal al inicio, NO al final, partícula interrogativa al final). Se usa predominantemente en los bloques SOV, Preguntas, Verbos, Tiempos, Negación y Adverbios —precisamente los bloques cuya regla central es una regla de posición dentro de la frase.
+
+### Por qué a veces aparece uno y a veces otro
+
+Los ejercicios de cada bloque se barajan aleatoriamente al entrar, de modo que el orden de aparición varía en cada sesión. Pero el tipo de ejercicio no es aleatorio: está fijado en los datos para cada pregunta concreta. La distribución responde a una decisión pedagógica: los bloques que enseñan reglas de orden (SOV, Negación, Tiempos…) tienen mayoría de ejercicios de tipo fichas porque esa mecánica obliga al usuario a aplicar la regla activamente. Los bloques que enseñan conceptos no reducibles a un orden (ENM, Intensidad) solo tienen opciones múltiples porque no existe una "frase que construir" que represente el concepto.
+
+La distribución final es: **27 ejercicios de tipo fichas** (36 %) y **47 de tipo opciones** (64 %).
+
+| Bloque | Fichas | Opciones | Total |
+|---|---|---|---|
+| ENM | 0 | 6 | 6 |
+| SOV | 6 | 4 | 10 |
+| Preguntas | 3 | 5 | 8 |
+| Género | 2 | 4 | 6 |
+| Presentaciones | 2 | 4 | 6 |
+| Verbos | 3 | 5 | 8 |
+| Tiempos | 3 | 3 | 6 |
+| Negación | 3 | 3 | 6 |
+| Plural | 1 | 3 | 4 |
+| Adverbios | 3 | 3 | 6 |
+| Intensidad | 0 | 6 | 6 |
+| **Total** | **27** | **47** | **74** |
+
+---
+
+## Integración del sistema ENM en los ejercicios
+
+Uno de los diferenciadores pedagógicos de Visual Voices es que la Expresión No Manual (ENM) no es un elemento decorativo sino parte de la gramática LSE. Los ejercicios reflejan esto de dos formas.
+
+**ENM activo en el avatar.** Cuando el ejercicio presenta una secuencia que el avatar signa y esa secuencia requiere ENM (preguntas con o sin partícula), el overlay ENM se abre automáticamente al cargar el ejercicio, mostrando la imagen de referencia y la descripción del patrón facial correspondiente. Esto ocurre en los 3 ejercicios de variante A2 que tienen `enmAbreAvatar` no nulo.
+
+**ENM como parte de la respuesta.** En los 24 ejercicios marcados con `conEnm: true`, el formulario de respuesta incluye un selector de ENM con cinco opciones: *Ninguna*, *Pregunta sin partícula*, *Pregunta con partícula*, *Negación* y *Afirmación*. El usuario debe seleccionar el ENM correcto además de ordenar las fichas o elegir la opción correcta. La validación es independiente: si el orden de fichas es correcto pero el ENM es incorrecto, el sistema lo indica específicamente (*"Orden correcto, pero la expresión no manual no era la indicada"*), de modo que el usuario comprende que ambas dimensiones —manual y no manual— son necesarias para una comunicación correcta en LSE.
+
+Al seleccionar cualquier opción de ENM distinta de *Ninguna*, el overlay ENM se abre mostrando la referencia visual del patrón facial, lo que permite al usuario consultarla mientras decide.
+
+---
+
+## Motor procedural: aleatoriedad controlada
+
+Aunque el contenido es estático, el componente introduce aleatoriedad en tres puntos para que cada sesión sea diferente:
+
+**Orden de ejercicios.** Al entrar en un bloque, el array de ejercicios se baraja con `Array.sort(() => Math.random() - 0.5)`. El usuario nunca ve los ejercicios en el mismo orden en dos sesiones distintas.
+
+**Orden de opciones.** En los ejercicios de tipo opciones, la opción correcta siempre ocupa el índice 0 en los datos (convención de diseño que simplifica la validación), pero antes de renderizarse se barajan. El usuario nunca ve la respuesta correcta en la misma posición.
+
+**Banco de fichas.** En los ejercicios de tipo fichas, las fichas del banco (correctas más distractores) también se barajan al preparar cada ejercicio.
+
+Esta aleatoriedad controlada —contenido fijo, presentación variable— es coherente con la decisión de mantener el contenido estático: no es necesario un generador procedural de frases porque la variabilidad necesaria para la práctica repetida se consigue con el orden aleatorio de un corpus curado y validado.
+
+---
+
+## Progresión y sistema de estrellas
+
+Cada bloque tiene un número fijo de ejercicios (entre 4 y 10). Al completar todos los ejercicios de un bloque, el componente calcula el porcentaje de aciertos y asigna estrellas:
+
+- **3 estrellas**: 100 % de aciertos
+- **2 estrellas**: 70 % o más
+- **1 estrella**: 40 % o más
+- **0 estrellas**: menos del 40 %
+
+Si el usuario supera el **60 % de aciertos**, el bloque se marca como completado en la colección `ProgresoComun` de MongoDB mediante el endpoint `POST /api/progreso-comunicacion/completar`. Este umbral del 60 % es el mismo que se usa para completar los bloques teóricos desde la sección Aprende → Comunicación, lo que unifica el criterio de progresión en toda la plataforma.
+
+El desbloqueo en cadena de los bloques de práctica sigue la misma lógica que en la teoría: el Bloque 2 de práctica (SOV) solo está disponible si el Bloque 1 de teoría (ENM) está completado, que a su vez requiere haber terminado el vocabulario. La pantalla de selección de bloque de `PracticaGramaticaComponent` consulta el progreso de comunicación al arrancar y aplica el mismo algoritmo de desbloqueo que la teoría.
+
+---
+
+## Arquitectura del componente
+
+El componente de ejercicio (`PracticaGramaticaEjercicioComponent`) implementa un ciclo de estado explícito con cuatro fases: **preparación** (barajar ejercicios y opciones, resetear estado), **interacción** (el usuario selecciona fichas, elige opción, selecciona ENM), **confirmación** (validación y cálculo de feedback) y **transición** (avanzar al siguiente ejercicio o mostrar la pantalla final).
+
+Todo el estado mutable —`zonaFichas`, `opcionSeleccionada`, `enmSeleccionado`, `confirmado`, `puedeConfirmarActual`— se gestiona como propiedades concretas de la clase, no como getters derivados, y se recalcula explícitamente tras cada acción del usuario mediante el método `recalcular()`. Esto garantiza que Angular detecte los cambios y re-renderice la vista de forma predecible.
+
+El panel izquierdo aloja el avatar con `[standalone]="true"` para que no se vea afectado por el servicio global de animaciones que limpia el canvas al cambiar de ruta. El panel derecho contiene toda la interacción: las preguntas, las fichas, las opciones, el selector ENM y los botones de acción. La proporción es 58/42, idéntica a la de Practica → Vocabulario, garantizando coherencia visual entre las secciones de práctica de la aplicación.
