@@ -11,6 +11,7 @@ import { EnmOverlayComponent } from '../enm-overlay/enm-overlay.component';
 import { EnmService } from '../services/enm.service';
 import { EnmPackId } from '../services/enm.types';
 import { StatsService } from '../services/stats.service';
+import { CombinacionMotorService, EjercicioMotor } from '../services/combinacion-motor.service';
 import {
   BloqueEjercicios,
   Ejercicio,
@@ -83,6 +84,7 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
     private router: Router,
     private enmService: EnmService,
     private statsService: StatsService,
+    private motorService: CombinacionMotorService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -90,8 +92,42 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
     this.bloqueId = this.route.snapshot.paramMap.get('bloqueId') ?? '';
     this.bloque = getEjerciciosPorBloque(this.bloqueId) ?? null;
     if (!this.bloque) { this.router.navigate(['/practica/gramatica']); return; }
-    this.ejerciciosBarajados = [...this.bloque.ejercicios].sort(() => Math.random() - 0.5);
-    this.prepararEjercicio();
+
+    // Intentar cargar ejercicios procedurales del motor; combinar con los estáticos
+    this.motorService.generarEjercicios(this.bloqueId).subscribe({
+      next: (resp) => {
+        const ejerciciosMotor: Ejercicio[] = resp.ejercicios.map(e => this.motorAEjercicio(e));
+        const estaticos = this.bloque!.ejercicios;
+        // Motor primero, estáticos después (sin duplicar fichas)
+        const ejerciciosFinales = [...ejerciciosMotor, ...estaticos];
+        this.ejerciciosBarajados = ejerciciosFinales.sort(() => Math.random() - 0.5);
+        this.prepararEjercicio();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Si falla el backend, usar solo los estáticos
+        this.ejerciciosBarajados = [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
+        this.prepararEjercicio();
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  /** Convierte un EjercicioMotor (backend) al tipo Ejercicio del frontend */
+  private motorAEjercicio(e: EjercicioMotor): Ejercicio {
+    // Generar distractores del mismo tipo que las fichas correctas
+    const distractores: Ficha[] = [];
+
+    return {
+      tipo: 'fichas',
+      pregunta: e.pregunta,
+      fichas: e.fichas.map(f => ({ texto: f.texto, rol: f.rol as any })),
+      distractores,
+      ordenCorrecto: e.ordenCorrecto,
+      conEnm: e.conEnm,
+      enmCorrecto: e.enmCorrecto as any,
+      enmAbreAvatar: null,
+    } as EjercicioFichas;
   }
 
   ngAfterViewChecked(): void {

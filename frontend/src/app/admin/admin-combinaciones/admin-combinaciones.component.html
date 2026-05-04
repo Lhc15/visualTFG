@@ -1,0 +1,45 @@
+<div class="wrapper">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-brand">
+      <h3>Admin Panel</h3>
+    </div>
+    <div class="sidebar-home">
+      <button class="btn btn-primary w-100" routerLink="/modos2"> <i class="fas fa-home"></i> Home</button>
+    </div>
+    <ul class="sidebar-nav">
+      <li class="nav-item">
+        <a class="nav-link" routerLink="usuarios">
+          <i class="nav-icon cil-user"></i> Usuarios
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="palabras">
+          <i class="nav-icon cil-list"></i> Palabras
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="categorias">
+          <i class="nav-icon cil-tag"></i> Categorías
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="estadisticas">
+          <i class="nav-icon cil-chart"></i> Estadísticas
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="combinaciones">
+          <i class="nav-icon cil-puzzle"></i> Motor gramática
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="body">
+    <div class="container-lg">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>
