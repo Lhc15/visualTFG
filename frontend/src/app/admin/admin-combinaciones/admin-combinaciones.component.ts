@@ -5,7 +5,7 @@ import {
   CombinacionMotorService,
   CombinacionMotor,
   StatsResponse
-} from '../services/combinacion-motor.service';
+} from '../../services/combinacion-motor.service';
 
 type Filtro = 'todas' | 'sin-revisar' | 'validas' | 'invalidas';
 
@@ -13,133 +13,8 @@ type Filtro = 'todas' | 'sin-revisar' | 'validas' | 'invalidas';
   selector: 'app-admin-combinaciones',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-<div class="container-fluid py-3">
-
-  <!-- Cabecera -->
-  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
-    <div>
-      <h4 class="mb-0">Motor procedimental
-        <span *ngIf="stats && stats.sinRevisar > 0" class="badge bg-warning text-dark ms-2">
-          {{ stats.sinRevisar }} sin revisar
-        </span>
-      </h4>
-      <small class="text-muted" *ngIf="stats">
-        {{ stats.total }} combinaciones totales &middot;
-        {{ stats.validas }} válidas &middot;
-        {{ stats.invalidas }} inválidas
-      </small>
-    </div>
-    <button class="btn btn-primary" (click)="regenerar()" [disabled]="regenerando">
-      <span *ngIf="regenerando" class="spinner-border spinner-border-sm me-1"></span>
-      {{ regenerando ? 'Regenerando…' : 'Regenerar combinaciones' }}
-    </button>
-  </div>
-
-  <!-- Mensaje resultado de regeneración -->
-  <div *ngIf="msgRegeneracion" class="alert alert-success alert-dismissible py-2">
-    {{ msgRegeneracion }}
-    <button type="button" class="btn-close" (click)="msgRegeneracion=''"></button>
-  </div>
-
-  <!-- Filtros -->
-  <div class="btn-group mb-3" role="group">
-    <button *ngFor="let f of filtros" type="button"
-      class="btn btn-sm"
-      [class.btn-dark]="filtroActivo === f.id"
-      [class.btn-outline-secondary]="filtroActivo !== f.id"
-      (click)="cambiarFiltro(f.id)">
-      {{ f.label }}
-    </button>
-  </div>
-
-  <!-- Tabla -->
-  <div class="table-responsive" *ngIf="!cargando">
-    <table class="table table-sm table-hover align-middle">
-      <thead class="table-dark">
-        <tr>
-          <th>Frase LSE</th>
-          <th>Plantilla</th>
-          <th>ENM</th>
-          <th class="text-center">Revisada</th>
-          <th class="text-center">Válida</th>
-          <th>Notas</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let c of combinaciones" [class.table-success]="c.valida === true && c.revisada"
-            [class.table-danger]="c.valida === false && c.revisada"
-            [class.table-warning]="!c.revisada">
-          <td class="fw-semibold">{{ fraseLSE(c) }}</td>
-          <td>
-            <span class="badge" [class.bg-secondary]="c.plantilla==='afirmativa'"
-              [class.bg-info]="c.plantilla==='pregunta-sn'"
-              [class.bg-primary]="c.plantilla==='pregunta-wh'">
-              {{ labelPlantilla(c.plantilla) }}
-            </span>
-          </td>
-          <td>
-            <small *ngIf="c.enm" class="text-muted">{{ labelEnm(c.enm) }}</small>
-            <small *ngIf="!c.enm" class="text-muted">—</small>
-          </td>
-          <td class="text-center">
-            <div class="form-check form-switch d-flex justify-content-center">
-              <input class="form-check-input" type="checkbox"
-                [checked]="c.revisada"
-                (change)="toggleRevisada(c)">
-            </div>
-          </td>
-          <td class="text-center">
-            <ng-container *ngIf="c.revisada">
-              <button class="btn btn-sm me-1"
-                [class.btn-success]="c.valida === true"
-                [class.btn-outline-success]="c.valida !== true"
-                (click)="setValida(c, true)" title="Válida">✓</button>
-              <button class="btn btn-sm"
-                [class.btn-danger]="c.valida === false"
-                [class.btn-outline-danger]="c.valida !== false"
-                (click)="setValida(c, false)" title="Inválida">✗</button>
-            </ng-container>
-            <small *ngIf="!c.revisada" class="text-muted">—</small>
-          </td>
-          <td>
-            <input type="text" class="form-control form-control-sm"
-              [value]="c.notas"
-              (blur)="guardarNotas(c, $event)"
-              placeholder="Notas…" style="min-width:120px">
-          </td>
-        </tr>
-        <tr *ngIf="combinaciones.length === 0">
-          <td colspan="6" class="text-center text-muted py-4">
-            No hay combinaciones con este filtro.
-            <span *ngIf="filtroActivo === 'todas'">Pulsa "Regenerar combinaciones" para generarlas.</span>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- Cargando -->
-  <div *ngIf="cargando" class="text-center py-5">
-    <div class="spinner-border text-primary"></div>
-  </div>
-
-  <!-- Paginación -->
-  <div class="d-flex justify-content-between align-items-center mt-2" *ngIf="totalPages > 1">
-    <small class="text-muted">{{ total }} combinaciones</small>
-    <div class="btn-group btn-group-sm">
-      <button class="btn btn-outline-secondary" [disabled]="paginaActual === 1" (click)="cambiarPagina(paginaActual-1)">‹</button>
-      <button class="btn btn-outline-secondary" disabled>{{ paginaActual }} / {{ totalPages }}</button>
-      <button class="btn btn-outline-secondary" [disabled]="paginaActual >= totalPages" (click)="cambiarPagina(paginaActual+1)">›</button>
-    </div>
-  </div>
-
-</div>
-  `,
-  styles: [`
-    .table td, .table th { vertical-align: middle; }
-    .form-check-input { cursor: pointer; }
-  `]
+  templateUrl: './admin-combinaciones.component.html',
+  styleUrls: ['./admin-combinaciones.component.css']
 })
 export class AdminCombinacionesComponent implements OnInit {
 
@@ -170,13 +45,16 @@ export class AdminCombinacionesComponent implements OnInit {
   }
 
   cargarStats(): void {
-    this.svc.stats().subscribe({ next: s => this.stats = s, error: () => {} });
+    this.svc.stats().subscribe({
+      next: (s: StatsResponse) => { this.stats = s; },
+      error: () => {}
+    });
   }
 
   cargar(): void {
     this.cargando = true;
     this.svc.listar(this.filtroActivo, this.paginaActual, this.limit).subscribe({
-      next: r => {
+      next: (r) => {
         this.combinaciones = r.combinaciones;
         this.total         = r.total;
         this.cargando      = false;
@@ -200,8 +78,8 @@ export class AdminCombinacionesComponent implements OnInit {
     this.regenerando = true;
     this.msgRegeneracion = '';
     this.svc.regenerar().subscribe({
-      next: r => {
-        this.regenerando    = false;
+      next: (r: any) => {
+        this.regenerando     = false;
         this.msgRegeneracion = r.msg;
         this.cargarStats();
         this.cargar();
@@ -232,7 +110,7 @@ export class AdminCombinacionesComponent implements OnInit {
   }
 
   fraseLSE(c: CombinacionMotor): string {
-    const partes = [c.sujetoId?.palabra];
+    const partes: (string | undefined)[] = [c.sujetoId?.palabra];
     if (c.plantilla === 'afirmativa') {
       if (c.objetoId) partes.push(c.objetoId.palabra);
       partes.push(c.verboId.palabra);
@@ -242,7 +120,7 @@ export class AdminCombinacionesComponent implements OnInit {
       partes.push(c.verboId.palabra);
       if (c.interrId) partes.push(c.interrId.palabra);
     }
-    return partes.filter(Boolean).join(' · ');
+    return partes.filter((p): p is string => Boolean(p)).join(' · ');
   }
 
   labelPlantilla(p: string): string {

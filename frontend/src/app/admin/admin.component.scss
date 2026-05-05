@@ -58,12 +58,13 @@ ul, li {
 
 
 .body {
-  flex-grow: 1; /* Asegura que ocupe todo el espacio restante */
-  display: flex; /* Permite el flujo interno */
-  flex-direction: column; /* Coloca los elementos verticalmente */
-  margin: 0; /* Elimina márgenes */
-  padding: 0; /* Elimina padding interno */
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
   background-color: #f8f9fa;
+  overflow-y: auto;
 }
 
 .card {
@@ -263,7 +264,3 @@ textarea {
     max-width: 33.333333%;
   }
 }
-
-
-
-

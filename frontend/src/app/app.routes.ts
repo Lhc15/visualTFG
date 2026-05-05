@@ -12,7 +12,7 @@ import { AdminUsuariosComponent } from './admin/admin_usuarios.component';
 import { AdminPalabrasComponent } from './admin/admin_palabras.component';
 import { AdminCategoriasComponent } from './admin/admin_categorias.component';
 import { AdminEstadisticasComponent } from './admin/admin_estadisticas.component';
-import { AdminCombinacionesComponent } from './admin/admin_combinaciones.component';
+import { AdminCombinacionesComponent } from './admin/admin-combinaciones/admin-combinaciones.component';
 import { MiperfilComponent } from './miperfil/miperfil.component';
 import { ModoLibreComponent } from './modo-libre/modo-libre.component';
 import { ModoExamenComponent } from './modo-examen/modo-examen.component';

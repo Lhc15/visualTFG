@@ -95,10 +95,11 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
 
     // Intentar cargar ejercicios procedurales del motor; combinar con los estáticos
     this.motorService.generarEjercicios(this.bloqueId).subscribe({
-      next: (resp) => {
-        const ejerciciosMotor: Ejercicio[] = resp.ejercicios.map(e => this.motorAEjercicio(e));
+      next: (resp: { ok: boolean; bloqueId: string; ejercicios: EjercicioMotor[] }) => {
+        const ejerciciosMotor: Ejercicio[] = resp.ejercicios.map(
+          (e: EjercicioMotor) => this.motorAEjercicio(e)
+        );
         const estaticos = this.bloque!.ejercicios;
-        // Motor primero, estáticos después (sin duplicar fichas)
         const ejerciciosFinales = [...ejerciciosMotor, ...estaticos];
         this.ejerciciosBarajados = ejerciciosFinales.sort(() => Math.random() - 0.5);
         this.prepararEjercicio();
@@ -113,21 +114,21 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
     });
   }
 
-  /** Convierte un EjercicioMotor (backend) al tipo Ejercicio del frontend */
-  private motorAEjercicio(e: EjercicioMotor): Ejercicio {
-    // Generar distractores del mismo tipo que las fichas correctas
-    const distractores: Ficha[] = [];
-
+  /** Convierte un EjercicioMotor (backend) al tipo EjercicioFichas del frontend */
+  private motorAEjercicio(e: EjercicioMotor): EjercicioFichas {
     return {
       tipo: 'fichas',
       pregunta: e.pregunta,
-      fichas: e.fichas.map(f => ({ texto: f.texto, rol: f.rol as any })),
-      distractores,
+      fichas: e.fichas.map((f: { texto: string; rol: string; palabraId: string }) => ({
+        texto: f.texto,
+        rol: f.rol as 'S' | 'O' | 'V' | 'ADJ' | 'INT' | 'FX' | 'ADV' | 'NEG'
+      })),
+      distractores: [],
       ordenCorrecto: e.ordenCorrecto,
       conEnm: e.conEnm,
       enmCorrecto: e.enmCorrecto as any,
       enmAbreAvatar: null,
-    } as EjercicioFichas;
+    };
   }
 
   ngAfterViewChecked(): void {

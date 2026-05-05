@@ -1,32 +1,30 @@
 import { EnmPackId } from '../services/enm.types';
 
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 //  TIPOS
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 
 export interface Ficha {
   texto: string;
   rol: 'S' | 'O' | 'V' | 'ADJ' | 'INT' | 'FX' | 'ADV' | 'NEG';
 }
 
-/** Formato B: el usuario ordena fichas para construir la frase en LSE */
 export interface EjercicioFichas {
   tipo: 'fichas';
-  pregunta: string;           // frase en español a construir
-  fichas: Ficha[];            // fichas de la solución correcta (en orden correcto)
-  distractores: Ficha[];      // fichas falsas para el banco
-  ordenCorrecto: string[];    // textos de fichas en orden correcto
+  pregunta: string;
+  fichas: Ficha[];
+  distractores: Ficha[];
+  ordenCorrecto: string[];
   conEnm: boolean;
   enmCorrecto: EnmPackId | null;
   enmAbreAvatar: EnmPackId | null;
 }
 
-/** Formato A: el usuario elige entre 4 opciones */
 export interface EjercicioOpciones {
   tipo: 'opciones';
-  pregunta: string;           // pregunta o instrucción
-  fichasSig?: Ficha[];        // si el avatar "signa" algo, se muestran estas fichas
-  opciones: string[];         // opciones[0] siempre es la correcta (se barajan al renderizar)
+  pregunta: string;
+  fichasSig?: Ficha[];
+  opciones: string[];
   conEnm: boolean;
   enmCorrecto: EnmPackId | null;
   enmAbreAvatar: EnmPackId | null;
@@ -37,23 +35,30 @@ export type Ejercicio = EjercicioFichas | EjercicioOpciones;
 export interface BloqueEjercicios {
   bloqueId: string;
   nombre: string;
-  accentColor: string;
   ejercicios: Ejercicio[];
 }
 
-// ─────────────────────────────────────────────────────────────
-//  DATOS
-// ─────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+//  CORPUS: palabras disponibles
+//  S:   YO · TU · EL/ELLA · NOSOTROS
+//  O:   MADRE · PADRE · ABUELO · HIJO · HERMANO · HOMBRE · MUJER
+//       COMPANERO · AMIGO · PUERTA · CASA · HABITACION
+//  V:   COMPRAR · COMER · VIVIR · DORMIR · LLAMARSE · PRESENTAR · CUIDAR
+//  INT: QUE · QUIEN · DONDE · CUANTOS/AS · COMO
+//  ADV: AYER · ANTES · MANANA
+//  ADJ: ALTO · SOLTERO/A · BIEN · REGULAR
+//  FX:  HOLA · BUENOS DIAS · ADIOS · HASTA MANANA · ENCANTADO/A
+//       SI · NO · POR FAVOR REPETIR
+// ─────────────────────────────────────────────────────────────────────────────
 
 export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
 
   // ══════════════════════════════════════════════════════════
-  // BLOQUE 1 — ENM (Expresión No Manual)
+  // BLOQUE 1 — ENM
   // ══════════════════════════════════════════════════════════
   {
     bloqueId: 'enm',
     nombre: 'ENM',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
@@ -73,16 +78,16 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
           'Agitar la mano en su campo visual.',
           'Gritar más alto de lo normal.',
           'Dar palmas fuertes lejos de ella.',
-          'Lanzar un objeto para que lo vea.',
+          'Tocar el hombro opuesto al que está mirando.',
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
         pregunta: 'El avatar signa una pregunta de sí o no. ¿Qué ENM debe acompañar a la frase?',
-        fichasSig: [{ texto: 'TÚ', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }],
+        fichasSig: [{ texto: 'TU', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }],
         opciones: [
-          'Cejas levantadas + cabeza e inclinación hacia delante.',
+          'Cejas levantadas + inclinación de cabeza y hombros hacia delante.',
           'Cejas fruncidas + nariz arrugada.',
           'Cabeza de lado a lado.',
           'Sin expresión facial adicional.',
@@ -102,23 +107,23 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'opciones',
-        pregunta: '¿Qué papel tiene la inclinación del cuerpo hacia delante en una pregunta en LSE?',
-        opciones: [
-          'Forma parte de la gramática, equivale a la entonación ascendente en español.',
-          'Es solo un gesto de cortesía sin valor gramatical.',
-          'Indica que la frase va a ser larga.',
-          'Se usa exclusivamente con preguntas con partícula.',
-        ],
-        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
-      },
-      {
-        tipo: 'opciones',
         pregunta: '¿Cuál de estas afirmaciones sobre el ENM en LSE es correcta?',
         opciones: [
           'El ENM forma parte de la gramática, no es un añadido opcional.',
           'El ENM solo se usa en contextos emocionales, no gramaticales.',
           'El ENM puede omitirse si los signos son claros.',
           'El ENM solo incluye movimientos de las cejas.',
+        ],
+        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
+      },
+      {
+        tipo: 'opciones',
+        pregunta: '¿Qué papel tiene la inclinación del cuerpo hacia delante en LSE?',
+        opciones: [
+          'Forma parte de la gramática, equivale a la entonación ascendente en español.',
+          'Es solo un gesto de cortesía sin valor gramatical.',
+          'Indica que la frase va a ser larga.',
+          'Se usa exclusivamente con preguntas con partícula.',
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
@@ -131,32 +136,31 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'sov',
     nombre: 'Orden S·O·V',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'fichas',
-        pregunta: 'Yo compro una puerta.',
-        fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'PUERTA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
-        distractores: [{ texto: 'COMER', rol: 'V' }],
-        ordenCorrecto: ['YO', 'PUERTA', 'COMPRAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        pregunta: 'Yo compro una casa.',
+        fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
+        distractores: [{ texto: 'VIVIR', rol: 'V' }],
+        ordenCorrecto: ['YO', 'CASA', 'COMPRAR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'fichas',
-        pregunta: 'Tú vives en una casa.',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'VIVIR', rol: 'V' }],
+        pregunta: 'Tú vives en una habitación.',
+        fichas: [{ texto: 'TU', rol: 'S' }, { texto: 'HABITACION', rol: 'O' }, { texto: 'VIVIR', rol: 'V' }],
         distractores: [{ texto: 'YO', rol: 'S' }],
-        ordenCorrecto: ['TÚ', 'CASA', 'VIVIR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        ordenCorrecto: ['TU', 'HABITACION', 'VIVIR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
-        pregunta: '¿Cuál es la traducción correcta de TÚ PUERTA COMPRAR en LSE?',
+        pregunta: '¿Cuál es la traducción correcta de TU CASA COMPRAR en LSE?',
         opciones: [
-          'Tú compras una puerta.',
-          'Compras la puerta tú.',
-          'La puerta te compra.',
-          'Tú eres la puerta.',
+          'Tú compras una casa.',
+          'Compras la casa tú.',
+          'La casa te compra.',
+          'Tú eres la casa.',
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
@@ -173,11 +177,11 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Yo como pizza.',
-        fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'PIZZA', rol: 'O' }, { texto: 'COMER', rol: 'V' }],
+        pregunta: 'Yo como con mi hermano.',
+        fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'HERMANO', rol: 'O' }, { texto: 'COMER', rol: 'V' }],
         distractores: [{ texto: 'COMPRAR', rol: 'V' }],
-        ordenCorrecto: ['YO', 'PIZZA', 'COMER'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        ordenCorrecto: ['YO', 'HERMANO', 'COMER'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -194,7 +198,7 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         tipo: 'opciones',
         pregunta: '¿Se signan los artículos y preposiciones en LSE?',
         opciones: [
-          'No. TÚ PUERTA COMPRAR equivale a "Tú compras una puerta" — los artículos se omiten.',
+          'No. TU CASA COMPRAR equivale a "Tú compras una casa" — los artículos se omiten.',
           'Sí, igual que en español.',
           'Solo las preposiciones, no los artículos.',
           'Solo en frases formales.',
@@ -203,27 +207,27 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Nosotros compramos una casa.',
-        fichas: [{ texto: 'NOSOTROS', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
+        pregunta: 'Nosotros compramos una puerta.',
+        fichas: [{ texto: 'NOSOTROS', rol: 'S' }, { texto: 'PUERTA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
         distractores: [{ texto: 'VIVIR', rol: 'V' }],
-        ordenCorrecto: ['NOSOTROS', 'CASA', 'COMPRAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        ordenCorrecto: ['NOSOTROS', 'PUERTA', 'COMPRAR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'fichas',
-        pregunta: 'Tú comes pizza.',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'PIZZA', rol: 'O' }, { texto: 'COMER', rol: 'V' }],
-        distractores: [{ texto: 'YO', rol: 'S' }],
-        ordenCorrecto: ['TÚ', 'PIZZA', 'COMER'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        pregunta: 'Él/ella cuida a su hijo.',
+        fichas: [{ texto: 'EL/ELLA', rol: 'S' }, { texto: 'HIJO', rol: 'O' }, { texto: 'CUIDAR', rol: 'V' }],
+        distractores: [{ texto: 'COMER', rol: 'V' }],
+        ordenCorrecto: ['EL/ELLA', 'HIJO', 'CUIDAR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'fichas',
         pregunta: 'Él/ella duerme.',
-        fichas: [{ texto: 'ÉL/ELLA', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }],
+        fichas: [{ texto: 'EL/ELLA', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }],
         distractores: [{ texto: 'COMER', rol: 'V' }, { texto: 'VIVIR', rol: 'V' }],
-        ordenCorrecto: ['ÉL/ELLA', 'DORMIR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        ordenCorrecto: ['EL/ELLA', 'DORMIR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
     ],
   },
@@ -234,13 +238,12 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'preguntas',
     nombre: 'Preguntas',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
         pregunta: '¿Cuál es la diferencia de expresión facial entre los dos tipos de pregunta en LSE?',
         opciones: [
-          'Pregunta s/p: cejas altas + cabeza adelante. Pregunta c/p: cejas fruncidas + nariz arrugada.',
+          'Pregunta s/p: cejas altas + cabeza adelante. Pregunta c/p: cejas fruncidas.',
           'Ambos tipos usan las cejas altas.',
           'No hay diferencia de expresión facial entre los dos tipos.',
           'Pregunta s/p: boca abierta. Pregunta c/p: labios apretados.',
@@ -250,15 +253,15 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       {
         tipo: 'fichas',
         pregunta: '¿Dónde vives?',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'DÓNDE', rol: 'INT' }],
-        distractores: [{ texto: 'DÓNDE', rol: 'INT' }],
-        ordenCorrecto: ['TÚ', 'VIVIR', 'DÓNDE'],
+        fichas: [{ texto: 'TU', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'DONDE', rol: 'INT' }],
+        distractores: [{ texto: 'COMO', rol: 'INT' }],
+        ordenCorrecto: ['TU', 'VIVIR', 'DONDE'],
         conEnm: true, enmCorrecto: 'pregunta-con-particula', enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
         pregunta: 'El avatar signa esta secuencia. ¿Qué significa?',
-        fichasSig: [{ texto: 'TÚ', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }],
+        fichasSig: [{ texto: 'TU', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }],
         opciones: [
           '¿Duermes?',
           'Tú duermes.',
@@ -281,15 +284,15 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       {
         tipo: 'fichas',
         pregunta: '¿Cómo te llamas?',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'LLAMARSE', rol: 'V' }, { texto: 'CÓMO', rol: 'INT' }],
-        distractores: [{ texto: 'DÓNDE', rol: 'INT' }],
-        ordenCorrecto: ['TÚ', 'LLAMARSE', 'CÓMO'],
+        fichas: [{ texto: 'TU', rol: 'S' }, { texto: 'LLAMARSE', rol: 'V' }, { texto: 'COMO', rol: 'INT' }],
+        distractores: [{ texto: 'DONDE', rol: 'INT' }],
+        ordenCorrecto: ['TU', 'LLAMARSE', 'COMO'],
         conEnm: true, enmCorrecto: 'pregunta-con-particula', enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
         pregunta: 'El avatar signa esta secuencia. ¿Qué significa?',
-        fichasSig: [{ texto: 'TÚ', rol: 'S' }, { texto: 'LLAMARSE', rol: 'V' }, { texto: 'CÓMO', rol: 'INT' }],
+        fichasSig: [{ texto: 'TU', rol: 'S' }, { texto: 'LLAMARSE', rol: 'V' }, { texto: 'COMO', rol: 'INT' }],
         opciones: [
           '¿Cómo te llamas?',
           'Te llamas así.',
@@ -297,14 +300,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
           'Tú te llamas bien.',
         ],
         conEnm: true, enmCorrecto: 'pregunta-con-particula', enmAbreAvatar: 'pregunta-con-particula',
-      },
-      {
-        tipo: 'fichas',
-        pregunta: '¿Comes pizza?',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'PIZZA', rol: 'O' }, { texto: 'COMER', rol: 'V' }],
-        distractores: [{ texto: 'COMPRAR', rol: 'V' }],
-        ordenCorrecto: ['TÚ', 'PIZZA', 'COMER'],
-        conEnm: true, enmCorrecto: 'pregunta-sin-particula', enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -317,6 +312,14 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
+      {
+        tipo: 'fichas',
+        pregunta: '¿Quién vive aquí?',
+        fichas: [{ texto: 'VIVIR', rol: 'V' }, { texto: 'QUIEN', rol: 'INT' }],
+        distractores: [{ texto: 'DONDE', rol: 'INT' }, { texto: 'COMO', rol: 'INT' }],
+        ordenCorrecto: ['VIVIR', 'QUIEN'],
+        conEnm: true, enmCorrecto: 'pregunta-con-particula', enmAbreAvatar: null,
+      },
     ],
   },
 
@@ -326,7 +329,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'genero',
     nombre: 'Género',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
@@ -397,7 +399,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'presentaciones',
     nombre: 'Presentaciones',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
@@ -412,15 +413,10 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Estructura de presentación: "Yo me presento, mi signo es…"',
-        fichas: [
-          { texto: 'YO', rol: 'S' },
-          { texto: 'PRESENTAR', rol: 'V' },
-          { texto: 'MI SIGNO', rol: 'O' },
-          { texto: 'LLAMARSE', rol: 'V' },
-        ],
-        distractores: [{ texto: 'COMER', rol: 'V' }],
-        ordenCorrecto: ['YO', 'PRESENTAR', 'MI SIGNO', 'LLAMARSE'],
+        pregunta: 'Yo me presento.',
+        fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'PRESENTAR', rol: 'V' }],
+        distractores: [{ texto: 'LLAMARSE', rol: 'V' }],
+        ordenCorrecto: ['YO', 'PRESENTAR'],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
@@ -447,11 +443,11 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Me llamo Ana (sin signo personal).',
-        fichas: [{ texto: 'LLAMARSE', rol: 'V' }, { texto: 'A-N-A', rol: 'O' }],
-        distractores: [{ texto: 'YO', rol: 'S' }],
-        ordenCorrecto: ['LLAMARSE', 'A-N-A'],
-        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
+        pregunta: '¿Cómo te llamas? (presentación)',
+        fichas: [{ texto: 'TU', rol: 'S' }, { texto: 'LLAMARSE', rol: 'V' }, { texto: 'COMO', rol: 'INT' }],
+        distractores: [{ texto: 'QUIEN', rol: 'INT' }],
+        ordenCorrecto: ['TU', 'LLAMARSE', 'COMO'],
+        conEnm: true, enmCorrecto: 'pregunta-con-particula', enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -473,26 +469,25 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'verbos',
     nombre: 'Los verbos',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
-        pregunta: '¿Cómo se dice "Tu hijo es guapo" en LSE?',
+        pregunta: '¿Cómo se dice "Tu hijo es alto" en LSE?',
         opciones: [
-          'TU HIJO GUAPO — sin verbo, el adjetivo ocupa su posición.',
-          'TU HIJO SER GUAPO — se mantiene el verbo ser.',
-          'GUAPO TU HIJO — el adjetivo va al principio.',
-          'TU HIJO ESTAR GUAPO — se usa ESTAR en lugar de SER.',
+          'TU HIJO ALTO — sin verbo, el adjetivo ocupa su posición.',
+          'TU HIJO SER ALTO — se mantiene el verbo ser.',
+          'ALTO TU HIJO — el adjetivo va al principio.',
+          'TU HIJO ESTAR ALTO — se usa ESTAR en lugar de SER.',
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'fichas',
-        pregunta: 'Yo como pizza.',
-        fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'PIZZA', rol: 'O' }, { texto: 'COMER', rol: 'V' }],
+        pregunta: 'Yo como con mi madre.',
+        fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'MADRE', rol: 'O' }, { texto: 'COMER', rol: 'V' }],
         distractores: [{ texto: 'COMPRAR', rol: 'V' }],
-        ordenCorrecto: ['YO', 'PIZZA', 'COMER'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        ordenCorrecto: ['YO', 'MADRE', 'COMER'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -518,11 +513,11 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Tú compras una puerta.',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'PUERTA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
+        pregunta: 'Tú cuidas a tu abuelo.',
+        fichas: [{ texto: 'TU', rol: 'S' }, { texto: 'ABUELO', rol: 'O' }, { texto: 'CUIDAR', rol: 'V' }],
         distractores: [{ texto: 'COMER', rol: 'V' }],
-        ordenCorrecto: ['TÚ', 'PUERTA', 'COMPRAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        ordenCorrecto: ['TU', 'ABUELO', 'CUIDAR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -537,23 +532,20 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
-        tipo: 'opciones',
-        pregunta: '¿Cuándo puede TENER/HABER omitirse en LSE?',
-        opciones: [
-          'Cuando ya hay un signo de cantidad en la frase: TÚ HIJO TRES = "Tienes tres hijos".',
-          'Nunca, TENER y HABER siempre se signan.',
-          'Solo cuando el sujeto es "yo".',
-          'Solo en frases negativas.',
-        ],
-        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
-      },
-      {
         tipo: 'fichas',
         pregunta: 'Nosotros compramos una casa.',
         fichas: [{ texto: 'NOSOTROS', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
         distractores: [{ texto: 'VIVIR', rol: 'V' }],
         ordenCorrecto: ['NOSOTROS', 'CASA', 'COMPRAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
+      },
+      {
+        tipo: 'fichas',
+        pregunta: 'Él/ella vive con su padre.',
+        fichas: [{ texto: 'EL/ELLA', rol: 'S' }, { texto: 'PADRE', rol: 'O' }, { texto: 'VIVIR', rol: 'V' }],
+        distractores: [{ texto: 'COMER', rol: 'V' }],
+        ordenCorrecto: ['EL/ELLA', 'PADRE', 'VIVIR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
     ],
   },
@@ -564,7 +556,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'tiempos',
     nombre: 'Tiempos verbales',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
@@ -579,19 +570,19 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Antes dormía mucho.',
-        fichas: [{ texto: 'ANTES', rol: 'ADV' }, { texto: 'YO', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }],
-        distractores: [{ texto: 'MAÑANA', rol: 'ADV' }],
-        ordenCorrecto: ['ANTES', 'YO', 'DORMIR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        pregunta: 'Antes vivíamos aquí.',
+        fichas: [{ texto: 'ANTES', rol: 'ADV' }, { texto: 'NOSOTROS', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }],
+        distractores: [{ texto: 'MANANA', rol: 'ADV' }],
+        ordenCorrecto: ['ANTES', 'NOSOTROS', 'VIVIR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'fichas',
-        pregunta: 'Ayer compramos.',
-        fichas: [{ texto: 'AYER', rol: 'ADV' }, { texto: 'NOSOTROS', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }],
-        distractores: [{ texto: 'MAÑANA', rol: 'ADV' }],
-        ordenCorrecto: ['AYER', 'NOSOTROS', 'COMPRAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        pregunta: 'Ayer comimos juntos.',
+        fichas: [{ texto: 'AYER', rol: 'ADV' }, { texto: 'NOSOTROS', rol: 'S' }, { texto: 'COMER', rol: 'V' }],
+        distractores: [{ texto: 'MANANA', rol: 'ADV' }],
+        ordenCorrecto: ['AYER', 'NOSOTROS', 'COMER'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -606,11 +597,11 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Mañana tú compras la casa.',
-        fichas: [{ texto: 'MAÑANA', rol: 'ADV' }, { texto: 'TÚ', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
+        pregunta: 'Mañana compras la casa.',
+        fichas: [{ texto: 'MANANA', rol: 'ADV' }, { texto: 'TU', rol: 'S' }, { texto: 'CASA', rol: 'O' }, { texto: 'COMPRAR', rol: 'V' }],
         distractores: [{ texto: 'AYER', rol: 'ADV' }],
-        ordenCorrecto: ['MAÑANA', 'TÚ', 'CASA', 'COMPRAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        ordenCorrecto: ['MANANA', 'TU', 'CASA', 'COMPRAR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -632,7 +623,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'negacion',
     nombre: 'La negación',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'fichas',
@@ -678,6 +668,19 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
+        tipo: 'fichas',
+        pregunta: 'Tú no compras la puerta.',
+        fichas: [
+          { texto: 'TU', rol: 'S' },
+          { texto: 'PUERTA', rol: 'O' },
+          { texto: 'COMPRAR', rol: 'V' },
+          { texto: 'NO', rol: 'NEG' },
+        ],
+        distractores: [{ texto: 'COMER', rol: 'V' }],
+        ordenCorrecto: ['TU', 'PUERTA', 'COMPRAR', 'NO'],
+        conEnm: true, enmCorrecto: 'negacion', enmAbreAvatar: null,
+      },
+      {
         tipo: 'opciones',
         pregunta: '¿Cuál de estos verbos tiene la negación incorporada en su propio signo?',
         opciones: [
@@ -688,19 +691,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
-      {
-        tipo: 'fichas',
-        pregunta: 'Tú no compras la puerta.',
-        fichas: [
-          { texto: 'TÚ', rol: 'S' },
-          { texto: 'PUERTA', rol: 'O' },
-          { texto: 'COMPRAR', rol: 'V' },
-          { texto: 'NO', rol: 'NEG' },
-        ],
-        distractores: [{ texto: 'COMER', rol: 'V' }],
-        ordenCorrecto: ['TÚ', 'PUERTA', 'COMPRAR', 'NO'],
-        conEnm: true, enmCorrecto: 'negacion', enmAbreAvatar: null,
-      },
     ],
   },
 
@@ -710,7 +700,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'plural',
     nombre: 'Singular y plural',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
@@ -721,14 +710,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
           'Añadiendo el signo VARIOS antes del sustantivo.',
           'Repitiendo siempre el signo dos veces.',
         ],
-        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
-      },
-      {
-        tipo: 'fichas',
-        pregunta: 'Tienes tres hijos.',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'HIJO', rol: 'O' }, { texto: 'TRES', rol: 'O' }],
-        distractores: [{ texto: 'CINCO', rol: 'O' }],
-        ordenCorrecto: ['TÚ', 'HIJO', 'TRES'],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
@@ -746,12 +727,24 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         tipo: 'opciones',
         pregunta: '¿Cuándo queda claro el plural sin modificar el signo?',
         opciones: [
-          'Cuando la frase ya incluye un número o un cuantificador como TRES, TODOS, MUCHO.',
+          'Cuando la frase ya incluye un número o cuantificador como TRES, TODOS, MUCHO.',
           'Siempre, el contexto siempre es suficiente.',
           'Solo cuando el sujeto es plural (NOSOTROS, ELLOS).',
           'Solo cuando se usa el mecanismo de repetición ++.',
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
+      },
+      {
+        tipo: 'opciones',
+        pregunta: 'El avatar signa TU HIJO CUANTOS/AS. ¿Qué pregunta?',
+        fichasSig: [{ texto: 'TU', rol: 'S' }, { texto: 'HIJO', rol: 'O' }, { texto: 'CUANTOS/AS', rol: 'INT' }],
+        opciones: [
+          '¿Cuántos hijos tienes?',
+          '¿Tienes hijos?',
+          '¿Quién es tu hijo?',
+          '¿Cómo se llaman tus hijos?',
+        ],
+        conEnm: true, enmCorrecto: 'pregunta-con-particula', enmAbreAvatar: 'pregunta-con-particula',
       },
     ],
   },
@@ -762,15 +755,14 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'adverbios',
     nombre: 'Los adverbios',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'fichas',
-        pregunta: 'Vives regular.',
-        fichas: [{ texto: 'TÚ', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'REGULAR', rol: 'ADV' }],
-        distractores: [{ texto: 'BIEN', rol: 'ADV' }],
-        ordenCorrecto: ['TÚ', 'VIVIR', 'REGULAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        pregunta: 'Él/ella vive bien.',
+        fichas: [{ texto: 'EL/ELLA', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'BIEN', rol: 'ADJ' }],
+        distractores: [{ texto: 'REGULAR', rol: 'ADJ' }],
+        ordenCorrecto: ['EL/ELLA', 'VIVIR', 'BIEN'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -787,9 +779,9 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         tipo: 'fichas',
         pregunta: 'Ayer yo compré.',
         fichas: [{ texto: 'AYER', rol: 'ADV' }, { texto: 'YO', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }],
-        distractores: [{ texto: 'REGULAR', rol: 'ADV' }],
+        distractores: [{ texto: 'REGULAR', rol: 'ADJ' }],
         ordenCorrecto: ['AYER', 'YO', 'COMPRAR'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -804,21 +796,21 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'fichas',
-        pregunta: 'Él/ella come bien.',
-        fichas: [{ texto: 'ÉL/ELLA', rol: 'S' }, { texto: 'COMER', rol: 'V' }, { texto: 'BIEN', rol: 'ADV' }],
-        distractores: [{ texto: 'REGULAR', rol: 'ADV' }],
-        ordenCorrecto: ['ÉL/ELLA', 'COMER', 'BIEN'],
-        conEnm: true, enmCorrecto: 'ninguna' as any, enmAbreAvatar: null,
+        pregunta: 'Él/ella come regular.',
+        fichas: [{ texto: 'EL/ELLA', rol: 'S' }, { texto: 'COMER', rol: 'V' }, { texto: 'REGULAR', rol: 'ADJ' }],
+        distractores: [{ texto: 'BIEN', rol: 'ADJ' }],
+        ordenCorrecto: ['EL/ELLA', 'COMER', 'REGULAR'],
+        conEnm: true, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
         pregunta: 'El avatar signa esta secuencia. ¿Qué significa?',
-        fichasSig: [{ texto: 'ÉL/ELLA', rol: 'S' }, { texto: 'COMER', rol: 'V' }, { texto: 'BIEN', rol: 'ADV' }],
+        fichasSig: [{ texto: 'EL/ELLA', rol: 'S' }, { texto: 'VIVIR', rol: 'V' }, { texto: 'BIEN', rol: 'ADJ' }],
         opciones: [
-          'Él/ella come bien.',
+          'Él/ella vive bien.',
           'Él/ella está bien.',
-          'Le gusta comer.',
-          'Come regular.',
+          'Le gusta vivir.',
+          'Vive regular.',
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
@@ -831,7 +823,6 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
   {
     bloqueId: 'intensidad',
     nombre: 'Intensidad y énfasis',
-    accentColor: '#E04A1A',
     ejercicios: [
       {
         tipo: 'opciones',
@@ -849,7 +840,7 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         pregunta: '¿Qué expresión facial indica énfasis positivo (algo muy bueno o bonito)?',
         opciones: [
           'Dientes apretados + ojos algo entrecerrados.',
-          'Carrillo inflados + cejas altas.',
+          'Carrillos inflados + cejas altas.',
           'Boca muy abierta + cejas fruncidas.',
           'Labios fruncidos + cabeza inclinada.',
         ],
@@ -879,23 +870,23 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
       },
       {
         tipo: 'opciones',
-        pregunta: '¿Qué expresión facial indica énfasis negativo (algo horrible o excesivo)?',
-        opciones: [
-          'Carrillos inflados + cejas ligeramente bajas.',
-          'Dientes apretados + ojos entrecerrados.',
-          'Boca abierta + cejas altas.',
-          'Labios fruncidos + cabeza hacia atrás.',
-        ],
-        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
-      },
-      {
-        tipo: 'opciones',
         pregunta: '¿En qué se diferencia el énfasis en LSE del énfasis en español?',
         opciones: [
           'En LSE el énfasis es no verbal (cara + cuerpo); en español se usan palabras como "muy", "bastante".',
           'En LSE se añaden signos especiales de énfasis; en español es la entonación.',
           'No hay diferencia: ambos idiomas usan los mismos mecanismos.',
           'En LSE solo se puede enfatizar con la velocidad del movimiento.',
+        ],
+        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
+      },
+      {
+        tipo: 'opciones',
+        pregunta: '¿Qué expresión facial indica énfasis negativo (algo horrible o excesivo)?',
+        opciones: [
+          'Carrillos inflados + cejas ligeramente bajas.',
+          'Dientes apretados + ojos entrecerrados.',
+          'Boca abierta + cejas altas.',
+          'Labios fruncidos + cabeza hacia atrás.',
         ],
         conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },

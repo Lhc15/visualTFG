@@ -296,14 +296,16 @@ export class AdminPalabrasComponent implements OnInit {
   editarPalabra(palabra: any) {
     this.isEditing  = true;
     this.palabraId  = palabra._id;
+    // La categoría puede llegar como objeto {_id, nombre} del populate o como string
+    const categoriaId = palabra.categoria?._id ?? palabra.categoria ?? null;
     this.nuevaPalabra = {
-      palabra:          palabra.palabra,
-      descripcion:      palabra.descripcion || palabra.explicacion || '',
-      usarDescripcion:  palabra.usarDescripcion  || false,
-      categoria:        palabra.categoria?._id   || null,
-      orden:            palabra.orden  || 0,
-      tiposLexicos:     [...(palabra.tiposLexicos || [])],
-      enMotor:          palabra.enMotor || false
+      palabra:         palabra.palabra         || '',
+      descripcion:     palabra.descripcion     || palabra.explicacion || '',
+      usarDescripcion: palabra.usarDescripcion || false,
+      categoria:       categoriaId,
+      orden:           palabra.orden           ?? 0,
+      tiposLexicos:    [...(palabra.tiposLexicos || [])],
+      enMotor:         palabra.enMotor         || false
     };
     this.toggleModal();
   }
