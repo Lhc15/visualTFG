@@ -225,6 +225,12 @@
   background: var(--gram-pale);
   transform: translateY(-2px);
 }
+.vv-quiz-choice.vv-choice-selected {
+  border-color: var(--gram);
+  background: var(--gram-pale);
+  color: var(--gram);
+  transform: translateY(-2px);
+}
 .vv-quiz-choice.vv-choice-correct {
   border-color: #2A7A4A;
   background: #E8F5EE;

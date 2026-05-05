@@ -66,7 +66,7 @@
     </div>
 
     <!-- PANEL DERECHO -->
-    <div class="vv-info-panel">
+    <div class="vv-right-panel">
       <div class="vv-panel-nav">
         <button class="vv-pnav-volver" (click)="volver()">Volver</button>
         <span class="vv-pnav-sep">›</span>
@@ -74,6 +74,7 @@
         <span class="vv-pnav-sep">›</span>
         <span class="vv-pnav-cur">Gramática</span>
       </div>
+      <div class="vv-info-panel">
 
       <ng-container *ngIf="bloqueActivo">
 
@@ -86,39 +87,6 @@
           </div>
           <div class="vv-info-title">{{ bloqueActivo.nombre }}</div>
           <div class="vv-info-sub">{{ bloqueActivo.subtitulo }}</div>
-        </div>
-
-        <!-- Ejemplo de frase -->
-        <div class="vv-ejemplo-wrap">
-          <div class="vv-ejemplo-label">Ejemplo en LSE</div>
-          <div class="vv-ejemplo">{{ bloqueActivo.ejemplo }}</div>
-        </div>
-
-        <!-- Barra de progreso -->
-        <div class="vv-progress-wrap">
-          <div class="vv-progress-label">
-            <span>Ejercicios completados</span>
-            <span>{{ bloqueActivo.ejerciciosCompletados }} / {{ bloqueActivo.totalEjercicios }}</span>
-          </div>
-          <div class="vv-progress-bar">
-            <div class="vv-progress-fill" [style.width.%]="progresoPct"></div>
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="vv-stats-row">
-          <div class="vv-stat-pill">
-            <div class="vv-stat-val">{{ bloqueActivo.estrellas }}/3</div>
-            <div class="vv-stat-lbl">Estrellas</div>
-          </div>
-          <div class="vv-stat-pill">
-            <div class="vv-stat-val">{{ bloqueActivo.ejerciciosCompletados }}</div>
-            <div class="vv-stat-lbl">Completados</div>
-          </div>
-          <div class="vv-stat-pill">
-            <div class="vv-stat-val">{{ bloqueActivo.totalEjercicios - bloqueActivo.ejerciciosCompletados }}</div>
-            <div class="vv-stat-lbl">Pendientes</div>
-          </div>
         </div>
 
         <!-- Conceptos que cubre -->
@@ -147,12 +115,12 @@
         <!-- Leyenda -->
         <div class="vv-legend">
           <div class="vv-legend-item">
-            <div class="vv-legend-dot" style="background:#7B4EA0"></div>
-            <span>Completado</span>
+            <div class="vv-legend-dot" style="background:#8B00A8"></div>
+            <span>Desbloqueado</span>
           </div>
           <div class="vv-legend-item">
-            <div class="vv-legend-dot" style="background:#E04A1A"></div>
-            <span>En curso</span>
+            <div class="vv-legend-dot vv-legend-dot--actual"></div>
+            <span>Actual</span>
           </div>
           <div class="vv-legend-item">
             <div class="vv-legend-dot" style="background:#e5e7eb"></div>
@@ -162,7 +130,8 @@
 
       </ng-container>
 
-    </div>
+    </div><!-- /vv-info-panel -->
+    </div><!-- /vv-right-panel -->
 
   </div>
 

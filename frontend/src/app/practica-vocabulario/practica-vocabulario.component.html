@@ -170,52 +170,6 @@
           <div class="vv-info-sub">{{ categoriaActiva.palabrasEstudiadas }} de {{ categoriaActiva.totalPalabras }} palabras estudiadas en Aprende</div>
         </div>
 
-        <!-- Barra de progreso -->
-        <div class="vv-progress-wrap">
-          <div class="vv-progress-label">
-            <span>Progreso</span>
-            <span>{{ progresoPct }}%</span>
-          </div>
-          <div class="vv-progress-bar">
-            <div class="vv-progress-fill" [style.width.%]="progresoPct"></div>
-          </div>
-        </div>
-
-        <!-- Stats -->
-        <div class="vv-stats-row">
-          <div class="vv-stat-pill">
-            <div class="vv-stat-val">{{ categoriaActiva.estrellas }}/3</div>
-            <div class="vv-stat-lbl">Estrellas</div>
-          </div>
-          <div class="vv-stat-pill">
-            <div class="vv-stat-val">{{ categoriaActiva.palabrasEstudiadas }}</div>
-            <div class="vv-stat-lbl">Estudiadas</div>
-          </div>
-          <div class="vv-stat-pill">
-            <div class="vv-stat-val">{{ categoriaActiva.totalPalabras - categoriaActiva.palabrasEstudiadas }}</div>
-            <div class="vv-stat-lbl">Pendientes</div>
-          </div>
-        </div>
-
-        <!-- Preview palabras -->
-        <div class="vv-words-preview" *ngIf="categoriaActiva.palabras.length">
-          <div class="vv-words-title">Palabras de esta categoría</div>
-          <div class="vv-words-chips">
-            <span
-              *ngFor="let p of palabrasPreview"
-              class="vv-word-chip"
-              [class.aprendida]="p.estado === 'aprendida'"
-              [class.vista]="p.estado === 'vista'"
-              [class.bloqueada]="p.estado === 'bloqueada'">
-              {{ p.nombre }}
-            </span>
-          </div>
-        </div>
-
-        <div class="vv-words-preview" *ngIf="!categoriaActiva.palabras.length">
-          <div class="vv-words-empty">Las palabras se mostrarán cuando estudies esta categoría en Aprende.</div>
-        </div>
-
         <!-- CTA -->
         <button class="vv-cta-btn" (click)="irAPracticar()" [disabled]="categoriaActiva.estado === 'bloqueado'">
           Practicar {{ categoriaActiva.nombre }}
@@ -225,12 +179,12 @@
         <!-- Leyenda -->
         <div class="vv-legend">
           <div class="vv-legend-item">
-            <div class="vv-legend-dot" style="background:#F4A940"></div>
-            <span>Completado</span>
+            <div class="vv-legend-dot" style="background:#1C2B2A"></div>
+            <span>Global</span>
           </div>
           <div class="vv-legend-item">
-            <div class="vv-legend-dot" style="background:#E04A1A"></div>
-            <span>En curso</span>
+            <div class="vv-legend-dot" style="background:#F4A940"></div>
+            <span>Desbloqueado</span>
           </div>
           <div class="vv-legend-item">
             <div class="vv-legend-dot" style="background:#e5e7eb"></div>

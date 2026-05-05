@@ -151,7 +151,10 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   cargarCategorias(): void {
     this.categoriasService.obtenerCategorias().subscribe({
       next: (data: any[]) => {
-        this.categorias = data.filter((c: any) => c.modulo === 'vocabulario');
+        this.categorias = data.filter((c: any) =>
+          c.modulo === 'vocabulario' &&
+          !c.nombre?.toLowerCase().includes('conversacion')
+        );
         this.categorias.forEach(cat => {
           this.categoriasService.obtenerPalabrasPorCategoria(cat._id).subscribe({
             next: (palabras) => { cat.palabras = palabras; },

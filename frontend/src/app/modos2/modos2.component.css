@@ -97,7 +97,7 @@
   color: var(--color-text-muted, #6b7280);
 }
 
-/* ── GRID — ocupa todo el espacio restante ────────────── */
+/* ── GRID ─────────────────────────────────────────────── */
 .modos2-grid {
   flex: 1;
   display: grid;
@@ -109,6 +109,13 @@
   width: 100%;
 }
 
+/* ── CARD WRAP — para que el tooltip no quede recortado ── */
+.modo-card-wrap {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
 /* ── CARD ─────────────────────────────────────────────── */
 .modo-card {
   background: #ffffff;
@@ -118,7 +125,8 @@
   flex-direction: column;
   position: relative;
   cursor: pointer;
-  min-height: 0; /* deja que el grid controle la altura */
+  min-height: 0;
+  flex: 1;
   transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s;
 }
 
@@ -149,8 +157,44 @@
 
 /* locked state */
 .modo-card.locked {
-  opacity: 0.55;
+  opacity: 0.6;
   pointer-events: none;
+}
+
+/* ── TOOLTIP — relativo al wrap, no al card ───────────── */
+.modo-card-wrap .lock-tooltip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1C2B2A;
+  color: #F9F6F3;
+  font-size: .75rem;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-weight: 500;
+  padding: .55rem .9rem;
+  border-radius: 8px;
+  text-align: center;
+  max-width: 220px;
+  line-height: 1.5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .2s;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  white-space: normal;
+}
+.modo-card-wrap .lock-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: #1C2B2A;
+}
+.modo-card-wrap:hover .lock-tooltip {
+  opacity: 1;
 }
 
 /* ── AVATAR STAGE ─────────────────────────────────────── */

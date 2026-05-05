@@ -37,7 +37,7 @@ export class Modos2Component implements AfterViewInit, OnInit {
       accentColor: '#4F9CF9',
       progress: 0,
       locked: false,
-      ctaLabel: 'Continuar',
+      ctaLabel: 'Explora',
       route: '/abecedario',
     },
     {
@@ -47,7 +47,7 @@ export class Modos2Component implements AfterViewInit, OnInit {
       accentColor: '#F4A940',
       progress: 0,
       locked: false,
-      ctaLabel: 'Explorar',
+      ctaLabel: 'Explora',
       route: '/aprende',
     },
     {
@@ -57,7 +57,7 @@ export class Modos2Component implements AfterViewInit, OnInit {
       accentColor: '#125603',
       progress: 0,
       locked: false,
-      ctaLabel: 'Empezar',
+      ctaLabel: 'Practica',
       route: '/practica',
     },
     {
@@ -67,7 +67,7 @@ export class Modos2Component implements AfterViewInit, OnInit {
       accentColor: '#8B00A8',
       progress: 0,
       locked: true,
-      ctaLabel: 'Empezar',
+      ctaLabel: 'Practica',
       route: '/conversamos',
     },
   ];
