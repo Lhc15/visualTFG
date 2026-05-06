@@ -1,5 +1,6 @@
 import {
-  Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef
+  Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef,
+  ViewChild, ElementRef, NgZone
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Subscription } from 'rxjs';
@@ -29,6 +30,12 @@ export class EnmOverlayComponent implements OnInit, OnDestroy {
   pos  = { x: INITIAL_X, y: INITIAL_Y };
   size = { w: INITIAL_W, h: INITIAL_H };
 
+  // Controles de vídeo
+  @ViewChild('enmVideo') videoRef?: ElementRef<HTMLVideoElement>;
+  videoPausado = false;
+  videoProgreso = 0; // 0–100
+  private rafId: number | null = null;
+
   // Drag
   private dragging = false;
   private dragStart = { mx: 0, my: 0, ox: 0, oy: 0 };
@@ -41,17 +48,20 @@ export class EnmOverlayComponent implements OnInit, OnDestroy {
 
   constructor(
     private enmService: EnmService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone
   ) {}
 
   ngOnInit(): void {
     this.sub = this.enmService.enm$.subscribe(id => {
       this.pack = id ? (getEnmPack(id) ?? null) : null;
       if (this.pack) {
-        // Resetear posición y minimizado al mostrar un nuevo pack
         this.minimizado = false;
         this.pos  = { x: INITIAL_X, y: INITIAL_Y };
         this.size = { w: INITIAL_W, h: INITIAL_H };
+        this.videoPausado = false;
+        this.videoProgreso = 0;
+        this.pararRaf();
       }
       this.cdr.detectChanges();
     });
@@ -59,6 +69,65 @@ export class EnmOverlayComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+    this.pararRaf();
+  }
+
+  // ── CONTROLES DE VÍDEO ─────────────────────────────────────────────
+
+  onVideoListo(): void {
+    this.iniciarRaf();
+  }
+
+  togglePlay(): void {
+    const v = this.videoRef?.nativeElement;
+    if (!v) return;
+    if (v.paused) {
+      v.play();
+      this.videoPausado = false;
+      this.iniciarRaf();
+    } else {
+      v.pause();
+      this.videoPausado = true;
+    }
+  }
+
+  reiniciar(): void {
+    const v = this.videoRef?.nativeElement;
+    if (!v) return;
+    v.currentTime = 0;
+    v.play();
+    this.videoPausado = false;
+    this.iniciarRaf();
+  }
+
+  onBarraClick(e: MouseEvent): void {
+    const v = this.videoRef?.nativeElement;
+    if (!v || !v.duration) return;
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    v.currentTime = ratio * v.duration;
+  }
+
+  private iniciarRaf(): void {
+    this.pararRaf();
+    this.ngZone.runOutsideAngular(() => {
+      const tick = () => {
+        const v = this.videoRef?.nativeElement;
+        if (v && v.duration) {
+          const p = (v.currentTime / v.duration) * 100;
+          this.ngZone.run(() => { this.videoProgreso = p; });
+        }
+        this.rafId = requestAnimationFrame(tick);
+      };
+      this.rafId = requestAnimationFrame(tick);
+    });
+  }
+
+  private pararRaf(): void {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
   }
 
   // ── MINIMIZAR / CERRAR ─────────────────────────────────────────────

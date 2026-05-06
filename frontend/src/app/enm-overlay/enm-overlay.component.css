@@ -160,6 +160,72 @@
   border-bottom: none;
 }
 
+/* ── CONTROLES DE VÍDEO ───────────────────────────────────────────── */
+
+.enm-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #111;
+  border-top: 1px solid rgba(255,255,255,0.06);
+  flex-shrink: 0;
+}
+
+.enm-ctrl-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  color: rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+}
+
+.enm-ctrl-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.enm-ctrl-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: #fff;
+}
+
+.enm-ctrl-play {
+  color: #E04A1A;
+}
+
+.enm-ctrl-play:hover {
+  background: rgba(224, 74, 26, 0.15);
+  color: #E04A1A;
+}
+
+.enm-progress {
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.enm-progress-fill {
+  height: 100%;
+  background: #E04A1A;
+  border-radius: 2px;
+  transition: width 0.1s linear;
+  pointer-events: none;
+}
+
+.enm-progress:hover {
+  height: 6px;
+}
+
 /* ── HANDLE RESIZE ────────────────────────────────────────────────── */
 
 .enm-resize-handle {

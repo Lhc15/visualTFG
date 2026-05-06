@@ -33,13 +33,34 @@
     <!-- VIDEO (prioridad si existe) -->
     <div class="enm-media" *ngIf="pack.video">
       <video
+        #enmVideo
         [src]="pack.video"
         autoplay
         loop
         muted
         playsinline
         class="enm-video"
+        (canplay)="onVideoListo()"
       ></video>
+    </div>
+
+    <!-- CONTROLES DE VÍDEO -->
+    <div class="enm-controls" *ngIf="pack.video">
+      <button class="enm-ctrl-btn" (click)="reiniciar()" title="Reiniciar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.36 2.64L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </button>
+      <button class="enm-ctrl-btn enm-ctrl-play" (click)="togglePlay()" [title]="videoPausado ? 'Reproducir' : 'Pausar'">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path *ngIf="!videoPausado" d="M6 4h4v16H6zm8 0h4v16h-4z"/>
+          <path *ngIf="videoPausado" d="M5 3l14 9-14 9V3z"/>
+        </svg>
+      </button>
+      <div class="enm-progress" (click)="onBarraClick($event)">
+        <div class="enm-progress-fill" [style.width.%]="videoProgreso"></div>
+      </div>
     </div>
 
     <!-- IMAGEN (si no hay vídeo) -->

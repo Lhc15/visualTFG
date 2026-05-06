@@ -225,3 +225,40 @@ El componente de ejercicio (`PracticaGramaticaEjercicioComponent`) implementa un
 Todo el estado mutable —`zonaFichas`, `opcionSeleccionada`, `enmSeleccionado`, `confirmado`, `puedeConfirmarActual`— se gestiona como propiedades concretas de la clase, no como getters derivados, y se recalcula explícitamente tras cada acción del usuario mediante el método `recalcular()`. Esto garantiza que Angular detecte los cambios y re-renderice la vista de forma predecible.
 
 El panel izquierdo aloja el avatar con `[standalone]="true"` para que no se vea afectado por el servicio global de animaciones que limpia el canvas al cambiar de ruta. El panel derecho contiene toda la interacción: las preguntas, las fichas, las opciones, el selector ENM y los botones de acción. La proporción es 58/42, idéntica a la de Practica → Vocabulario, garantizando coherencia visual entre las secciones de práctica de la aplicación.
+
+Entendido. Te genero el bloque para añadir al final:
+
+---
+
+# ENM Overlay: controles de reproducción de vídeo
+
+## Motivación
+
+El pack `pregunta-con-particula` pasó de usar una imagen estática a un vídeo `.mp4` real (`enm/pcp.mp4`). Con el vídeo en autoplay y loop, el usuario no tenía ningún control sobre la reproducción, lo que resulta problemático si quiere pausar para observar un gesto con calma o volver al inicio para comparar.
+
+## Cambios implementados
+
+### `enm-packs.data.ts`
+Se añadió el campo `video: 'enm/pcp.mp4'` al pack `pregunta-con-particula`. El campo `video` ya tenía prioridad sobre `imagen` por diseño previo del sistema, así que no requirió ningún cambio de arquitectura.
+
+### `enm-overlay.component.ts`
+- Se añaden `ViewChild`, `ElementRef` y `NgZone` a los imports.
+- Nuevas propiedades: `videoRef` (referencia al elemento `<video>`), `videoPausado` (booleano que controla el icono play/pausa) y `videoProgreso` (número 0–100 que alimenta la barra).
+- Se inyecta `NgZone` para ejecutar el bucle de `requestAnimationFrame` fuera de la zona de Angular y solo entrar en zona para actualizar `videoProgreso`, evitando detecciones de cambio innecesarias en cada frame.
+- Métodos nuevos: `onVideoListo()` (arranca el RAF al evento `canplay`), `togglePlay()`, `reiniciar()` (vuelve a `currentTime = 0` y retoma la reproducción), `onBarraClick()` (calcula el ratio de clic sobre la barra y salta al instante correspondiente).
+- `pararRaf()` se llama tanto en `ngOnDestroy` como al cambiar de pack, evitando fugas de memoria.
+
+### `enm-overlay.component.html`
+- Se añade `#enmVideo` y el evento `(canplay)="onVideoListo()"` al elemento `<video>`.
+- Se añade el bloque `.enm-controls` bajo `.enm-media`, visible únicamente cuando `pack.video` existe. Contiene el botón reiniciar, el botón play/pausa (con icono condicional según `videoPausado`) y la barra de progreso clicable.
+
+### `enm-overlay.component.css`
+- `.enm-controls`: franja de 6px de gap con fondo `#111` y borde superior sutil, igual que la cabecera.
+- `.enm-ctrl-play`: color naranja `#E04A1A`, coherente con la identidad de marca.
+- `.enm-progress`: barra de 4px de alto que se engrosa a 6px en hover para indicar interactividad. El relleno usa transición de 0.1s para suavizar el avance frame a frame.
+
+## Notas
+
+- Los controles solo se renderizan cuando el pack tiene vídeo (`*ngIf="pack.video"`), así que los packs con imagen estática no se ven afectados.
+- El vídeo sigue siendo `muted` y `loop`; los controles añaden agencia al usuario sin cambiar el comportamiento base.
+- El asset `pcp.mp4` debe copiarse manualmente a `frontend/public/enm/pcp.mp4` antes del despliegue.
