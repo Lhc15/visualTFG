@@ -12,6 +12,7 @@ export const ENM_PACKS: EnmPack[] = [
     label: 'Pregunta con partícula',
     descripcion: 'Cejas fruncidas + inclinación de cabeza hacia delante.',
     imagen: 'assets/pregunta-sin-particula-mujer.png',
+    video: 'assets/enm/pcp.mp4',
   },
   {
     id: 'negacion',
