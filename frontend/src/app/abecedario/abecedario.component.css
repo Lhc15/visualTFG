@@ -999,3 +999,11 @@
   margin-left: auto;
 }
 .vv-switch-mode:hover { text-decoration: underline; }
+.vv-deletrea-desc {
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-size: 0.9rem;
+  color: #4a5e5c;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  max-width: 38ch;
+}
