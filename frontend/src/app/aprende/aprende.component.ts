@@ -61,6 +61,11 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
   esAdmin = false;
   comunicacionDesbloqueada = false;
 
+  // ── Chip de desbloqueo ──
+  chipVisible = false;
+  chipTexto = '';
+  private chipTimer: any = null;
+
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
@@ -99,6 +104,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): void {
     document.removeEventListener('click', this.handleClickOutside.bind(this));
+    if (this.chipTimer) clearTimeout(this.chipTimer);
   }
 
   ngAfterViewInit(): void {
@@ -134,13 +140,25 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   irAModos(): void { this.router.navigate(['/modos']); }
 
-  volverASelector(): void {    this.vista = 'selector';
+  volverASelector(): void {
+    this.vista = 'selector';
     this.selectedCategory = null;
     this.palabrasDeCategoriaSeleccionada = [];
     this.selectedWord = null;
     this.hasClickedWord = false;
     this.isPlaying = false;
     this.isLooping = false;
+    // Comprobar si hay un unlock de Comunicación pendiente de mostrar
+    if (this.userId) {
+      const pendiente = localStorage.getItem(`vv_unlock_comunicacion_${this.userId}`);
+      if (pendiente) {
+        localStorage.removeItem(`vv_unlock_comunicacion_${this.userId}`);
+        setTimeout(() => {
+          this.lanzarConfeti();
+          this.mostrarChip('🔓 Comunicación desbloqueada');
+        }, 300);
+      }
+    }
   }
 
   volverAModos(): void {
@@ -244,6 +262,7 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     const catId = this.selectedCategory._id;
     if (this.categoriasCompletadas.has(catId)) return;
     if (this.categoriaActualCompletada) {
+      const eraVocabCompleto = this.comunicacionDesbloqueada;
       this.categoriasCompletadas.add(catId);
       if (this.userId) {
         localStorage.setItem(
@@ -252,7 +271,28 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
         );
       }
       this.lanzarConfeti();
+      // Recalcular estado de desbloqueo global
+      if (!this.esAdmin) {
+        this.desbloqueoService.obtenerEstado().subscribe({
+          next: (estado) => {
+            const recienDesbloqueado = !eraVocabCompleto && estado.vocabularioCompleto;
+            this.comunicacionDesbloqueada = estado.vocabularioCompleto;
+            if (recienDesbloqueado) {
+              this.mostrarChip('🔓 Comunicación desbloqueada');
+              // Guardar en localStorage para que el chip salga también al volver al selector
+              localStorage.setItem(`vv_unlock_comunicacion_${this.userId}`, '1');
+            }
+          }
+        });
+      }
     }
+  }
+
+  private mostrarChip(texto: string): void {
+    if (this.chipTimer) clearTimeout(this.chipTimer);
+    this.chipTexto = texto;
+    this.chipVisible = true;
+    this.chipTimer = setTimeout(() => { this.chipVisible = false; }, 4500);
   }
 
   private lanzarConfeti(): void {

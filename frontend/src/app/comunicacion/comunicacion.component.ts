@@ -491,6 +491,11 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
   esAdmin = false;
   bloquesCompletados = new Set<string>();
 
+  // ── Chip de desbloqueo ──
+  chipVisible = false;
+  chipTexto = '';
+  private chipTimer: any = null;
+
   constructor(private router: Router, private cdr: ChangeDetectorRef,
               private statsService: StatsService,
               private usuariosService: UsuariosService,
@@ -502,6 +507,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
   }
   ngOnDestroy(): void {
     this.enmService.hide();
+    if (this.chipTimer) clearTimeout(this.chipTimer);
   }
   ngAfterViewInit(): void { this.waitForSkinAndResize(); }
 
@@ -513,6 +519,23 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           this.statsService.getProgresoComunicacion().subscribe({
             next: (completados) => {
               this.bloquesCompletados = new Set(completados.map(c => c.bloqueId));
+              // Calcular cuántos bloques están desbloqueados ahora y mostrar chip si hay nuevos
+              const desbloqueadosAhora = this.bloques.filter(b => this.estaDesbloqueado(b.id));
+              const keyVisto = `vv_comun_desbloqueados_vistos_${resp.usuario.uid}`;
+              const vistosRaw = localStorage.getItem(keyVisto);
+              const vistos: string[] = vistosRaw ? JSON.parse(vistosRaw) : [];
+              const nuevos = desbloqueadosAhora.filter(b => !vistos.includes(b.id));
+              if (nuevos.length > 0) {
+                // Guardar el estado actual como visto
+                localStorage.setItem(keyVisto, JSON.stringify(desbloqueadosAhora.map(b => b.id)));
+                setTimeout(() => {
+                  const nombre = nuevos.length === 1
+                    ? `🔓 ${nuevos[0].titulo} desbloqueado`
+                    : `🔓 ${nuevos.length} bloques nuevos desbloqueados`;
+                  this.mostrarChip(nombre);
+                  this.lanzarConfeti();
+                }, 500);
+              }
             },
             error: (e) => console.error('Error cargando progreso comunicación:', e)
           });
@@ -520,6 +543,26 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
       },
       error: (e) => console.error('Error cargando usuario:', e)
     });
+  }
+
+  mostrarChip(texto: string): void {
+    if (this.chipTimer) clearTimeout(this.chipTimer);
+    this.chipTexto = texto;
+    this.chipVisible = true;
+    this.chipTimer = setTimeout(() => { this.chipVisible = false; }, 4500);
+  }
+
+  private lanzarConfeti(): void {
+    if (typeof (window as any).confetti === 'undefined') return;
+    const confetti = (window as any).confetti;
+    const colores = ['#E04A1A', '#F4A940', '#1C0E0A', '#F9F6F3', '#F0997B'];
+    const base = { spread: 70, colors: colores, gravity: 1.1, scalar: 1.1, ticks: 350 };
+    confetti({ ...base, particleCount: 100, angle: 60,  startVelocity: 55, origin: { x: 0, y: 0.65 } });
+    confetti({ ...base, particleCount: 100, angle: 120, startVelocity: 55, origin: { x: 1, y: 0.65 } });
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 60, angle: 70, startVelocity: 45, origin: { x: 0, y: 0.7 } });
+      confetti({ ...base, particleCount: 60, angle: 110, startVelocity: 45, origin: { x: 1, y: 0.7 } });
+    }, 500);
   }
 
   // Devuelve true si el bloque/subBloque está desbloqueado para el usuario actual
@@ -608,6 +651,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
 
   // ── Navegación ───────────────────────────────────────────
   abrirBloque(bloque: Bloque): void {
+    if (!this.estaDesbloqueado(bloque.id)) return;
     this.bloqueActivo = bloque;
     this.subBloqueActivo = null;
     this.diapositivaIdx = 0;

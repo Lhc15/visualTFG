@@ -27,8 +27,6 @@ export const ENM_OPCIONES: { id: EnmOpcion; label: string }[] = [
   { id: 'ninguna',                label: 'Ninguna' },
   { id: 'pregunta-sin-particula', label: 'Pregunta sin partícula' },
   { id: 'pregunta-con-particula', label: 'Pregunta con partícula' },
-  { id: 'negacion',               label: 'Negación' },
-  { id: 'afirmacion',             label: 'Afirmación' },
 ];
 
 @Component({

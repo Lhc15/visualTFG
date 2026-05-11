@@ -14,16 +14,6 @@ export const ENM_PACKS: EnmPack[] = [
     imagen: 'assets/pregunta-sin-particula-mujer.png',
     video: 'assets/enm/pcp.mp4',
   },
-  {
-    id: 'negacion',
-    label: 'Negación',
-    descripcion: 'Cabeza moviéndose de lado a lado + expresión de rechazo.',
-  },
-  {
-    id: 'afirmacion',
-    label: 'Afirmación',
-    descripcion: 'Cabeza asintiendo + expresión neutra o positiva.',
-  },
 ];
 
 export function getEnmPack(id: string): EnmPack | undefined {

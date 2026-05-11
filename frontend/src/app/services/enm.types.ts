@@ -1,8 +1,6 @@
 export type EnmPackId =
   | 'pregunta-sin-particula'
-  | 'pregunta-con-particula'
-  | 'negacion'
-  | 'afirmacion';
+  | 'pregunta-con-particula';
 
 export interface EnmPack {
   id: EnmPackId;

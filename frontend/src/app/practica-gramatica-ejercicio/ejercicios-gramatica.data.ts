@@ -635,7 +635,7 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         ],
         distractores: [{ texto: 'VIVIR', rol: 'V' }],
         ordenCorrecto: ['NOSOTROS', 'CASA', 'COMPRAR', 'NO'],
-        conEnm: true, enmCorrecto: 'negacion', enmAbreAvatar: null,
+        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -654,7 +654,7 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         fichas: [{ texto: 'YO', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }, { texto: 'NO', rol: 'NEG' }],
         distractores: [{ texto: 'COMER', rol: 'V' }],
         ordenCorrecto: ['YO', 'DORMIR', 'NO'],
-        conEnm: true, enmCorrecto: 'negacion', enmAbreAvatar: null,
+        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',
@@ -678,7 +678,7 @@ export const EJERCICIOS_GRAMATICA: BloqueEjercicios[] = [
         ],
         distractores: [{ texto: 'COMER', rol: 'V' }],
         ordenCorrecto: ['TU', 'PUERTA', 'COMPRAR', 'NO'],
-        conEnm: true, enmCorrecto: 'negacion', enmAbreAvatar: null,
+        conEnm: false, enmCorrecto: null, enmAbreAvatar: null,
       },
       {
         tipo: 'opciones',

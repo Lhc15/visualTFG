@@ -72,6 +72,7 @@
           <span class="vv-pnav-cur">Comunicación</span>
         </ng-container>
       </div>
+
       <div class="vv-action-scroll">
 
         <!-- ── ÍNDICE PRINCIPAL ── -->
@@ -80,17 +81,23 @@
             <div class="com-eyebrow">Comunicación · LSE</div>
             <div class="com-title">Elige un <em>bloque</em></div>
             <div class="com-list">
-              <div class="com-item" *ngFor="let bloque of bloques" (click)="abrirBloque(bloque)">
+              <div class="com-item"
+                   *ngFor="let bloque of bloques"
+                   [class.com-item--locked]="!estaDesbloqueado(bloque.id)"
+                   (click)="abrirBloque(bloque)">
                 <div class="com-item-num">{{ bloque.numero }}</div>
                 <div class="com-item-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#E04A1A" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+                  <!-- Bloqueado: candado -->
+                  <svg *ngIf="!estaDesbloqueado(bloque.id)" viewBox="0 0 24 24" fill="none" stroke="#aaa" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                  <!-- Desbloqueado: avatar -->
+                  <svg *ngIf="estaDesbloqueado(bloque.id)" viewBox="0 0 24 24" fill="none" stroke="#E04A1A" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
                 </div>
                 <div class="com-item-body">
                   <div class="com-item-name">{{ bloque.titulo }}</div>
                   <div class="com-item-sub">{{ bloque.subtitulo }}</div>
                 </div>
                 <div class="com-item-arrow">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+                  <svg *ngIf="estaDesbloqueado(bloque.id)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
                 </div>
               </div>
             </div>
@@ -246,6 +253,12 @@
           </div>
         </ng-container>
 
+      </div>
+
+      <!-- Chip de desbloqueo — flotante sobre el contenido -->
+      <div class="vv-unlock-chip" [class.vv-unlock-chip--visible]="chipVisible">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="15" height="15"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 6.93-4.65"/></svg>
+        {{ chipTexto }}
       </div>
     </div>
   </div>

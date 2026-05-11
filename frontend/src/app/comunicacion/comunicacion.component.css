@@ -51,7 +51,7 @@
 .com-caption-sub { font-size: .82rem; color: #9ca3af; margin-top: 3px; font-family: var(--font-body, 'DM Sans', sans-serif); }
 
 /* ACTION PANEL */
-.vv-action-panel { background: #ffffff; display: flex; flex-direction: column; border-left: 1px solid rgba(0,0,0,.07); min-height: 0; overflow: hidden; }
+.vv-action-panel { background: #ffffff; display: flex; flex-direction: column; border-left: 1px solid rgba(0,0,0,.07); min-height: 0; overflow: hidden; position: relative; }
 .vv-action-scroll { flex: 1; overflow-y: auto; min-height: 0; display: flex; flex-direction: column; }
 
 /* ÍNDICE + SUBÍNDICE */
@@ -72,6 +72,10 @@
 .com-item-name { font-size: 1rem; font-weight: 500; color: #1C0E0A; margin-bottom: 2px; font-family: var(--font-body, 'DM Sans', sans-serif); }
 .com-item-sub { font-size: .82rem; color: #9ca3af; font-family: var(--font-body, 'DM Sans', sans-serif); }
 .com-item-arrow { color: #d1d5db; }
+.com-item--locked { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+.com-item--locked .com-item-num { color: #aaa; }
+.com-item--locked .com-item-icon { background: #f0f0f0; }
+.com-item--locked .com-item-name { color: #888; }
 .com-item-arrow svg { width: 14px; height: 14px; }
 
 /* CONTENIDO BLOQUE — versión espaciada */
@@ -294,3 +298,31 @@
 }
 .com-portada--leccion .com-portada-btn:hover { background: #E04A1A; color: #fff; transform: translateY(-1px); }
 .com-portada-btn svg { width: 14px; height: 14px; }
+/* ── Chip de desbloqueo ── */
+.vv-unlock-chip {
+  position: absolute;
+  top: 52px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: #1C0E0A;
+  color: #F9F6F3;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(28,14,10,0.22);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.vv-unlock-chip--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
