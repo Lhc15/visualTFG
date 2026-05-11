@@ -1,5 +1,5 @@
 import {
-  Component, OnInit, OnDestroy, AfterViewInit, AfterViewChecked,
+  Component, OnInit, OnDestroy, AfterViewInit,
   ViewChild, ElementRef, ChangeDetectorRef
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -36,12 +36,11 @@ export const ENM_OPCIONES: { id: EnmOpcion; label: string }[] = [
   templateUrl: './practica-gramatica-ejercicio.component.html',
   styleUrls: ['./practica-gramatica-ejercicio.component.css'],
 })
-export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @ViewChild('mainCanvas', { static: false }) mainCanvasRef?: CanvasComponent;
   @ViewChild('avatarPanel', { static: false }) avatarPanel?: ElementRef<HTMLElement>;
 
-  private canvasResized = false;
 
   bloqueId = '';
   bloque: BloqueEjercicios | null = null;
@@ -129,15 +128,17 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
     };
   }
 
-  ngAfterViewChecked(): void {
-    if (!this.canvasResized && this.mainCanvasRef && this.avatarPanel) {
+  ngAfterViewInit(): void { this.waitForSkinAndResize(); }
+
+  private waitForSkinAndResize(attempts = 0): void {
+    if (attempts > 50) return;
+    if (!this.mainCanvasRef?.skinReady) {
+      setTimeout(() => this.waitForSkinAndResize(attempts + 1), 100);
+      return;
+    }
+    if (this.avatarPanel) {
       const { clientWidth: w, clientHeight: h } = this.avatarPanel.nativeElement;
-      if (w > 0 && h > 0) {
-        try {
-          this.mainCanvasRef.resizeToContainer(w, h);
-        } catch (_) { /* canvas aún no inicializado */ }
-        this.canvasResized = true;
-      }
+      if (w > 0 && h > 0) this.mainCanvasRef!.resizeToContainer(w, h);
     }
   }
 
@@ -310,7 +311,6 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
   // ── Siguiente / Finalizar ─────────────────────────────────
   siguiente(): void {
     this.enmService.hide();
-    this.canvasResized = false;
     if (this.preguntaIdx + 1 >= this.totalPreguntas) {
       this.finalizado = true;
       this.enmService.hide();
@@ -330,7 +330,6 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
     this.preguntaIdx = 0;
     this.correctas = 0;
     this.finalizado = false;
-    this.canvasResized = false;
     this.ejerciciosBarajados = [...(this.bloque?.ejercicios ?? [])].sort(() => Math.random() - 0.5);
     this.prepararEjercicio();
   }

@@ -42,6 +42,11 @@ export class PracticaVocabularioComponent implements OnInit {
   private categoriasCompletadas = new Set<string>();
   private userId = '';
 
+  // ── Chip de desbloqueo ──
+  chipVisible = false;
+  chipTexto = '';
+  private chipTimer: any = null;
+
   constructor(
     private router: Router,
     private categoriasService: CategoriasService,
@@ -58,9 +63,48 @@ export class PracticaVocabularioComponent implements OnInit {
         const guardadas = localStorage.getItem(`vv_cats_completadas_${this.userId}`);
         if (guardadas) this.categoriasCompletadas = new Set(JSON.parse(guardadas));
         this.cargarCategorias();
+        // Mostrar chips pendientes al entrar al mapa
+        setTimeout(() => this.consumirChipsPendientes(), 700);
       },
       error: () => { this.cargarCategorias(); }
     });
+  }
+
+  private consumirChipsPendientes(): void {
+    const key = `vv_vocab_chips_pendientes_${this.userId}`;
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    const pendientes: string[] = JSON.parse(raw);
+    if (!pendientes.length) return;
+    localStorage.removeItem(key);
+    this.lanzarConfeti();
+    this.mostrarChipsEnCola(pendientes);
+  }
+
+  private mostrarChipsEnCola(textos: string[], idx = 0): void {
+    if (idx >= textos.length) return;
+    this.mostrarChip(textos[idx]);
+    setTimeout(() => this.mostrarChipsEnCola(textos, idx + 1), 5000);
+  }
+
+  private mostrarChip(texto: string): void {
+    if (this.chipTimer) clearTimeout(this.chipTimer);
+    this.chipTexto = texto;
+    this.chipVisible = true;
+    this.chipTimer = setTimeout(() => { this.chipVisible = false; }, 4500);
+  }
+
+  private lanzarConfeti(): void {
+    if (typeof (window as any).confetti === 'undefined') return;
+    const confetti = (window as any).confetti;
+    const colores = ['#E04A1A', '#F4A940', '#1C0E0A', '#F9F6F3', '#F0997B'];
+    const base = { spread: 70, colors: colores, gravity: 1.1, scalar: 1.1, ticks: 350 };
+    confetti({ ...base, particleCount: 100, angle: 60, startVelocity: 55, origin: { x: 0, y: 0.65 } });
+    confetti({ ...base, particleCount: 100, angle: 120, startVelocity: 55, origin: { x: 1, y: 0.65 } });
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 60, angle: 70, startVelocity: 45, origin: { x: 0, y: 0.7 } });
+      confetti({ ...base, particleCount: 60, angle: 110, startVelocity: 45, origin: { x: 1, y: 0.7 } });
+    }, 500);
   }
 
   private cargarCategorias(): void {
@@ -69,7 +113,7 @@ export class PracticaVocabularioComponent implements OnInit {
       this.progresoVocabService.obtenerProgreso('vocabulario').toPromise().then(v => v ?? []).catch(() => [] as string[]),
       this.categoriasService.obtenerCategorias().toPromise().then(c => c ?? []).catch(() => [])
     ]).then(([vistas, cats]) => {
-      const vocab = (cats as any[]).filter((c: any) => c.modulo === 'vocabulario');
+      const vocab = (cats as any[]).filter((c: any) => c.modulo === 'vocabulario' && !c.nombre?.toLowerCase().includes('conversacion'));
       const palabrasVistas = new Set<string>(vistas as string[]);
 
       if (vocab.length === 0) { this.cargando = false; return; }

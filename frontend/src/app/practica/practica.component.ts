@@ -24,16 +24,12 @@ export class PracticaComponent implements AfterViewInit, OnInit {
   @ViewChild('canvasWrap') canvasWrap!: ElementRef<HTMLElement>;
 
   secciones: SeccionPractica[] = [
-    { id: 'abecedario',  nombre: 'Abecedario',  subtitulo: '27 letras · LSE básico',  deco: 'A', progreso: 68, novedad: 'Desbloqueada la letra Ñ — completa el abecedario' },
+    { id: 'abecedario',  nombre: 'Abecedario',  subtitulo: '27 letras · LSE básico',  deco: 'A', progreso: 68 },
     { id: 'vocabulario', nombre: 'Vocabulario', subtitulo: 'Categorías temáticas',     deco: 'V', progreso: 30 },
     { id: 'gramatica',   nombre: 'Gramática',   subtitulo: 'SOV · Preguntas · ENM',   deco: 'G', progreso: 10, locked: true }
   ];
 
-  novedades = [
-    { texto: 'Desbloqueada',    negrita: 'Familia' },
-    { texto: 'Nueva categoría', negrita: 'Comida'  },
-    { texto: 'Racha de',        negrita: '5 días'  }
-  ];
+  novedades: any[] = [];
 
   activoId: string | null = null;
   statsExpandido = false;

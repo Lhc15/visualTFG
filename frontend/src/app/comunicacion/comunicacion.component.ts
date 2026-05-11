@@ -604,17 +604,34 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
 
   private registrarChipPendienteSiProcede(bloqueIdCompletado: string): void {
     if (!this._uid) return;
-    // El bloque siguiente al recién completado acaba de desbloquearse
+    // El bloque completado acaba de desbloquear su nodo de práctica (mismo id)
+    const bloqueCompletado = this.bloques.find(b => b.id === bloqueIdCompletado);
+    // El bloque siguiente al recién completado se desbloquea en teoría
     const idxCompletado = this.bloques.findIndex(b => b.id === bloqueIdCompletado);
     const siguienteBloque = this.bloques[idxCompletado + 1];
-    if (!siguienteBloque) return; // Era el último bloque
-    const keyPendientes = `vv_comun_chips_pendientes_${this._uid}`;
-    const raw = localStorage.getItem(keyPendientes);
-    const pendientes: string[] = raw ? JSON.parse(raw) : [];
-    const texto = `🔓 ${siguienteBloque.titulo} desbloqueado`;
-    if (!pendientes.includes(texto)) {
-      pendientes.push(texto);
-      localStorage.setItem(keyPendientes, JSON.stringify(pendientes));
+
+    // Chip para el índice de Comunicación (siguiente bloque teórico)
+    if (siguienteBloque) {
+      const keyComun = `vv_comun_chips_pendientes_${this._uid}`;
+      const rawComun = localStorage.getItem(keyComun);
+      const pendientesComun: string[] = rawComun ? JSON.parse(rawComun) : [];
+      const textoComun = `🔓 ${siguienteBloque.titulo} desbloqueado`;
+      if (!pendientesComun.includes(textoComun)) {
+        pendientesComun.push(textoComun);
+        localStorage.setItem(keyComun, JSON.stringify(pendientesComun));
+      }
+    }
+
+    // Chip para practica-gramatica (el bloque que acaba de completarse desbloquea su nodo de práctica)
+    if (bloqueCompletado) {
+      const keyGram = `vv_gram_chips_pendientes_${this._uid}`;
+      const rawGram = localStorage.getItem(keyGram);
+      const pendientesGram: string[] = rawGram ? JSON.parse(rawGram) : [];
+      const textoGram = `🔓 Ejercicios de ${bloqueCompletado.titulo} desbloqueados`;
+      if (!pendientesGram.includes(textoGram)) {
+        pendientesGram.push(textoGram);
+        localStorage.setItem(keyGram, JSON.stringify(pendientesGram));
+      }
     }
   }
 

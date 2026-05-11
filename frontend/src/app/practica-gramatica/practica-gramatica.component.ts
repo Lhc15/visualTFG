@@ -183,6 +183,11 @@ export class PracticaGramaticaComponent implements OnInit {
   readonly shifts = ['shift-r','shift-l','shift-r','shift-l','shift-r',
                      'shift-r','shift-l','shift-r','shift-l','shift-r','shift-l'];
 
+  // ── Chip de desbloqueo ──
+  chipVisible = false;
+  chipTexto = '';
+  private chipTimer: any = null;
+
   constructor(
     private router: Router,
     private usuariosService: UsuariosService,
@@ -193,6 +198,7 @@ export class PracticaGramaticaComponent implements OnInit {
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: (resp) => {
         this.esAdmin = resp.usuario?.rol === 'ROL_ADMIN';
+        const uid = resp.usuario.uid;
         if (this.esAdmin) {
           const todos = new Set(BLOQUES_GRAMATICA.map(b => b.id));
           this.construirBloques(todos, todos);
@@ -204,10 +210,48 @@ export class PracticaGramaticaComponent implements OnInit {
             },
             error: () => this.construirBloques(new Set(), new Set())
           });
+          setTimeout(() => this.consumirChipsPendientes(uid), 700);
         }
       },
       error: () => this.construirBloques(new Set(), new Set())
     });
+  }
+
+  private consumirChipsPendientes(uid: string): void {
+    const key = `vv_gram_chips_pendientes_${uid}`;
+    const raw = localStorage.getItem(key);
+    if (!raw) return;
+    const pendientes: string[] = JSON.parse(raw);
+    if (!pendientes.length) return;
+    localStorage.removeItem(key);
+    this.lanzarConfeti();
+    this.mostrarChipsEnCola(pendientes);
+  }
+
+  private mostrarChipsEnCola(textos: string[], idx = 0): void {
+    if (idx >= textos.length) return;
+    this.mostrarChip(textos[idx]);
+    setTimeout(() => this.mostrarChipsEnCola(textos, idx + 1), 5000);
+  }
+
+  private mostrarChip(texto: string): void {
+    if (this.chipTimer) clearTimeout(this.chipTimer);
+    this.chipTexto = texto;
+    this.chipVisible = true;
+    this.chipTimer = setTimeout(() => { this.chipVisible = false; }, 4500);
+  }
+
+  private lanzarConfeti(): void {
+    if (typeof (window as any).confetti === 'undefined') return;
+    const confetti = (window as any).confetti;
+    const colores = ['#E04A1A', '#F4A940', '#1C0E0A', '#F9F6F3', '#F0997B'];
+    const base = { spread: 70, colors: colores, gravity: 1.1, scalar: 1.1, ticks: 350 };
+    confetti({ ...base, particleCount: 100, angle: 60, startVelocity: 55, origin: { x: 0, y: 0.65 } });
+    confetti({ ...base, particleCount: 100, angle: 120, startVelocity: 55, origin: { x: 1, y: 0.65 } });
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 60, angle: 70, startVelocity: 45, origin: { x: 0, y: 0.7 } });
+      confetti({ ...base, particleCount: 60, angle: 110, startVelocity: 45, origin: { x: 1, y: 0.7 } });
+    }, 500);
   }
 
   private construirBloques(completadosComunicacion: Set<string>, completadosPractica: Set<string>): void {

@@ -269,6 +269,19 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
           `vv_cats_completadas_${this.userId}`,
           JSON.stringify([...this.categoriasCompletadas])
         );
+        // Escribir chip pendiente para practica-vocabulario: la siguiente categoría se desbloquea
+        const idxActual = this.categorias.findIndex(c => c._id === catId);
+        const siguiente = this.categorias[idxActual + 1];
+        if (siguiente) {
+          const keyVocab = `vv_vocab_chips_pendientes_${this.userId}`;
+          const raw = localStorage.getItem(keyVocab);
+          const pendientes: string[] = raw ? JSON.parse(raw) : [];
+          const texto = `🔓 Ejercicios de ${siguiente.nombre} desbloqueados`;
+          if (!pendientes.includes(texto)) {
+            pendientes.push(texto);
+            localStorage.setItem(keyVocab, JSON.stringify(pendientes));
+          }
+        }
       }
       this.lanzarConfeti();
       // Recalcular estado de desbloqueo global
@@ -279,7 +292,6 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
             this.comunicacionDesbloqueada = estado.vocabularioCompleto;
             if (recienDesbloqueado) {
               this.mostrarChip('🔓 Comunicación desbloqueada');
-              // Guardar en localStorage para que el chip salga también al volver al selector
               localStorage.setItem(`vv_unlock_comunicacion_${this.userId}`, '1');
             }
           }

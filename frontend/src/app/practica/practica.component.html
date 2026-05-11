@@ -65,7 +65,6 @@
           (mouseenter)="activar(s.id)"
           (mouseleave)="desactivar()">
           <!-- Punto de notificacion sobresaliente — fuera del item para no ser recortado -->
-          <div class="prac-ac-notif-dot" *ngIf="s.novedad && !s.locked"></div>
           <div class="prac-ac-item" (click)="irA(s)">
             <div class="prac-ac-deco">{{ s.locked ? '🔒' : s.deco }}</div>
             <div class="prac-ac-expanded">
@@ -74,10 +73,6 @@
               <div class="prac-ac-bar-wrap" *ngIf="!s.locked">
                 <div class="prac-ac-bar"><div class="prac-ac-bar-fill" [style.width.%]="s.progreso"></div></div>
                 <div class="prac-ac-bar-label">{{ s.progreso }}% completado</div>
-              </div>
-              <div class="prac-ac-novedad" *ngIf="s.novedad && !s.locked">
-                <div class="prac-ac-novedad-dot"></div>
-                {{ s.novedad }}
               </div>
               <div class="prac-ac-cta" *ngIf="!s.locked">
                 Ir a practicar
