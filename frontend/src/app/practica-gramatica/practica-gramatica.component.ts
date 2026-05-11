@@ -194,24 +194,28 @@ export class PracticaGramaticaComponent implements OnInit {
       next: (resp) => {
         this.esAdmin = resp.usuario?.rol === 'ROL_ADMIN';
         if (this.esAdmin) {
-          this.construirBloques(new Set(BLOQUES_GRAMATICA.map(b => b.id)));
+          const todos = new Set(BLOQUES_GRAMATICA.map(b => b.id));
+          this.construirBloques(todos, todos);
         } else {
           this.statsService.getProgresoComunicacion().subscribe({
             next: (completados) => {
-              this.construirBloques(new Set(completados.map(c => c.bloqueId)));
+              const set = new Set(completados.map(c => c.bloqueId));
+              this.construirBloques(set, set);
             },
-            error: () => this.construirBloques(new Set())
+            error: () => this.construirBloques(new Set(), new Set())
           });
         }
       },
-      error: () => this.construirBloques(new Set())
+      error: () => this.construirBloques(new Set(), new Set())
     });
   }
 
-  private construirBloques(completados: Set<string>): void {
+  private construirBloques(completadosComunicacion: Set<string>, completadosPractica: Set<string>): void {
     this.bloques = BLOQUES_GRAMATICA.map((b, idx) => {
-      const desbloqueado = this.esAdmin || idx === 0 || completados.has(BLOQUES_GRAMATICA[idx - 1].id);
-      const estaCompletado = completados.has(b.id);
+      // El nodo de práctica N se desbloquea cuando el bloque teórico N de Comunicación está completado
+      // (el primero —ENM— siempre desbloqueado si Comunicación está desbloqueada para el usuario)
+      const desbloqueado = this.esAdmin || completadosComunicacion.has(b.id);
+      const estaCompletado = completadosPractica.has(b.id);
       const estado: 'completado' | 'activo' | 'bloqueado' =
         !desbloqueado ? 'bloqueado' :
         estaCompletado ? 'completado' : 'activo';

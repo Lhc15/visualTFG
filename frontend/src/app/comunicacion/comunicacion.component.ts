@@ -490,6 +490,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
   // ── Progreso y rol ──
   esAdmin = false;
   bloquesCompletados = new Set<string>();
+  private _uid = '';
 
   // ── Chip de desbloqueo ──
   chipVisible = false;
@@ -515,27 +516,13 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: (resp) => {
         this.esAdmin = resp.usuario?.rol === 'ROL_ADMIN';
+        this._uid = resp.usuario.uid;
         if (!this.esAdmin) {
           this.statsService.getProgresoComunicacion().subscribe({
             next: (completados) => {
               this.bloquesCompletados = new Set(completados.map(c => c.bloqueId));
-              // Calcular cuántos bloques están desbloqueados ahora y mostrar chip si hay nuevos
-              const desbloqueadosAhora = this.bloques.filter(b => this.estaDesbloqueado(b.id));
-              const keyVisto = `vv_comun_desbloqueados_vistos_${resp.usuario.uid}`;
-              const vistosRaw = localStorage.getItem(keyVisto);
-              const vistos: string[] = vistosRaw ? JSON.parse(vistosRaw) : [];
-              const nuevos = desbloqueadosAhora.filter(b => !vistos.includes(b.id));
-              if (nuevos.length > 0) {
-                // Guardar el estado actual como visto
-                localStorage.setItem(keyVisto, JSON.stringify(desbloqueadosAhora.map(b => b.id)));
-                setTimeout(() => {
-                  const nombre = nuevos.length === 1
-                    ? `🔓 ${nuevos[0].titulo} desbloqueado`
-                    : `🔓 ${nuevos.length} bloques nuevos desbloqueados`;
-                  this.mostrarChip(nombre);
-                  this.lanzarConfeti();
-                }, 500);
-              }
+              // Mostrar chips pendientes si el usuario llega al índice (incluye refresco y reapertura)
+              setTimeout(() => this.alVerIndice(), 600);
             },
             error: (e) => console.error('Error cargando progreso comunicación:', e)
           });
@@ -543,6 +530,27 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
       },
       error: (e) => console.error('Error cargando usuario:', e)
     });
+  }
+
+  // Llamado desde el HTML cuando la vista cambia a 'indice'
+  alVerIndice(): void {
+    if (this.vista !== 'indice') return;
+    if (this.esAdmin || !this._uid) return;
+    const keyPendientes = `vv_comun_chips_pendientes_${this._uid}`;
+    const raw = localStorage.getItem(keyPendientes);
+    if (!raw) return;
+    const pendientes: string[] = JSON.parse(raw);
+    if (!pendientes.length) return;
+    localStorage.removeItem(keyPendientes);
+    this.lanzarConfeti();
+    this.mostrarChipsEnCola(pendientes);
+  }
+
+  private mostrarChipsEnCola(textos: string[], idx = 0): void {
+    if (idx >= textos.length) return;
+    this.mostrarChip(textos[idx]);
+    // Cada chip dura 4.5s; encadenamos el siguiente tras 5s
+    setTimeout(() => this.mostrarChipsEnCola(textos, idx + 1), 5000);
   }
 
   mostrarChip(texto: string): void {
@@ -582,15 +590,32 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.statsService.completarBloqueComun(bloqueIdCompletado).subscribe({
       next: () => {
         this.bloquesCompletados.add(bloqueIdCompletado);
+        this.registrarChipPendienteSiProcede(bloqueIdCompletado);
         accionDespues();
       },
       error: (e) => {
-        // Si falla el guardado (p.ej. ya estaba guardado), continuamos igualmente
         console.warn('completarBloqueComun error (puede ser duplicado):', e);
         this.bloquesCompletados.add(bloqueIdCompletado);
+        this.registrarChipPendienteSiProcede(bloqueIdCompletado);
         accionDespues();
       }
     });
+  }
+
+  private registrarChipPendienteSiProcede(bloqueIdCompletado: string): void {
+    if (!this._uid) return;
+    // El bloque siguiente al recién completado acaba de desbloquearse
+    const idxCompletado = this.bloques.findIndex(b => b.id === bloqueIdCompletado);
+    const siguienteBloque = this.bloques[idxCompletado + 1];
+    if (!siguienteBloque) return; // Era el último bloque
+    const keyPendientes = `vv_comun_chips_pendientes_${this._uid}`;
+    const raw = localStorage.getItem(keyPendientes);
+    const pendientes: string[] = raw ? JSON.parse(raw) : [];
+    const texto = `🔓 ${siguienteBloque.titulo} desbloqueado`;
+    if (!pendientes.includes(texto)) {
+      pendientes.push(texto);
+      localStorage.setItem(keyPendientes, JSON.stringify(pendientes));
+    }
   }
 
   private waitForSkinAndResize(attempts = 0): void {
@@ -676,6 +701,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.diapositivaIdx = 0;
     this.resetAvatar();
     this.enmService.hide();
+    setTimeout(() => this.alVerIndice(), 400);
   }
 
   volverASubIndice(): void {
