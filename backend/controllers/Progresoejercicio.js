@@ -1,14 +1,21 @@
 const ProgresoEjercicio = require('../models/progresoEjercicio');
+const Palabra = require('../models/palabras');
 
 // GET /api/progreso-ejercicio?categoriaId=xxx
-// Devuelve el historial de ejercicios del usuario para una categoría
+// Devuelve el historial de ejercicios del usuario para una categoría,
+// buscando por las palabraIds de esa categoría (no por categoriaId guardado,
+// que puede haberse sobreescrito si el usuario practicó en modo global).
 const obtenerProgreso = async (req, res) => {
   try {
     const userId = req.uid;
     const { categoriaId } = req.query;
     if (!categoriaId) return res.status(400).json({ ok: false, msg: 'categoriaId requerido' });
 
-    const registros = await ProgresoEjercicio.find({ userId, categoriaId })
+    // Obtener las palabras de esa categoría
+    const palabras = await Palabra.find({ categoria: categoriaId }).select('_id');
+    const palabraIds = palabras.map(p => p._id);
+
+    const registros = await ProgresoEjercicio.find({ userId, palabraId: { $in: palabraIds } })
       .select('palabraId vecesAcertada vecesFallada');
 
     return res.json({ ok: true, registros });
@@ -33,7 +40,7 @@ const registrarResultado = async (req, res) => {
       { userId, palabraId },
       {
         $inc: inc,
-        $set: { fechaUltimo: new Date(), categoriaId },
+        $set: { fechaUltimo: new Date() },
         $setOnInsert: { userId, palabraId, categoriaId }
       },
       { upsert: true }

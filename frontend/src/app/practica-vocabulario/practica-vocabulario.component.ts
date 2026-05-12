@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
 import { CategoriasService } from '../services/categorias.service';
 import { PalabrasService } from '../services/palabras.service';
 import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
@@ -124,8 +125,8 @@ export class PracticaVocabularioComponent implements OnInit {
           .then((p: any) => p ?? []).catch(() => [])
       );
       const peticionesEjercicio = vocab.map((cat: any) =>
-        this.progresoEjercicioService.obtenerProgreso(cat._id).toPromise()
-          .then((r: any) => r ?? []).catch(() => [] as RegistroEjercicio[])
+        firstValueFrom(this.progresoEjercicioService.obtenerProgreso(cat._id))
+          .then((r: RegistroEjercicio[]) => r ?? []).catch(() => [] as RegistroEjercicio[])
       );
 
       Promise.all([Promise.all(peticionesPalabras), Promise.all(peticionesEjercicio)])

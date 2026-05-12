@@ -268,7 +268,7 @@ export class PracticaGramaticaComponent implements OnInit {
         ...b,
         estado,
         ejerciciosCompletados,
-        estrellas: this.calcularEstrellas(ejerciciosCompletados, b.totalEjercicios, estado)
+        estrellas: this.calcularEstrellas(estado)
       };
     });
     this.bloqueActivo = this.bloques.find(b => b.estado === 'activo')
@@ -277,13 +277,8 @@ export class PracticaGramaticaComponent implements OnInit {
     this.cargando = false;
   }
 
-  private calcularEstrellas(completados: number, total: number, estado: string): number {
-    if (estado === 'bloqueado' || total === 0) return 0;
-    const pct = completados / total;
-    if (pct >= 1) return 3;
-    if (pct >= 0.6) return 2;
-    if (pct >= 0.3) return 1;
-    return 0;
+  private calcularEstrellas(estado: string): number {
+    return estado === 'completado' ? 3 : 0;
   }
 
   seleccionarBloque(bloque: BloquGramatica): void {

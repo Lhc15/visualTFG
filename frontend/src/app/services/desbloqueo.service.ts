@@ -25,12 +25,6 @@ export class DesbloqueoService {
 
   constructor(private http: HttpClient) {}
 
-  /**
-   * Devuelve el estado de desbloqueo calculado a partir de:
-   *  - palabras vistas (módulo vocabulario)
-   *  - total de palabras en categorías de vocabulario
-   *  - bloques de comunicación completados
-   */
   obtenerEstado(): Observable<EstadoDesbloqueo> {
     const vistas$   = this.http
       .get<{ ok: boolean; palabrasVistas: string[] }>(`${this.vocabUrl}?modulo=vocabulario`, { withCredentials: true })
@@ -51,12 +45,10 @@ export class DesbloqueoService {
 
     return combineLatest([vistas$, cats$, bloques$]).pipe(
       map(([vistas, cats, completados]) => {
-        // Total de palabras en módulo vocabulario
         const totalPalabras = cats.reduce((acc: number, c: any) => acc + (c.totalPalabras ?? 0), 0);
         const vocabularioCompleto = totalPalabras > 0 && vistas.length >= totalPalabras;
 
         const bloquesCompletados = completados.length;
-        // El bloque 1 de Comunicación tiene id 'enm'
         const bloque1Completado  = completados.some((b: any) => b.bloqueId === 'enm');
         const todosComunicacionCompletos = bloquesCompletados >= TOTAL_BLOQUES_COMUNICACION;
 

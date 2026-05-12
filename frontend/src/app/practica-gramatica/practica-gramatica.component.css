@@ -186,7 +186,7 @@
   height: 14px;
 }
 .vv-star path { fill: #d1d5db; }
-.vv-star.lit path { fill: #8B00A8; }
+.vv-star.lit path { fill: #F4A940; }
 .vv-node.active .vv-star path { fill: rgba(255,255,255,.3); }
 .vv-node.active .vv-star.lit path { fill: #fff; }
 
