@@ -46,35 +46,35 @@ const SITUACIONES: Situacion[] = [
     id: 1,
     nombre: 'Saludar',
     estado: 'disponible',
-    tags: ['Hola', 'Buenos días', '¿Qué tal?', 'Bien'],
+    tags: ['HOLA', 'BUENOS DÍAS', 'CÓMO', 'BIEN'],
     turnos: [
       {
-        avatarTexto: '¡Hola! Buenos días.',
+        avatarTexto: 'HOLA BUENOS DÍAS',
         gltf: 'hola_lse.gltf',
-        opciones: ['Buenos días', 'Hasta mañana', 'Tengo hambre'],
+        opciones: ['Buenos días', 'Hasta mañana', 'No'],
         correcta: 0,
         respuestaTexto: 'Buenos días'
       },
       {
-        avatarTexto: '¿Qué tal estás hoy?',
+        avatarTexto: 'TÚ CÓMO',
         gltf: 'hola_lse.gltf',
-        opciones: ['Adiós', 'Bien, gracias', 'No entiendo'],
-        correcta: 1,
-        respuestaTexto: 'Bien, gracias'
-      },
-      {
-        avatarTexto: 'Me alegra oírlo. ¿Y tu familia?',
-        gltf: 'hola_lse.gltf',
-        opciones: ['También bien', 'No sé signar', 'Hasta luego'],
+        opciones: ['Bien', 'Adiós', 'Por favor repite'],
         correcta: 0,
-        respuestaTexto: 'También bien'
+        respuestaTexto: 'Bien'
       },
       {
-        avatarTexto: 'Qué bien. ¡Hasta pronto!',
+        avatarTexto: 'YO BIEN TÚ',
         gltf: 'hola_lse.gltf',
-        opciones: ['Mucho gusto', 'Soy de Madrid', 'Hasta luego'],
-        correcta: 2,
-        respuestaTexto: 'Hasta luego'
+        opciones: ['Bien también', 'Hasta luego', 'Encantado/a'],
+        correcta: 0,
+        respuestaTexto: 'Bien también'
+      },
+      {
+        avatarTexto: 'YO REGULAR',
+        gltf: 'hola_lse.gltf',
+        opciones: ['¡Vaya!', 'Hasta mañana', 'Buenos días'],
+        correcta: 0,
+        respuestaTexto: '¡Vaya!'
       }
     ]
   },
@@ -82,42 +82,42 @@ const SITUACIONES: Situacion[] = [
     id: 2,
     nombre: 'Presentarse',
     estado: 'disponible',
-    tags: ['Me llamo', '¿De dónde eres?', 'Mucho gusto', 'Tengo X años'],
+    tags: ['LLAMARSE', 'PRESENTAR', 'ENCANTADO/A', 'DÓNDE'],
     turnos: [
       {
-        avatarTexto: 'Hola, me llamo Ana. ¿Cómo te llamas tú?',
+        avatarTexto: 'HOLA YO LLAMARSE',
         gltf: 'hola_lse.gltf',
-        opciones: ['Me llamo Luis', 'Adiós, hasta luego', 'No entiendo'],
+        opciones: ['Hola, me llamo Luis', 'Adiós', 'Buenos días'],
+        correcta: 0,
+        respuestaTexto: 'Hola, me llamo Luis'
+      },
+      {
+        avatarTexto: 'YO PRESENTAR',
+        gltf: 'hola_lse.gltf',
+        opciones: ['Encantado/a', 'No', 'Hasta mañana'],
+        correcta: 0,
+        respuestaTexto: 'Encantado/a'
+      },
+      {
+        avatarTexto: 'TÚ LLAMARSE CÓMO',
+        gltf: 'hola_lse.gltf',
+        opciones: ['Me llamo Luis', 'Bien', 'Adiós'],
         correcta: 0,
         respuestaTexto: 'Me llamo Luis'
       },
       {
-        avatarTexto: '¿De dónde eres?',
+        avatarTexto: 'ENCANTADO/A',
         gltf: 'hola_lse.gltf',
-        opciones: ['Tengo 24 años', 'Soy de Madrid', 'Mucho gusto'],
-        correcta: 1,
-        respuestaTexto: 'Soy de Madrid'
-      },
-      {
-        avatarTexto: '¡Yo también! ¿Cuántos años tienes?',
-        gltf: 'hola_lse.gltf',
-        opciones: ['Soy de Barcelona', 'Tengo 24 años', 'Hasta mañana'],
-        correcta: 1,
-        respuestaTexto: 'Tengo 24 años'
-      },
-      {
-        avatarTexto: 'Encantada de conocerte.',
-        gltf: 'hola_lse.gltf',
-        opciones: ['Mucho gusto', 'No sé', 'Adiós'],
+        opciones: ['Encantado/a', 'Por favor repite', 'No'],
         correcta: 0,
-        respuestaTexto: 'Mucho gusto'
+        respuestaTexto: 'Encantado/a'
       },
       {
-        avatarTexto: '¿Hablas lengua de signos?',
+        avatarTexto: 'TÚ DÓNDE VIVIR',
         gltf: 'hola_lse.gltf',
-        opciones: ['Estoy aprendiendo', 'Me llamo Luis', 'Soy de Madrid'],
+        opciones: ['En Madrid', 'Hasta mañana', 'Buenos días'],
         correcta: 0,
-        respuestaTexto: 'Estoy aprendiendo'
+        respuestaTexto: 'En Madrid'
       }
     ]
   },
@@ -125,8 +125,37 @@ const SITUACIONES: Situacion[] = [
     id: 3,
     nombre: 'Despedirse',
     estado: 'disponible',
-    tags: ['Adiós', 'Hasta luego', 'Hasta mañana'],
-    turnos: []
+    tags: ['ADIÓS', 'HASTA MAÑANA', 'BIEN', 'MAÑANA'],
+    turnos: [
+      {
+        avatarTexto: 'TÚ BIEN',
+        gltf: 'hola_lse.gltf',
+        opciones: ['Sí, bien', 'Buenos días', 'Encantado/a'],
+        correcta: 0,
+        respuestaTexto: 'Sí, bien'
+      },
+      {
+        avatarTexto: 'NOSOTROS MAÑANA',
+        gltf: 'hola_lse.gltf',
+        opciones: ['Sí, hasta mañana', 'No', 'Por favor repite'],
+        correcta: 0,
+        respuestaTexto: 'Sí, hasta mañana'
+      },
+      {
+        avatarTexto: 'ADIÓS',
+        gltf: 'hola_lse.gltf',
+        opciones: ['Adiós', 'Hola', 'Bien'],
+        correcta: 0,
+        respuestaTexto: 'Adiós'
+      },
+      {
+        avatarTexto: 'HASTA MAÑANA',
+        gltf: 'hola_lse.gltf',
+        opciones: ['Hasta mañana', 'Buenos días', 'Encantado/a'],
+        correcta: 0,
+        respuestaTexto: 'Hasta mañana'
+      }
+    ]
   }
 ];
 

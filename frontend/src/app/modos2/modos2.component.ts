@@ -72,6 +72,11 @@ export class Modos2Component implements AfterViewInit, OnInit {
     },
   ];
 
+  // ── Chip de desbloqueo ──
+  chipVisible = false;
+  chipTexto = '';
+  private chipTimer: any = null;
+
   constructor(
     private router: Router,
     private desbloqueoService: DesbloqueoService,
@@ -82,17 +87,60 @@ export class Modos2Component implements AfterViewInit, OnInit {
     this.usuariosService.getAuthenticatedUser().subscribe({
       next: (resp) => {
         const esAdmin = resp.usuario?.rol === 'ROL_ADMIN';
+        const uid = resp.usuario.uid;
         if (esAdmin) {
           this.desbloquearConversamos();
         } else {
           this.desbloqueoService.obtenerEstado().subscribe({
             next: (estado) => {
+              const eraBloquedado = this.modos.find(m => m.id === 'conv')?.locked ?? true;
               if (estado.todosComunicacionCompletos) this.desbloquearConversamos();
+
+              // Chip por localStorage (navegación desde comunicacion en la misma sesión)
+              const key = `vv_conv_chip_pendiente_${uid}`;
+              const pendiente = localStorage.getItem(key);
+              if (pendiente) {
+                localStorage.removeItem(key);
+                setTimeout(() => {
+                  this.lanzarConfeti();
+                  this.mostrarChip('🔓 ¿Conversamos? desbloqueado');
+                }, 600);
+              } else if (estado.todosComunicacionCompletos && eraBloquedado) {
+                // Primera vez que modos2 ve que está completo (refresco, nueva sesión, etc.)
+                const vistosKey = `vv_conv_chip_visto_${uid}`;
+                if (!localStorage.getItem(vistosKey)) {
+                  localStorage.setItem(vistosKey, '1');
+                  setTimeout(() => {
+                    this.lanzarConfeti();
+                    this.mostrarChip('🔓 ¿Conversamos? desbloqueado');
+                  }, 600);
+                }
+              }
             }
           });
         }
       }
     });
+  }
+
+  private mostrarChip(texto: string): void {
+    if (this.chipTimer) clearTimeout(this.chipTimer);
+    this.chipTexto = texto;
+    this.chipVisible = true;
+    this.chipTimer = setTimeout(() => { this.chipVisible = false; }, 4500);
+  }
+
+  private lanzarConfeti(): void {
+    if (typeof (window as any).confetti === 'undefined') return;
+    const confetti = (window as any).confetti;
+    const colores = ['#E04A1A', '#F4A940', '#1C0E0A', '#F9F6F3', '#F0997B'];
+    const base = { spread: 70, colors: colores, gravity: 1.1, scalar: 1.1, ticks: 350 };
+    confetti({ ...base, particleCount: 100, angle: 60, startVelocity: 55, origin: { x: 0, y: 0.65 } });
+    confetti({ ...base, particleCount: 100, angle: 120, startVelocity: 55, origin: { x: 1, y: 0.65 } });
+    setTimeout(() => {
+      confetti({ ...base, particleCount: 60, angle: 70, startVelocity: 45, origin: { x: 0, y: 0.7 } });
+      confetti({ ...base, particleCount: 60, angle: 110, startVelocity: 45, origin: { x: 1, y: 0.7 } });
+    }, 500);
   }
 
   private desbloquearConversamos(): void {

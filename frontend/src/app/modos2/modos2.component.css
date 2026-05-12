@@ -329,3 +329,32 @@
     padding: 0 0.75rem;
   }
 }
+/* ── Chip de desbloqueo ── */
+.modos2-wrapper { position: relative; }
+.vv-unlock-chip {
+  position: fixed;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 16px;
+  background: #1C0E0A;
+  color: #F9F6F3;
+  font-family: var(--font-body, 'DM Sans', sans-serif);
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(28,14,10,0.22);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.vv-unlock-chip--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}

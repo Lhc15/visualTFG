@@ -633,6 +633,11 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
         localStorage.setItem(keyGram, JSON.stringify(pendientesGram));
       }
     }
+    // Chip para modos2: si era el último bloque, se desbloquea Conversamos
+    if (!siguienteBloque) {
+      const keyConv = `vv_conv_chip_pendiente_${this._uid}`;
+      localStorage.setItem(keyConv, '1');
+    }
   }
 
   private waitForSkinAndResize(attempts = 0): void {
