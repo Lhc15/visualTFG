@@ -300,17 +300,6 @@
 .vv-word-name { font-size: .88rem; font-weight: 500; color: #1C2B2A; flex: 1; }
 .vv-word-active .vv-word-name { font-weight: 600; color: #F4A940; }
 
-.vv-sign-cta {
-  display: flex; align-items: center; gap: .25rem;
-  font-size: .68rem; font-weight: 600; color: #F4A940;
-  background: none; border: none; cursor: pointer;
-  font-family: var(--font-body, 'DM Sans', sans-serif);
-  opacity: 0; transition: opacity .14s; padding: 0;
-}
-.vv-sign-cta svg { width: 10px; height: 10px; }
-.vv-word-row:hover .vv-sign-cta,
-.vv-word-active .vv-sign-cta { opacity: 1; }
-
 .vv-exercises-divider {
   display: flex; align-items: center; gap: .65rem; margin: .25rem 0 .9rem;
 }

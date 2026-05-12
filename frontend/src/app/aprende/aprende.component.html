@@ -174,15 +174,10 @@
               [class.vv-word-vista]="palabrasVistas.has(palabra._id)"
               (click)="seleccionarPalabra(palabra)">
               <div class="vv-word-status" [class.vv-status-signing]="selectedWord?.palabra === palabra.palabra">
-                <span *ngIf="selectedWord?.palabra === palabra.palabra">▶</span>
-                <span *ngIf="selectedWord?.palabra !== palabra.palabra && palabrasVistas.has(palabra._id)">✓</span>
-                <span *ngIf="selectedWord?.palabra !== palabra.palabra && !palabrasVistas.has(palabra._id)">○</span>
+                <span *ngIf="palabrasVistas.has(palabra._id)">✓</span>
+                <span *ngIf="!palabrasVistas.has(palabra._id)">○</span>
               </div>
               <div class="vv-word-name">{{ palabra.palabra }}</div>
-              <button class="vv-sign-cta">
-                <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                Signar
-              </button>
             </div>
           </div>
           <ng-container *ngIf="categoriaActualCompletada || categoriasCompletadas.has(selectedCategory._id)">

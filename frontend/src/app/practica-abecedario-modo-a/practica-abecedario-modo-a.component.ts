@@ -8,18 +8,16 @@ import { CanvasComponent } from '../canvas/canvas.component';
 import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
+import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { HeaderComponent } from '../header/header.component';
 
 interface LetraInfo {
   letra: string;
   gltf: string;
+  _id?: string;
 }
-
-const LETRAS: LetraInfo[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({
-  letra: l,
-  gltf: `${l.toLowerCase()}_lse.gltf`
-}));
 
 @Component({
   selector: 'app-practica-abecedario-modo-a',
@@ -33,7 +31,12 @@ export class PracticaAbecedarioModoAComponent implements OnInit, OnDestroy, Afte
   @ViewChild('mainCanvas') mainCanvasRef!: CanvasComponent;
   @ViewChild('avatarPanel') avatarPanel!: ElementRef<HTMLElement>;
 
-  readonly letras = LETRAS;
+  readonly letras_fallback: LetraInfo[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({
+    letra: l,
+    gltf: `${l.toLowerCase()}_lse.gltf`
+  }));
+  letras: LetraInfo[] = [];
+  cargando = true;
 
   isPlaying = false;
   isLooping = false;
@@ -53,7 +56,9 @@ export class PracticaAbecedarioModoAComponent implements OnInit, OnDestroy, Afte
   constructor(
     private router: Router,
     private usuariosService: UsuariosService,
-    private statsService: StatsService
+    private statsService: StatsService,
+    private progresoVocabService: ProgresoVocabularioService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -64,13 +69,42 @@ export class PracticaAbecedarioModoAComponent implements OnInit, OnDestroy, Afte
           next: r => { this.currentStatsId = r.statsId; },
           error: e => console.error(e)
         });
+        // Cargar letras del backend y filtrar por las que el usuario ha visto
+        Promise.all([
+          this.http.get<{ ok: boolean; palabras: any[] }>(
+            `${environment.apiUrl}/palabras/por-modulo?modulo=abecedario`,
+            { withCredentials: true }
+          ).toPromise().catch(() => null),
+          this.progresoVocabService.obtenerProgreso('abecedario').toPromise().catch(() => [] as string[])
+        ]).then(([res, vistas]) => {
+          const palabrasVistas = new Set<string>(vistas ?? []);
+          if (res?.ok && res.palabras.length > 0) {
+            const todasLetras: LetraInfo[] = res.palabras.map((p: any) => ({
+              letra: p.palabra,
+              gltf: p.gltf || `${p.palabra.toLowerCase()}_lse.gltf`,
+              _id: p._id
+            }));
+            // Solo las que el usuario ha reproducido en Abecedario
+            this.letras = todasLetras.filter(l => l._id && palabrasVistas.has(l._id));
+            // Fallback: si no hay ninguna vista, usar todas (no bloquear al usuario)
+            if (this.letras.length < 2) this.letras = todasLetras;
+          } else {
+            this.letras = this.letras_fallback;
+          }
+          this.cargando = false;
+        });
       },
-      error: e => console.error(e)
+      error: e => { console.error(e); this.letras = this.letras_fallback; this.cargando = false; }
     });
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.waitForCanvas(), 50);
+    // El canvas espera a que letras esté cargado (ngOnInit async)
+    const waitReady = (attempts = 0) => {
+      if (this.cargando) { setTimeout(() => waitReady(attempts + 1), 100); return; }
+      setTimeout(() => this.waitForCanvas(), 50);
+    };
+    waitReady();
   }
 
   ngOnDestroy(): void {

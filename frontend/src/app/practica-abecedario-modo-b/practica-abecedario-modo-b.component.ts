@@ -7,18 +7,16 @@ import { Router } from '@angular/router';
 import { CanvasComponent } from '../canvas/canvas.component';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
+import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { HeaderComponent } from '../header/header.component';
 
 interface LetraInfo {
   letra: string;
   gltf: string;
+  _id?: string;
 }
-
-const LETRAS: LetraInfo[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({
-  letra: l,
-  gltf: `${l.toLowerCase()}_lse.gltf`
-}));
 
 const QUIZ_B_COLORS = ['#00B4D8', '#E04A1A', '#2A7A4A', '#D4A017'];
 
@@ -34,7 +32,12 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
   @ViewChildren('quizBCanvas') quizBCanvases!: QueryList<CanvasComponent>;
   @ViewChildren('quizBCell') quizBCells!: QueryList<ElementRef<HTMLElement>>;
 
-  readonly letras = LETRAS;
+  readonly letras_fallback: LetraInfo[] = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').map(l => ({
+    letra: l,
+    gltf: `${l.toLowerCase()}_lse.gltf`
+  }));
+  letras: LetraInfo[] = [];
+  cargando = true;
   readonly quizBColors = QUIZ_B_COLORS;
 
   letraPregunta: LetraInfo | null = null;
@@ -51,7 +54,9 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
   constructor(
     private router: Router,
     private usuariosService: UsuariosService,
-    private statsService: StatsService
+    private statsService: StatsService,
+    private progresoVocabService: ProgresoVocabularioService,
+    private http: HttpClient
   ) {}
 
   ngOnInit(): void {
@@ -62,14 +67,39 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
           next: r => { this.currentStatsId = r.statsId; },
           error: e => console.error(e)
         });
+        Promise.all([
+          this.http.get<{ ok: boolean; palabras: any[] }>(
+            `${environment.apiUrl}/palabras/por-modulo?modulo=abecedario`,
+            { withCredentials: true }
+          ).toPromise().catch(() => null),
+          this.progresoVocabService.obtenerProgreso('abecedario').toPromise().catch(() => [] as string[])
+        ]).then(([res, vistas]) => {
+          const palabrasVistas = new Set<string>(vistas ?? []);
+          if (res?.ok && res.palabras.length > 0) {
+            const todasLetras: LetraInfo[] = res.palabras.map((p: any) => ({
+              letra: p.palabra,
+              gltf: p.gltf || `${p.palabra.toLowerCase()}_lse.gltf`,
+              _id: p._id
+            }));
+            this.letras = todasLetras.filter(l => l._id && palabrasVistas.has(l._id));
+            if (this.letras.length < 4) this.letras = todasLetras;
+          } else {
+            this.letras = this.letras_fallback;
+          }
+          this.cargando = false;
+        });
       },
-      error: e => console.error(e)
+      error: e => { console.error(e); this.letras = this.letras_fallback; this.cargando = false; }
     });
   }
 
   ngAfterViewInit(): void {
-    this.nuevaPregunta();
-    setTimeout(() => this.waitForCanvases(), 100);
+    const waitReady = (attempts = 0) => {
+      if (this.cargando) { setTimeout(() => waitReady(attempts + 1), 100); return; }
+      this.nuevaPregunta();
+      setTimeout(() => this.waitForCanvases(), 100);
+    };
+    waitReady();
   }
 
   ngOnDestroy(): void {
