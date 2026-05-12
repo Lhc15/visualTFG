@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild, ViewEncapsulation, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { LoginComponent } from '../login/login.component';
 import { RegistroComponent } from '../registro/registro.component';
 import { CommonModule } from '@angular/common';
@@ -23,7 +23,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   isRegisterVisible: boolean = false;
   private gapAfterHello = 3000;
   private gapBeforeWelcome = 2500;
-  private isPlayingHello = true;
+  protected isPlayingHello = true;
   private animationTimeout!: any;
 
   // ── Efectos visuales ──
@@ -31,7 +31,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
   private readonly LSE_CHARS = 'ABCDEFGHIJKLMNÑOPQRSTUVWXYZ';
   private resizeListener!: () => void;
 
-  constructor(private animacionService: AnimacionService) {}
+  constructor(private animacionService: AnimacionService, private cdr: ChangeDetectorRef) {}
 
   showRegister() { this.isRegisterVisible = true; }
   showLogin()    { this.isRegisterVisible = false; }
@@ -55,6 +55,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   private async playHelloLoop() {
     this.isPlayingHello = true;
+    this.cdr.markForCheck();
     const url = `${environment.apiUrl}/gltf/animaciones/holaanimation.gltf`;
     try {
       await this.canvasRef.loadSkinModel(url);
@@ -68,6 +69,7 @@ export class LandingComponent implements AfterViewInit, OnDestroy {
 
   private async playWelcome() {
     this.isPlayingHello = false;
+    this.cdr.markForCheck();
     const url = `${environment.apiUrl}/gltf/animaciones/bienvenidoanimation.gltf`;
     try {
       await this.canvasRef.loadSkinModel(url);
