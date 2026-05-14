@@ -85,6 +85,45 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   userId = '';
   currentStatsId: string | null = null;
 
+  // ── Toolbar por celda (modo B) ────────────────────────────
+  cellPlaying   = [false, false, false, false];
+  cellLooping   = [true,  true,  true,  true ];
+  cellRate      = [1, 1, 1, 1];
+
+  onCellPlay(i: number): void {
+    const canvas = this.quizBCanvases?.toArray()[i];
+    if (!canvas) return;
+    this.cellLooping[i] = false;
+    this.cellPlaying[i] = true;
+    const clips = canvas.availableClips;
+    if (clips.length) canvas.playClip(clips[0], false);
+  }
+
+  onCellLoop(i: number, checked: boolean): void {
+    const canvas = this.quizBCanvases?.toArray()[i];
+    if (!canvas) return;
+    this.cellLooping[i] = checked;
+    if (checked) {
+      this.cellPlaying[i] = false;
+      const clips = canvas.availableClips;
+      if (clips.length) canvas.playClip(clips[0], true);
+    } else {
+      canvas.stopClip();
+      this.cellPlaying[i] = false;
+    }
+  }
+
+  onCellRate(i: number, rate: number): void {
+    const canvas = this.quizBCanvases?.toArray()[i];
+    if (!canvas) return;
+    this.cellRate[i] = rate;
+    canvas.setPlaybackRate(rate);
+  }
+
+  onCellAnimEnded(i: number): void {
+    this.cellPlaying[i] = false;
+  }
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,

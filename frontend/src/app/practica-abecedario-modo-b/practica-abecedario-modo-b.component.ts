@@ -5,6 +5,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { CanvasComponent } from '../canvas/canvas.component';
+import { ToolMenuComponent } from '../tool-menu/tool-menu.component';
 import { UsuariosService } from '../services/usuarios.service';
 import { StatsService } from '../services/stats.service';
 import { ProgresoVocabularioService } from '../services/progreso-vocabulario.service';
@@ -23,7 +24,7 @@ const QUIZ_B_COLORS = ['#00B4D8', '#E04A1A', '#2A7A4A', '#D4A017'];
 @Component({
   selector: 'app-practica-abecedario-modo-b',
   standalone: true,
-  imports: [CommonModule, CanvasComponent, HeaderComponent],
+  imports: [CommonModule, CanvasComponent, ToolMenuComponent, HeaderComponent],
   templateUrl: './practica-abecedario-modo-b.component.html',
   styleUrl: './practica-abecedario-modo-b.component.css'
 })
@@ -50,6 +51,45 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
 
   userId = '';
   currentStatsId: string | null = null;
+
+  // ── Toolbar por celda ─────────────────────────────────────
+  cellPlaying   = [false, false, false, false];
+  cellLooping   = [true,  true,  true,  true ];
+  cellRate      = [1, 1, 1, 1];
+
+  onCellPlay(i: number): void {
+    const canvas = this.quizBCanvases?.toArray()[i];
+    if (!canvas) return;
+    this.cellLooping[i] = false;
+    this.cellPlaying[i] = true;
+    const clips = canvas.availableClips;
+    if (clips.length) canvas.playClip(clips[0], false);
+  }
+
+  onCellLoop(i: number, checked: boolean): void {
+    const canvas = this.quizBCanvases?.toArray()[i];
+    if (!canvas) return;
+    this.cellLooping[i] = checked;
+    if (checked) {
+      this.cellPlaying[i] = false;
+      const clips = canvas.availableClips;
+      if (clips.length) canvas.playClip(clips[0], true);
+    } else {
+      canvas.stopClip();
+      this.cellPlaying[i] = false;
+    }
+  }
+
+  onCellRate(i: number, rate: number): void {
+    const canvas = this.quizBCanvases?.toArray()[i];
+    if (!canvas) return;
+    this.cellRate[i] = rate;
+    canvas.setPlaybackRate(rate);
+  }
+
+  onCellAnimEnded(i: number): void {
+    this.cellPlaying[i] = false;
+  }
 
   constructor(
     private router: Router,

@@ -386,3 +386,12 @@
 
 /* Footer */
 .vv-footer-sep { width: 1px; height: 1rem; background: rgba(0,0,0,.1); flex-shrink: 0; }
+/* ── Toolbar mini dentro de cada celda (modo B) ── */
+.vv-mini-cell ::ng-deep app-tool-menu {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) scale(0.55);
+  transform-origin: center right;
+  z-index: 3;
+}

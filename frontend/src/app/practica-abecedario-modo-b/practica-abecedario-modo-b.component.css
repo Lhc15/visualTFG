@@ -282,3 +282,12 @@
   font-size: .75rem;
 }
 .vv-switch-mode:hover { text-decoration: underline; }
+/* ── Toolbar mini dentro de cada celda ── */
+.vv-mini-cell ::ng-deep app-tool-menu {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%) scale(0.55);
+  transform-origin: center right;
+  z-index: 3;
+}
