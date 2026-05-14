@@ -817,12 +817,12 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.cdr.detectChanges();
     setTimeout(() => this.waitForSkinAndResize(), 50);
   }
-  onPlayClicked(): void { this.isLooping = false; this.isPlaying = true; this.reproducirSchema(); }
+  onPlayClicked(): void { this.isLooping = false; this.isPlaying = true; this.syncEnm(); this.reproducirSchema(); }
   onAnimationEnded(): void { this.isPlaying = false; this.tokenActivo = -1; }
   setPlaybackRate(r: number): void { this.currentPlaybackRate = r; this.canvasRef?.setPlaybackRate(r); }
   handleLoop(checked: boolean): void {
     this.isLooping = checked;
-    if (checked) { this.isPlaying = false; this.reproducirSchema(true); }
+    if (checked) { this.isPlaying = false; this.syncEnm(); this.reproducirSchema(true); }
     else { this.canvasRef?.stopClip(); this.isPlaying = false; }
   }
 

@@ -8,8 +8,8 @@ import { EnmService } from '../services/enm.service';
 import { EnmPack } from '../services/enm.types';
 import { getEnmPack } from '../services/enm-packs.data';
 
-const INITIAL_W = 220;
-const INITIAL_H = 300;
+const INITIAL_W = 300;
+const INITIAL_H = 400;
 const INITIAL_X = 24;
 const INITIAL_Y = 120;
 const MIN_W = 160;
