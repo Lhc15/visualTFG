@@ -557,4 +557,4 @@
   opacity: 1;
   transform: translateX(-50%) translateY(0);
   pointer-events: auto;
-}
+}.vv-global-aviso { font-family: var(--font-body, 'DM Sans', sans-serif); font-size: 0.78rem; color: #9ca3af; text-align: center; margin: 0 0 0.5rem; line-height: 1.4; }

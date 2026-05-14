@@ -34,19 +34,42 @@
       </div>
     </ng-container>
 
-    <ng-container *ngIf="vista === 'bloque' && diapositiva?.tipo === 'layout-b'">
-      <div class="com-img-panel">
-        <div class="com-img-placeholder">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
-            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
-          </svg>
-          <span>Imagen ilustrativa</span>
+    <ng-container *ngIf="vista === 'bloque' && (diapositiva?.tipo === 'layout-b' || diapositiva?.tipo === 'layout-b-galeria')">
+      <!-- layout-b clásico (imagen placeholder) -->
+      <ng-container *ngIf="diapositiva?.tipo === 'layout-b'">
+        <div class="com-img-panel">
+          <ng-container *ngIf="diapositiva!.imagenIzq; else imgPlaceholder">
+            <img [src]="diapositiva!.imagenIzq" [alt]="diapositiva!.captionIzq" class="com-img-real" />
+          </ng-container>
+          <ng-template #imgPlaceholder>
+            <div class="com-img-placeholder">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/>
+              </svg>
+              <span>Imagen ilustrativa</span>
+            </div>
+          </ng-template>
+          <div class="com-img-caption">
+            <div class="com-caption-title">{{ diapositiva!.captionIzq }}</div>
+            <div class="com-caption-sub">{{ diapositiva!.subtituloIzq }}</div>
+          </div>
         </div>
-        <div class="com-img-caption">
-          <div class="com-caption-title">{{ diapositiva!.captionIzq }}</div>
-          <div class="com-caption-sub">{{ diapositiva!.subtituloIzq }}</div>
+      </ng-container>
+      <!-- layout-b-galeria: grupos de imágenes con contexto -->
+      <ng-container *ngIf="diapositiva?.tipo === 'layout-b-galeria'">
+        <div class="com-galeria-panel">
+          <div class="com-galeria-grupo" *ngFor="let grupo of diapositiva!.galeriaGrupos">
+            <div class="com-galeria-grupo-titulo">{{ grupo.titulo }}</div>
+            <div class="com-galeria-descripcion">{{ grupo.descripcion }}</div>
+            <div class="com-galeria-imgs">
+              <img *ngFor="let img of grupo.imagenes"
+                   [src]="img.src"
+                   [alt]="img.alt"
+                   class="com-galeria-img" />
+            </div>
+          </div>
         </div>
-      </div>
+      </ng-container>
     </ng-container>
 
     <!-- ══ PANEL DERECHO ══ -->
@@ -244,7 +267,7 @@
             </button>
 
             <!-- Fin: última diapo del último bloque -->
-            <button class="com-nav-next-btn com-nav-fin" *ngIf="esUltimaDiapositiva && esUltimoSubBloque && !siguienteBloque" (click)="volverAIndice()">
+            <button class="com-nav-next-btn com-nav-fin" *ngIf="esUltimaDiapositiva && esUltimoSubBloque && !siguienteBloque" (click)="completarUltimoYVolverAIndice()">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
               Volver al índice
             </button>

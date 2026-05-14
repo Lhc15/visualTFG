@@ -151,19 +151,6 @@ const BLOQUES_GRAMATICA: Omit<BloquGramatica, 'estado' | 'estrellas' | 'ejercici
     ],
     ejemplo: 'TÚ ESCRIBIR REGULAR'
   },
-  {
-    id: 'intensidad',
-    nombre: 'Intensidad y énfasis',
-    subtitulo: 'Graduar el significado',
-    icono: '!',
-    totalEjercicios: 6,
-    conceptos: [
-      'Expresión facial + amplitud del movimiento',
-      'Énfasis positivo: dientes apretados',
-      'Énfasis negativo: carrillos inflados',
-    ],
-    ejemplo: 'ÉL COMER-MUCHÍSIMO'
-  },
 ];
 
 @Component({

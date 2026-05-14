@@ -14,7 +14,9 @@ import { HeaderComponent } from '../header/header.component';
 
 export type RolToken = 'S' | 'O' | 'V' | 'ENM' | 'INT' | 'ADV';
 export type DerechoTipo = 'lista' | 'highlight' | 'reglas';
-export type LayoutTipo = 'layout-a' | 'layout-b';
+export type LayoutTipo = 'layout-a' | 'layout-b' | 'layout-b-galeria';
+export interface GaleriaImagen { src: string; alt: string; }
+export interface GaleriaGrupo { titulo: string; descripcion: string; imagenes: GaleriaImagen[]; }
 
 export interface Token { texto: string; rol: RolToken; }
 export interface ReglaItem { texto: string; tipo: 'ok' | 'no'; }
@@ -36,6 +38,7 @@ export interface Diapositiva {
   highlight?: { titulo: string; texto: string };
   nota?: string;
   tip?: string;
+  galeriaGrupos?: GaleriaGrupo[];
 }
 
 export interface SubBloque {
@@ -107,7 +110,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
               tipo: 'layout-b',
               titulo: 'El contacto', tituloItalica: 'visual',
               lead: 'El contacto visual es la base de la comunicación en LSE. Mirar a la otra persona no es solo educación — es parte del propio lenguaje. Sin contacto visual, la comunicación no puede ocurrir.',
-              imagenIzq: '', captionIzq: 'Contacto visual directo', subtituloIzq: 'Imprescindible para comunicarse',
+              imagenIzq: 'assets/comunicacion/contacto-visual.png', captionIzq: 'Contacto visual directo', subtituloIzq: 'Imprescindible para comunicarse',
               derechoTipo: 'lista',
               items: [
                 { texto: 'Mantén la mirada a los ojos durante toda la conversación', tipo: 'ok' },
@@ -126,7 +129,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
               tipo: 'layout-b',
               titulo: 'La posición', tituloItalica: 'del cuerpo',
               lead: 'La postura corporal forma parte activa de la gramática en LSE. No es solo postura — es información lingüística. Inclinarse hacia delante activa la pregunta igual que lo hace la entonación en español.',
-              imagenIzq: '', captionIzq: 'Cuerpo inclinado = pregunta', subtituloIzq: 'Postura corporal como marcador gramatical',
+              imagenIzq: 'assets/comunicacion/posicion-cuerpo.png', captionIzq: 'Cuerpo inclinado = pregunta', subtituloIzq: 'Postura corporal como marcador gramatical',
               derechoTipo: 'highlight',
               highlight: { titulo: 'En preguntas', texto: 'Inclina el cuerpo ligeramente hacia delante cuando hagas una pregunta — es parte de la gramática, no solo postura.' },
               nota: 'Recostarse o alejarse indica desinterés o que la conversación ha terminado.',
@@ -138,16 +141,33 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           id: 'enm-llamar', titulo: 'Llamar la atención', subtitulo: 'Antes de empezar a signar',
           diapositivas: [
             {
-              tipo: 'layout-b',
+              tipo: 'layout-b-galeria',
               titulo: 'Llamar la', tituloItalica: 'atención',
               lead: 'Antes de empezar a signar debes asegurarte de que la persona sorda te está mirando. Sin ese contacto visual previo, todo lo que signes pasará desapercibido.',
-              imagenIzq: '', captionIzq: 'Formas correctas de llamar la atención', subtituloIzq: 'Siempre antes de empezar a signar',
               derechoTipo: 'lista',
               items: [
                 { texto: 'Agitar la mano en su campo visual', tipo: 'ok' },
                 { texto: 'Tocar suavemente el hombro o el brazo', tipo: 'ok' },
                 { texto: 'Golpear la mesa o el suelo para generar vibración', tipo: 'ok' },
                 { texto: 'Gritar o hablar más alto — no tiene ningún efecto', tipo: 'no' }
+              ],
+              galeriaGrupos: [
+                {
+                  titulo: 'Si las personas están de pie',
+                  descripcion: 'La persona signante (sorda u oyente) tocará a la otra persona con la que quiere signar. Los lugares correctos para tocar y llamar la atención son el hombro o la parte superior del brazo.',
+                  imagenes: [
+                    { src: 'assets/comunicacion/llamar-pie-1.png', alt: 'Persona toca el hombro de otra de pie' },
+                    { src: 'assets/comunicacion/llamar-pie-2.png', alt: 'Persona toca el brazo de otra de pie' }
+                  ]
+                },
+                {
+                  titulo: 'Si las personas están sentadas',
+                  descripcion: 'Cuando dos personas están sentadas, los lugares correctos para tocar y llamar la atención son el hombro, la parte superior del brazo o la rodilla.',
+                  imagenes: [
+                    { src: 'assets/comunicacion/llamar-sentados-1.png', alt: 'Persona toca el hombro de otra sentada' },
+                    { src: 'assets/comunicacion/llamar-sentados-2.png', alt: 'Persona toca la rodilla de otra sentada' }
+                  ]
+                }
               ]
             }
           ]
@@ -454,36 +474,6 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
           textoExtra: 'Mismo principio con tiempo: AYER YO DORMIR BIEN = "Ayer dormí bien". El marcador temporal al inicio enmarca toda la frase. AQUÍ GENTE MUCHO TRABAJAR = "Aquí trabaja mucha gente" (lugar al inicio, contexto global). YO TRABAJAR EMPEZAR PRONTO = "Empiezo a trabajar pronto" (adverbio al final, afecta solo al verbo).'
         }
       ]
-    },
-
-    // ── BLOQUE 11: INTENSIDAD Y ÉNFASIS ───────────────────────────────────────
-    {
-      id: 'intensidad', numero: 11,
-      titulo: 'Intensidad y énfasis',
-      subtitulo: 'Graduar el significado con la cara y el cuerpo',
-      diapositivas: [
-        {
-          tipo: 'layout-a',
-          titulo: 'Más intensidad,', tituloItalica: 'más expresión',
-          lead: 'En LSE la intensidad de un signo no se cambia con palabras adicionales — se cambia con la expresión facial, la amplitud del movimiento y la repetición. La cara es el regulador de la intensidad.',
-          regla: { label: 'Mecanismos de intensidad', texto: 'Para más intensidad: expresión facial marcada + movimiento más amplio o repetido. Para menos intensidad: labios arqueados + ligera inclinación de cabeza.' },
-          schema: { tokens: [{ texto: 'ÉL/ELLA', rol: 'S' }, { texto: 'COMER-MUCHÍSIMO', rol: 'V' }], label: '"Se harta de comer" — signo COMER con intensidad máxima incorporada' },
-          textoExtra: 'Ejemplo de escala con COMER: COMER un poco → COMER normal → COMER-MUCHÍSIMO. Lo mismo con DORMIR: DORMIR-MUCHÍSIMO = "Duerme muchísimo". El movimiento amplifica la intensidad. COMER un poco (labios arqueados + cabeza ladeada) → COMER normal → COMER-MUCHO (expresión + amplitud) → COMER-MUCHÍSIMO (repetición + expresión máxima). La intensidad se incorpora al propio signo.'
-        },
-        {
-          tipo: 'layout-a',
-          titulo: 'Énfasis', tituloItalica: 'positivo y negativo',
-          lead: 'La expresión facial varía según si el énfasis tiene connotación positiva o negativa. No es la misma expresión para "guapísimo" que para "aburridísimo".',
-          derechoTipo: 'lista',
-          items: [
-            { texto: 'Énfasis positivo: apretar los dientes y cerrar un poco los ojos (guapísimo, riquísimo, muy rápido)', tipo: 'ok' },
-            { texto: 'Énfasis negativo: inflar los carrillos y hacer un pequeño soplido (muy aburrido, mucho calor, muy cansado)', tipo: 'ok' },
-            { texto: 'Intensidad máxima en algunos signos: sacar un poco la lengua (muy pequeño, muy lento, muy poco)', tipo: 'ok' }
-          ],
-          nota: 'El mecanismo de inflar carrillos no se aplica a todos los signos — solo a algunos con connotación claramente negativa.',
-          tip: 'Recuerda: estas expresiones no son opcionales. Sin la expresión correcta, el énfasis no existe en LSE — es gramática, no actuación.'
-        }
-      ]
     }
   ];
 
@@ -611,7 +601,7 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     const siguienteBloque = this.bloques[idxCompletado + 1];
 
     // Chip para el índice de Comunicación (siguiente bloque teórico)
-    if (siguienteBloque) {
+    if (siguienteBloque && !siguienteBloque.id.startsWith('enm')) {
       const keyComun = `vv_comun_chips_pendientes_${this._uid}`;
       const rawComun = localStorage.getItem(keyComun);
       const pendientesComun: string[] = rawComun ? JSON.parse(rawComun) : [];
@@ -724,6 +714,15 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
     this.resetAvatar();
     this.enmService.hide();
     setTimeout(() => this.alVerIndice(), 400);
+  }
+
+  completarUltimoYVolverAIndice(): void {
+    const bloqueId = this.subBloqueActivo
+      ? this.subBloqueActivo.id
+      : this.bloqueActivo!.id;
+    this.guardarYMostrarPortada(bloqueId, () => {
+      this.volverAIndice();
+    });
   }
 
   volverASubIndice(): void {

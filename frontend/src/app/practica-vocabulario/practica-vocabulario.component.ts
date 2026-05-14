@@ -223,6 +223,7 @@ export class PracticaVocabularioComponent implements OnInit {
 
   empezarGlobal(): void {
     if (this.globalCatsSeleccionadas.size === 0) return;
+    if (this.categoriasDesbloqueadas.length < 2) return;
     const cats = [...this.globalCatsSeleccionadas].join(',');
     this.router.navigate(['/practica/vocabulario/global'], {
       queryParams: { cats, modo: this.globalModoForzado }

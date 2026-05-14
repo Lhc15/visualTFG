@@ -149,7 +149,10 @@
             </div>
           </div>
 
-          <button class="vv-cta-btn" (click)="empezarGlobal()" [disabled]="globalCatsSeleccionadas.size === 0">
+          <p class="vv-global-aviso" *ngIf="categoriasDesbloqueadas.length < 2">
+            Desbloquea al menos una categoría más para poder usar el modo global.
+          </p>
+          <button class="vv-cta-btn" (click)="empezarGlobal()" [disabled]="globalCatsSeleccionadas.size === 0 || categoriasDesbloqueadas.length < 2">
             Empezar modo global
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
           </button>
