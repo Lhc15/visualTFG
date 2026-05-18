@@ -88,6 +88,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     'CASA':          'casa',
     'COMO ESTAS':    'como-estas',
     'REGULAR':       'regular',
+    // Letras del abecedario (demo)
+    'a': 'a', 'b': 'b', 'c': 'c', 'd': 'd', 'e': 'e',
+    'l': 'l', 'n': 'n', 'o': 'o', 'r': 'r',
   };
 
 
@@ -208,10 +211,12 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
     // Intentar extraer el nombre del clip de la URL y reproducir vídeo demo
     // Las URLs tienen formato tipo '/api/palabras/gltf/HOLA' o 'hola.gltf'
+    console.log('cargarAnimacionesDinamicas llamado con:', animaciones);
     if (animaciones.length === 1) {
       const url = animaciones[0];
       const match = url.match(/([^/]+?)(?:\.gltf)?$/i);
       const clipGuess = match ? match[1].toUpperCase() : '';
+      console.log('clipGuess extraído:', clipGuess);
       if (this.tryPlayVideo(clipGuess)) return;
     }
 
@@ -507,9 +512,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  public playClip(clip: string, loop = false) {
+  public playClip(clip: string, loop = false): boolean {
     // Intentar reproducir vídeo demo primero
-    if (this.tryPlayVideo(clip)) return;
+    if (this.tryPlayVideo(clip)) return true;
 
     this.engineApi?.play(clip, loop);
     if (!loop) {
@@ -520,6 +525,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         this.animationEnded.emit();
       }, ms);
     }
+    return false;
   }
 
   /**
@@ -531,7 +537,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     const fileName = this.videoClipMap[key];
     if (!fileName) return false;
 
-    const src = `/animaciones/${fileName}.mp4`;
+    const src = `/assets/animaciones/${fileName}.mp4`;
     const videoEl = this.videoOverlay?.nativeElement;
     if (!videoEl) return false;
 

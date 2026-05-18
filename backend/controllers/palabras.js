@@ -159,7 +159,7 @@ const obtenerPalabrasPorCategoria = async (req, res) => {
             });
         }
 
-        const palabras = await Palabra.find({ categoria })
+        const palabras = await Palabra.find({ categoria, enMotor: true })
             .populate('categoria', 'nombre')
            
 
@@ -241,7 +241,7 @@ const obtenerPalabrasPorModulo = async (req, res) => {
     const Categoria = require('../models/categorias');
     const cats = await Categoria.find({ modulo });
     const catIds = cats.map(c => c._id);
-    const palabras = await Palabra.find({ categoria: { $in: catIds } })
+    const palabras = await Palabra.find({ categoria: { $in: catIds }, enMotor: true })
       .populate('categoria', 'nombre modulo')
       .sort({ orden: 1 });
     res.json({ ok: true, palabras });

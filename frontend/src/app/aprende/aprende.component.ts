@@ -229,6 +229,15 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // ── Reproducción ──────────────────────────────────────────
   async reproducirAnimacion(loop: boolean): Promise<void> {
+    // Demo: intentar reproducir vídeo overlay con el nombre de la palabra
+    if (this.selectedWord?.palabra) {
+      const usandoVideo = this.canvasRef.playClip(this.selectedWord.palabra, loop);
+      if (usandoVideo) {
+        this.isPlaying = !loop;
+        this.isLooping = loop;
+        return;
+      }
+    }
     if (!this.selectedWord?.gltf) return;
     const url = `${environment.apiUrl}/gltf/animaciones/${this.selectedWord.gltf}`;
     this.canvasRef.stopClip();

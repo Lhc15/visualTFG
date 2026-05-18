@@ -305,6 +305,10 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
     const c = canvas ?? this.mainCanvasRef;
     if (!c) return;
     c.stopClip();
+
+    // Demo: intentar reproducir vídeo overlay con el nombre de la letra directamente
+    if (c.playClip(info.letra.toLowerCase(), loop)) return;
+
     const url = `${environment.apiUrl}/gltf/animaciones/${info.gltf}`;
     if (c.currentModel !== url) await c.loadSkinModel(url);
     const clips = c.availableClips;

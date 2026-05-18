@@ -270,7 +270,7 @@ export class ConversamosComponent implements OnInit, OnDestroy, AfterViewInit {
     this.opcionSeleccionada = null;
     this.isAvatarSignando = true;
 
-    await this.reproducirGltf(turno.gltf);
+    await this.reproducirGltf(turno.gltf, turno.avatarTexto);
     this.isAvatarSignando = false;
 
     this.chat.push({ de: 'avatar', texto: turno.avatarTexto });
@@ -335,9 +335,22 @@ export class ConversamosComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // ── Avatar ────────────────────────────────────────────────────────────────
 
-  private async reproducirGltf(gltf: string): Promise<void> {
+  private async reproducirGltf(gltf: string, avatarTexto?: string): Promise<void> {
     return new Promise(async resolve => {
       if (!this.mainCanvasRef) { resolve(); return; }
+
+      // Demo: intentar reproducir vídeo overlay con el texto del turno
+      if (avatarTexto) {
+        // Normalizar: quitar signos de puntuación y espacios extra
+        const clipKey = avatarTexto.replace(/[¿?¡!.,]/g, '').trim();
+        const sub = this.mainCanvasRef.animationEnded.subscribe(() => {
+          sub.unsubscribe();
+          resolve();
+        });
+        if (this.mainCanvasRef.playClip(clipKey, false)) return;
+        sub.unsubscribe();
+      }
+
       const url = `${environment.apiUrl}/gltf/animaciones/${gltf}`;
       this.mainCanvasRef.stopClip();
       if (this.mainCanvasRef.currentModel !== url) {

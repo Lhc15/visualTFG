@@ -50,11 +50,13 @@
 /* ── Overlay de vídeo demo ─────────────────────────────────────────────── */
 .video-overlay {
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  top: 53%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 145%;
+  height: 145%;
+  object-fit: contain;
+  object-position: center center;
   z-index: 2;
   pointer-events: none;
   transition: opacity 0.15s ease-in-out;
