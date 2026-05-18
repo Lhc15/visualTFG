@@ -4,8 +4,9 @@ export const ENM_PACKS: EnmPack[] = [
   {
     id: 'pregunta-sin-particula',
     label: 'Pregunta sin partícula',
-    descripcion: 'EJEMPLO: TÚ NOMBRE QUÉ (¿Cómo te llamas?)\nCejas levantadas + inclinación de cabeza y hombros hacia delante.',
-    imagen: 'assets/pregunta-sin-particula-hombre.png',
+    descripcion: 'EJEMPLO: TÚ ESTUDIAR (¿Tú estudias?)\nCejas levantadas + inclinación de cabeza y hombros hacia delante.',
+    imagen: 'assets/enm/psp.mp4',
+    video: 'assets/enm/psp.mp4',
   },
   {
     id: 'pregunta-con-particula',

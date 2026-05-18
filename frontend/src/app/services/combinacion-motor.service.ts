@@ -73,7 +73,17 @@ export class CombinacionMotorService {
     return this.http.patch(`${this.base}/${id}`, cambios, { withCredentials: true });
   }
 
-  generarEjercicios(bloqueId: string): Observable<{ ok: boolean; bloqueId: string; ejercicios: EjercicioMotor[] }> {
-    return this.http.get<any>(`${this.base}/ejercicios/${bloqueId}`, { withCredentials: true });
+  generarEjercicios(
+    bloqueId: string,
+    categoriasDesbloqueadas?: string[]
+  ): Observable<{ ok: boolean; bloqueId: string; ejercicios: EjercicioMotor[] }> {
+    let params = new HttpParams();
+    if (categoriasDesbloqueadas && categoriasDesbloqueadas.length > 0) {
+      params = params.set('categoriasDesbloqueadas', categoriasDesbloqueadas.join(','));
+    }
+    return this.http.get<any>(
+      `${this.base}/ejercicios/${bloqueId}`,
+      { params, withCredentials: true }
+    );
   }
 }

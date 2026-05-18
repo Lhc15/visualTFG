@@ -174,16 +174,53 @@ const PLANTILLAS_POR_BLOQUE = {
 const generarEjercicios = async (req, res) => {
   try {
     const { bloqueId } = req.params;
+    // categoriasDesbloqueadas: IDs separados por coma enviados por el frontend
+    // Si no se mandan (p.ej. admin), no se aplica filtro
+    const { categoriasDesbloqueadas } = req.query;
     const plantillas = PLANTILLAS_POR_BLOQUE[bloqueId] ?? [];
 
     let ejerciciosProcedurales = [];
 
     if (plantillas.length > 0) {
-      const combinaciones = await CombinacionMotor.find({
+      // ── Construir filtro de combinaciones ───────────────────────────────
+      let combinacionQuery = {
         plantilla: { $in: plantillas },
         valida: true,
         revisada: true
-      })
+      };
+
+      // Si el frontend mandó categorías desbloqueadas, filtrar las palabras
+      // del motor para que solo aparezcan combinaciones cuyas palabras
+      // pertenezcan a categorías que el usuario ya ha desbloqueado.
+      if (categoriasDesbloqueadas) {
+        const catIds = categoriasDesbloqueadas.split(',').filter(Boolean);
+        if (catIds.length > 0) {
+          // Obtener IDs de palabras que están en las categorías desbloqueadas
+          // O que no tienen categoría asignada (pronombres, interrogativos, etc.)
+          const palabrasPermitidas = await Palabra.find({
+            enMotor: true,
+            $or: [
+              { categoria: { $in: catIds } },
+              { categoria: null },
+              { categoria: { $exists: false } }
+            ]
+          }).select('_id').lean();
+
+          const idsPermitidos = palabrasPermitidas.map(p => p._id);
+
+          combinacionQuery = {
+            ...combinacionQuery,
+            sujetoId: { $in: idsPermitidos },
+            verboId:  { $in: idsPermitidos },
+            $or: [
+              { objetoId: null },
+              { objetoId: { $in: idsPermitidos } }
+            ]
+          };
+        }
+      }
+
+      const combinaciones = await CombinacionMotor.find(combinacionQuery)
         .populate('sujetoId',  'palabra tiposLexicos gltf clipName')
         .populate('verboId',   'palabra tiposLexicos gltf clipName')
         .populate('objetoId',  'palabra tiposLexicos gltf clipName')

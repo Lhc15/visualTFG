@@ -12,6 +12,7 @@ import { EnmService } from '../services/enm.service';
 import { EnmPackId } from '../services/enm.types';
 import { StatsService } from '../services/stats.service';
 import { CombinacionMotorService, EjercicioMotor } from '../services/combinacion-motor.service';
+import { UsuariosService } from '../services/usuarios.service';
 import {
   BloqueEjercicios,
   Ejercicio,
@@ -82,6 +83,7 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
     private enmService: EnmService,
     private statsService: StatsService,
     private motorService: CombinacionMotorService,
+    private usuariosService: UsuariosService,
     private cdr: ChangeDetectorRef,
   ) {}
 
@@ -91,22 +93,48 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
     if (!this.bloque) { this.router.navigate(['/practica/gramatica']); return; }
 
     // Intentar cargar ejercicios procedurales del motor; combinar con los estáticos
-    this.motorService.generarEjercicios(this.bloqueId).subscribe({
-      next: (resp: { ok: boolean; bloqueId: string; ejercicios: EjercicioMotor[] }) => {
-        const ejerciciosMotor: Ejercicio[] = resp.ejercicios.map(
-          (e: EjercicioMotor) => this.motorAEjercicio(e)
-        );
-        const estaticos = this.bloque!.ejercicios;
-        const ejerciciosFinales = [...ejerciciosMotor, ...estaticos];
-        this.ejerciciosBarajados = ejerciciosFinales.sort(() => Math.random() - 0.5);
-        this.prepararEjercicio();
-        this.cdr.detectChanges();
+    this.usuariosService.getAuthenticatedUser().subscribe({
+      next: (resp: any) => {
+        const uid = resp?.usuario?.uid ?? '';
+        const raw = uid ? localStorage.getItem(`vv_cats_completadas_${uid}`) : null;
+        const categoriasDesbloqueadas: string[] = raw ? JSON.parse(raw) : [];
+
+        this.motorService.generarEjercicios(this.bloqueId, categoriasDesbloqueadas).subscribe({
+          next: (motorResp: { ok: boolean; bloqueId: string; ejercicios: EjercicioMotor[] }) => {
+            const ejerciciosMotor: Ejercicio[] = motorResp.ejercicios.map(
+              (e: EjercicioMotor) => this.motorAEjercicio(e)
+            );
+            const estaticos = this.bloque!.ejercicios;
+            const ejerciciosFinales = [...ejerciciosMotor, ...estaticos];
+            this.ejerciciosBarajados = ejerciciosFinales.sort(() => Math.random() - 0.5);
+            this.prepararEjercicio();
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            // Si falla el backend, usar solo los estáticos
+            this.ejerciciosBarajados = [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
+            this.prepararEjercicio();
+            this.cdr.detectChanges();
+          }
+        });
       },
       error: () => {
-        // Si falla el backend, usar solo los estáticos
-        this.ejerciciosBarajados = [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
-        this.prepararEjercicio();
-        this.cdr.detectChanges();
+        // Si no hay sesión, usar solo ejercicios estáticos sin filtro
+        this.motorService.generarEjercicios(this.bloqueId).subscribe({
+          next: (motorResp: { ok: boolean; bloqueId: string; ejercicios: EjercicioMotor[] }) => {
+            const ejerciciosMotor: Ejercicio[] = motorResp.ejercicios.map(
+              (e: EjercicioMotor) => this.motorAEjercicio(e)
+            );
+            this.ejerciciosBarajados = [...ejerciciosMotor, ...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
+            this.prepararEjercicio();
+            this.cdr.detectChanges();
+          },
+          error: () => {
+            this.ejerciciosBarajados = [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
+            this.prepararEjercicio();
+            this.cdr.detectChanges();
+          }
+        });
       }
     });
   }
