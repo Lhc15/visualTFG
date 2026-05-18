@@ -38,6 +38,7 @@ interface SkinEngineApi {
 export class CanvasComponent implements AfterViewInit, OnDestroy {
   @ViewChild('threeCanvas', { static: false }) threeCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('skinCanvas',  { static: false }) skinCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('videoOverlay', { static: false }) videoOverlay!: ElementRef<HTMLVideoElement>;
 
   @Input() animationUrls: string[] = [];
   @Input() showResetButton: boolean = false;
@@ -67,6 +68,27 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   private skinIsRunning: boolean = false;
 
   private clipDurations: Map<string, number> = new Map();
+
+  // Control del overlay de vídeo demo
+  videoVisible = false;
+  private videoClipMap: Record<string, string> = {
+    'HOLA':          'hola',
+    'BUENOS DIAS':   'buenos-dias',
+    'ADIOS':         'adios',
+    'HASTA MANANA':  'hasta-manana',
+    'ENCANTADO/A':   'encantado',
+    'YO':            'yo',
+    'TU':            'tu',
+    'EL/ELLA':       'el-ella',
+    'NOSOTROS':      'nosotros',
+    'COMPRAR':       'comprar',
+    'COMER':         'comer',
+    'VIVIR':         'vivir',
+    'PUERTA':        'puerta',
+    'CASA':          'casa',
+    'COMO ESTAS':    'como-estas',
+    'REGULAR':       'regular',
+  };
 
 
   // 👇 NUEVO: Propiedad para controlar la velocidad
@@ -183,6 +205,16 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   private cargarAnimacionesDinamicas(animaciones: string[], loop: boolean): void {
     if (this.isMainActive) return;
+
+    // Intentar extraer el nombre del clip de la URL y reproducir vídeo demo
+    // Las URLs tienen formato tipo '/api/palabras/gltf/HOLA' o 'hola.gltf'
+    if (animaciones.length === 1) {
+      const url = animaciones[0];
+      const match = url.match(/([^/]+?)(?:\.gltf)?$/i);
+      const clipGuess = match ? match[1].toUpperCase() : '';
+      if (this.tryPlayVideo(clipGuess)) return;
+    }
+
     // 1) Detenemos animación previa, pero sin recargar la pose
     this.stopLoop(false);
 
@@ -476,6 +508,9 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   }
 
   public playClip(clip: string, loop = false) {
+    // Intentar reproducir vídeo demo primero
+    if (this.tryPlayVideo(clip)) return;
+
     this.engineApi?.play(clip, loop);
     if (!loop) {
       const ms = this.clipDurations.get(clip) ?? 1000;
@@ -485,6 +520,42 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
         this.animationEnded.emit();
       }, ms);
     }
+  }
+
+  /**
+   * Intenta reproducir el mp4 de demo correspondiente al clip.
+   * Devuelve true si encontró y lanzó el vídeo, false si no hay mp4 y hay que usar 3D.
+   */
+  private tryPlayVideo(clipName: string): boolean {
+    const key = clipName.toUpperCase().trim();
+    const fileName = this.videoClipMap[key];
+    if (!fileName) return false;
+
+    const src = `/animaciones/${fileName}.mp4`;
+    const videoEl = this.videoOverlay?.nativeElement;
+    if (!videoEl) return false;
+
+    videoEl.src = src;
+    videoEl.load();
+
+    videoEl.oncanplay = () => {
+      this.videoVisible = true;
+      videoEl.play();
+    };
+
+    videoEl.onended = () => {
+      this.videoVisible = false;
+      videoEl.src = '';
+      this.animationEnded.emit();
+    };
+
+    videoEl.onerror = () => {
+      // Si el fichero no existe en disco, caer al 3D sin ruido
+      this.videoVisible = false;
+      return;
+    };
+
+    return true;
   }
 
   public stopClip() {

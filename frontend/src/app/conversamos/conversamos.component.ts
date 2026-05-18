@@ -46,33 +46,26 @@ const SITUACIONES: Situacion[] = [
     id: 1,
     nombre: 'Saludar',
     estado: 'disponible',
-    tags: ['HOLA', 'BUENOS DÍAS', 'CÓMO', 'BIEN'],
+    tags: ['HOLA', 'BUENOS DÍAS', 'CÓMO ESTÁS', 'REGULAR'],
     turnos: [
       {
-        avatarTexto: 'HOLA BUENOS DÍAS',
+        avatarTexto: 'HOLA. BUENOS DÍAS',
         gltf: 'hola_lse.gltf',
-        opciones: ['Buenos días', 'Hasta mañana', 'No'],
+        opciones: ['Hola. Buenos días', 'Hasta mañana', 'No'],
         correcta: 0,
-        respuestaTexto: 'Buenos días'
+        respuestaTexto: 'Hola. Buenos días'
       },
       {
-        avatarTexto: 'TÚ CÓMO',
+        avatarTexto: '¿CÓMO ESTÁS?',
         gltf: 'hola_lse.gltf',
-        opciones: ['Bien', 'Adiós', 'Por favor repite'],
+        opciones: ['Muy bien, ¿y tú?', 'Adiós', 'Por favor repite'],
         correcta: 0,
-        respuestaTexto: 'Bien'
+        respuestaTexto: 'Muy bien, ¿y tú?'
       },
       {
-        avatarTexto: 'YO BIEN TÚ',
+        avatarTexto: 'REGULAR',
         gltf: 'hola_lse.gltf',
-        opciones: ['Bien también', 'Hasta luego', 'Encantado/a'],
-        correcta: 0,
-        respuestaTexto: 'Bien también'
-      },
-      {
-        avatarTexto: 'YO REGULAR',
-        gltf: 'hola_lse.gltf',
-        opciones: ['¡Vaya!', 'Hasta mañana', 'Buenos días'],
+        opciones: ['¡Vaya!', 'Hasta mañana', 'Encantado/a'],
         correcta: 0,
         respuestaTexto: '¡Vaya!'
       }

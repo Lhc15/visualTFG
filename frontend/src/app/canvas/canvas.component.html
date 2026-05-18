@@ -7,6 +7,15 @@
       class="webgl skin-canvas"
       [class.invisible]="!skinRunning"
     ></canvas>
+
+    <!-- Overlay de vídeo para demo: sustituye animación 3D cuando existe el mp4 -->
+    <video
+      #videoOverlay
+      class="video-overlay"
+      playsinline
+      muted
+      [style.opacity]="videoVisible ? 1 : 0"
+    ></video>
   </div>
 
   <div class="button-container">
