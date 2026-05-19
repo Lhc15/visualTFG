@@ -23,7 +23,7 @@ export class TestUploadComponent {
     Array.from(files).forEach((file) => {
       if (
         !this.selectedFiles.some((f) => f.name === file.name) &&
-        (file.type === 'model/gltf+json' || file.name.endsWith('.gltf'))
+        (file.type === 'model/gltf+json' || file.type === 'model/gltf-binary' || file.name.endsWith('.gltf') || file.name.endsWith('.glb'))
       ) {
         this.selectedFiles.push(file);
       }

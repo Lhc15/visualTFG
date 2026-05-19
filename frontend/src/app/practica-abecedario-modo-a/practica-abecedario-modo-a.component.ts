@@ -162,6 +162,12 @@ export class PracticaAbecedarioModoAComponent implements OnInit, OnDestroy, Afte
   private async reproducir(info: LetraInfo, loop: boolean): Promise<void> {
     if (!this.mainCanvasRef) return;
     this.mainCanvasRef.stopClip();
+    // Demo: intentar vídeo overlay primero con la letra en minúscula
+    if (this.mainCanvasRef.playClip(info.letra.toLowerCase(), loop)) {
+      this.isPlaying = !loop;
+      this.isLooping = loop;
+      return;
+    }
     const url = `${environment.apiUrl}/gltf/animaciones/${info.gltf}`;
     if (this.mainCanvasRef.currentModel !== url) await this.mainCanvasRef.loadSkinModel(url);
     const clips = this.mainCanvasRef.availableClips;

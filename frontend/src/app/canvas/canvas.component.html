@@ -11,7 +11,7 @@
     <!-- Overlay de vídeo para demo: sustituye animación 3D cuando existe el mp4 -->
     <video
       #videoOverlay
-      class="video-overlay"
+      [class]="'video-overlay' + (compacto ? ' video-overlay--compacto' : '')"
       playsinline
       muted
       [style.opacity]="videoVisible ? 1 : 0"

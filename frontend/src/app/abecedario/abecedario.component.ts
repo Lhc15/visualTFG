@@ -374,11 +374,17 @@ export class AbecedarioComponent implements OnInit, OnDestroy, AfterViewInit {
     return new Promise(async resolve => {
       if (!this.mainCanvasRef) { resolve(); return; }
       this.mainCanvasRef.stopClip();
+
+      // Demo: intentar vídeo overlay primero
+      const sub = this.mainCanvasRef.animationEnded.subscribe(() => { sub.unsubscribe(); resolve(); });
+      if (this.mainCanvasRef.playClip(info.letra.toLowerCase(), false)) return;
+      sub.unsubscribe();
+
       const url = `${environment.apiUrl}/gltf/animaciones/${info.gltf}`;
       if (this.mainCanvasRef.currentModel !== url) await this.mainCanvasRef.loadSkinModel(url);
       const clips = this.mainCanvasRef.availableClips;
       if (!clips.length) { resolve(); return; }
-      const sub = this.mainCanvasRef.animationEnded.subscribe(() => { sub.unsubscribe(); resolve(); });
+      const sub2 = this.mainCanvasRef.animationEnded.subscribe(() => { sub2.unsubscribe(); resolve(); });
       this.mainCanvasRef.playClip(clips[0], false);
     });
   }

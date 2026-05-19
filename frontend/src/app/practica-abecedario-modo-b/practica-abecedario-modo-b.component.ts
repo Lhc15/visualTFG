@@ -48,6 +48,7 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
   errores = 0;
   preguntaNum = 1;
   distractores: LetraInfo[] = [];
+  letrasActualesCeldas: LetraInfo[] = [];  // letras asignadas a cada celda del modo B
 
   userId = '';
   currentStatsId: string | null = null;
@@ -62,6 +63,8 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
     if (!canvas) return;
     this.cellLooping[i] = false;
     this.cellPlaying[i] = true;
+    const letra = this.letrasActualesCeldas[i]?.letra?.toLowerCase();
+    if (letra && canvas.playClip(letra, false)) return;
     const clips = canvas.availableClips;
     if (clips.length) canvas.playClip(clips[0], false);
   }
@@ -72,6 +75,8 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
     this.cellLooping[i] = checked;
     if (checked) {
       this.cellPlaying[i] = false;
+      const letra = this.letrasActualesCeldas[i]?.letra?.toLowerCase();
+      if (letra && canvas.playClip(letra, true)) return;
       const clips = canvas.availableClips;
       if (clips.length) canvas.playClip(clips[0], true);
     } else {
@@ -186,11 +191,14 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
         cuatroLetras[cellIdx] = this.distractores[this.orden[cellIdx] - 1];
       }
     }
+    this.letrasActualesCeldas = cuatroLetras;
 
     for (let i = 0; i < 4; i++) {
       const canvas = canvases[i];
       const info = cuatroLetras[i];
       canvas.stopClip();
+      // Demo: intentar vídeo overlay primero
+      if (canvas.playClip(info.letra.toLowerCase(), true)) continue;
       const url = `${environment.apiUrl}/gltf/animaciones/${info.gltf}`;
       if (canvas.currentModel !== url) await canvas.loadSkinModel(url);
       const clips = canvas.availableClips;

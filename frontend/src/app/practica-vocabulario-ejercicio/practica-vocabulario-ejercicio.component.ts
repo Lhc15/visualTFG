@@ -88,6 +88,7 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   // ── Toolbar por celda (modo B) ────────────────────────────
   cellPlaying   = [false, false, false, false];
   cellLooping   = [true,  true,  true,  true ];
+  palabrasActualesCeldas: PalabraEjercicio[] = [];
   cellRate      = [1, 1, 1, 1];
 
   onCellPlay(i: number): void {
@@ -95,6 +96,8 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
     if (!canvas) return;
     this.cellLooping[i] = false;
     this.cellPlaying[i] = true;
+    const palabra = this.palabrasActualesCeldas[i]?.palabra;
+    if (palabra && canvas.playClip(palabra, false)) return;
     const clips = canvas.availableClips;
     if (clips.length) canvas.playClip(clips[0], false);
   }
@@ -105,6 +108,8 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
     this.cellLooping[i] = checked;
     if (checked) {
       this.cellPlaying[i] = false;
+      const palabra = this.palabrasActualesCeldas[i]?.palabra;
+      if (palabra && canvas.playClip(palabra, true)) return;
       const clips = canvas.availableClips;
       if (clips.length) canvas.playClip(clips[0], true);
     } else {
@@ -336,8 +341,15 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
   }
 
   private async reproducirA(p: PalabraEjercicio, loop: boolean): Promise<void> {
-    if (!this.mainCanvasRef || !p.gltf) return;
+    if (!this.mainCanvasRef) return;
     this.mainCanvasRef.stopClip();
+    // Demo: intentar vídeo overlay primero
+    if (p.palabra && this.mainCanvasRef.playClip(p.palabra, loop)) {
+      this.isPlaying = !loop;
+      this.isLooping = loop;
+      return;
+    }
+    if (!p.gltf) return;
     const url = `${environment.apiUrl}/gltf/animaciones/${p.gltf}`;
     if (this.mainCanvasRef.currentModel !== url) await this.mainCanvasRef.loadSkinModel(url);
     const clips = this.mainCanvasRef.availableClips;
@@ -423,11 +435,15 @@ export class PracticaVocabularioEjercicioComponent implements OnInit, OnDestroy,
         ? this.palabraPreguntaB
         : this.distractoresB[this.ordenB[i] - 1];
     }
+    this.palabrasActualesCeldas = cuatro;
 
     for (let i = 0; i < 4; i++) {
       const canvas = canvases[i];
       const p = cuatro[i];
       canvas.stopClip();
+      // Demo: intentar vídeo overlay primero
+      if (p.palabra && canvas.playClip(p.palabra, true)) continue;
+      if (!p.gltf) continue;
       const url = `${environment.apiUrl}/gltf/animaciones/${p.gltf}`;
       if (canvas.currentModel !== url) await canvas.loadSkinModel(url);
       const clips = canvas.availableClips;

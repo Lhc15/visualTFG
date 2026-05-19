@@ -254,7 +254,7 @@ export class AdminPalabrasComponent implements OnInit {
   agruparPorPrefijo() {
     this.agrupaciones = {};
     for (const file of this.allGltfFiles) {
-      const filename  = (file.filename || '').replace('.gltf', '');
+      const filename  = (file.filename || '').replace(/\.(gltf|glb)$/i, '');
       const [prefijo] = filename.split('_');
       if (!this.agrupaciones[prefijo]) this.agrupaciones[prefijo] = [];
       this.agrupaciones[prefijo].push(file);
@@ -338,8 +338,14 @@ export class AdminPalabrasComponent implements OnInit {
     const prefijo = selectEl.value;
     if (!prefijo) { this.mensajeError = 'Selecciona un prefijo'; return; }
 
+    // Buscar el archivo real para obtener su filename con extensión correcta
+    const archivosDelPrefijo = this.agrupaciones[prefijo] ?? [];
+    const archivoReal = archivosDelPrefijo[0];
+    const filenameReal = archivoReal?.filename ?? `${prefijo}.gltf`;
+    const clipName = filenameReal.replace(/\.(gltf|glb)$/i, '');
+
     this.palabrasService.asignarAnimacion(this.palabraSeleccionada._id, {
-      gltf: `${prefijo}.gltf`, clipName: prefijo
+      gltf: filenameReal, clipName
     }).subscribe({
       next: (resp) => {
         const i = this.palabras.findIndex(p => p._id === this.palabraSeleccionada._id);

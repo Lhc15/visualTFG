@@ -42,7 +42,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
 
   @Input() animationUrls: string[] = [];
   @Input() showResetButton: boolean = false;
-  @Input() standalone: boolean = false;  // true = no escuchar animacionService (usado en landing)
+  @Input() standalone: boolean = false;
+  @Input() compacto: boolean = false;  // true = canvas pequeño (modo B), ajusta overlay
   @Input() cameraZ: number = 4.2;
   @Input() cameraY: number = 0;
   @Input() cameraLookAtY: number = 0;
@@ -73,14 +74,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
   videoVisible = false;
   private videoClipMap: Record<string, string> = {
     'HOLA':          'hola',
+    'ADIOS':         'hola',
     'BUENOS DIAS':   'buenos-dias',
-    'ADIOS':         'adios',
     'HASTA MANANA':  'hasta-manana',
     'ENCANTADO/A':   'encantado',
     'YO':            'yo',
     'TU':            'tu',
     'EL/ELLA':       'el-ella',
-    'NOSOTROS':      'nosotros',
     'COMPRAR':       'comprar',
     'COMER':         'comer',
     'VIVIR':         'vivir',
@@ -534,7 +534,8 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
    */
   private tryPlayVideo(clipName: string): boolean {
     const key = clipName.toUpperCase().trim();
-    const fileName = this.videoClipMap[key];
+    const keyLower = clipName.toLowerCase().trim();
+    const fileName = this.videoClipMap[key] ?? this.videoClipMap[keyLower];
     if (!fileName) return false;
 
     const src = `/assets/animaciones/${fileName}.mp4`;
