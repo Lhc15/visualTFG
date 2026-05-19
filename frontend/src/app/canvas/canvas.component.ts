@@ -512,6 +512,13 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  /** Comprueba si existe un mp4 mapeado para este clip name */
+  public tieneVideo(clipName: string): boolean {
+    const key = clipName.toUpperCase().trim();
+    const keyLower = clipName.toLowerCase().trim();
+    return !!(this.videoClipMap[key] ?? this.videoClipMap[keyLower]);
+  }
+
   public playClip(clip: string, loop = false): boolean {
     // Intentar reproducir vídeo demo primero
     if (this.tryPlayVideo(clip)) return true;

@@ -49,14 +49,14 @@ const SITUACIONES: Situacion[] = [
     tags: ['HOLA', 'BUENOS DÍAS', 'CÓMO ESTÁS', 'REGULAR'],
     turnos: [
       {
-        avatarTexto: 'HOLA. BUENOS DÍAS',
+        avatarTexto: 'HOLA|BUENOS DIAS',
         gltf: 'hola_lse.gltf',
         opciones: ['Hola. Buenos días', 'Hasta mañana', 'No'],
         correcta: 0,
         respuestaTexto: 'Hola. Buenos días'
       },
       {
-        avatarTexto: '¿CÓMO ESTÁS?',
+        avatarTexto: 'COMO ESTAS',
         gltf: 'hola_lse.gltf',
         opciones: ['Muy bien, ¿y tú?', 'Adiós', 'Por favor repite'],
         correcta: 0,
@@ -336,21 +336,45 @@ export class ConversamosComponent implements OnInit, OnDestroy, AfterViewInit {
   // ── Avatar ────────────────────────────────────────────────────────────────
 
   private async reproducirGltf(gltf: string, avatarTexto?: string): Promise<void> {
+    if (!this.mainCanvasRef) return;
+
+    // Demo: dividir el texto en tokens y reproducir cada vídeo encadenado
+    if (avatarTexto) {
+      const tokens = avatarTexto
+        .split('|')
+        .map(t => t.trim().toUpperCase())
+        .filter(t => t.length > 0);
+
+      // Intentar reproducir todos los tokens como vídeos encadenados
+      const todosEncontrados = tokens.every(t =>
+        this.mainCanvasRef!.tieneVideo(t)
+      );
+
+      if (tokens.length > 0) {
+        // Reproducir cada token en secuencia
+        for (const token of tokens) {
+          const encontrado = await new Promise<boolean>(resolve => {
+            const sub = this.mainCanvasRef!.animationEnded.subscribe(() => {
+              sub.unsubscribe();
+              resolve(true);
+            });
+            const usandoVideo = this.mainCanvasRef!.playClip(token, false);
+            if (!usandoVideo) {
+              sub.unsubscribe();
+              resolve(false);
+            }
+          });
+          if (!encontrado) break;
+          // Pausa breve entre tokens
+          await new Promise(r => setTimeout(r, 200));
+        }
+        if (todosEncontrados) return;
+      }
+    }
+
+    // Fallback: reproducir el GLTF como antes
     return new Promise(async resolve => {
       if (!this.mainCanvasRef) { resolve(); return; }
-
-      // Demo: intentar reproducir vídeo overlay con el texto del turno
-      if (avatarTexto) {
-        // Normalizar: quitar signos de puntuación y espacios extra
-        const clipKey = avatarTexto.replace(/[¿?¡!.,]/g, '').trim();
-        const sub = this.mainCanvasRef.animationEnded.subscribe(() => {
-          sub.unsubscribe();
-          resolve();
-        });
-        if (this.mainCanvasRef.playClip(clipKey, false)) return;
-        sub.unsubscribe();
-      }
-
       const url = `${environment.apiUrl}/gltf/animaciones/${gltf}`;
       this.mainCanvasRef.stopClip();
       if (this.mainCanvasRef.currentModel !== url) {
