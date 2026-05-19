@@ -80,6 +80,7 @@ export class CanvasComponent implements AfterViewInit, OnDestroy {
     'ENCANTADO/A':   'encantado',
     'YO':            'yo',
     'TU':            'tu',
+    'TÚ':            'tu',
     'EL/ELLA':       'el-ella',
     'COMPRAR':       'comprar',
     'COMER':         'comer',

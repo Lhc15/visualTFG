@@ -215,8 +215,8 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
               titulo: 'Preguntas sin', tituloItalica: 'partícula',
               lead: 'Las preguntas de sí o no mantienen exactamente el mismo orden de frase que las afirmaciones (S-O-V). Lo único que cambia es la expresión facial.',
               regla: { label: 'Expresión facial obligatoria', texto: 'Cejas levantadas + inclinación de cabeza y hombros hacia delante. Sin esta expresión, la frase es una afirmación, no una pregunta. Los signos son idénticos — solo cambia la cara.' },
-              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'DORMIR', rol: 'V' }], label: '"¿Duermes?" en LSE — misma estructura que la afirmación' },
-              textoExtra: 'TÚ DORMIR con cejas levantadas y cabeza inclinada = "¿Duermes?". TÚ DORMIR con expresión neutra = "Tú duermes". Los signos son exactamente los mismos — solo cambia la cara.'
+              schema: { tokens: [{ texto: 'TÚ', rol: 'S' }, { texto: 'COMPRAR', rol: 'V' }], label: '"¿Compras?" en LSE — misma estructura que la afirmación' },
+              textoExtra: 'TÚ COMPRAR con cejas levantadas y cabeza inclinada = "¿Compras?". TÚ COMPRAR con expresión neutra = "Tú compras". Los signos son exactamente los mismos — solo cambia la cara.'
             }
           ]
         },
@@ -829,7 +829,26 @@ export class ComunicacionComponent implements OnInit, AfterViewInit {
   async reproducirSchema(loop = false): Promise<void> {
     if (!this.diapositiva?.schema) return;
     const tokens = this.diapositiva.schema.tokens;
-    for (let i = 0; i < tokens.length; i++) { this.tokenActivo = i; await new Promise(r => setTimeout(r, 800)); }
+    for (let i = 0; i < tokens.length; i++) {
+      this.tokenActivo = i;
+      const token = tokens[i];
+      if (this.canvasRef) {
+        const tieneVideo = this.canvasRef.playClip(token.texto, false);
+        if (tieneVideo) {
+          // Esperar a que termine el vídeo
+          await new Promise<void>(resolve => {
+            const sub = this.canvasRef!.animationEnded.subscribe(() => {
+              sub.unsubscribe();
+              resolve();
+            });
+          });
+        } else {
+          await new Promise(r => setTimeout(r, 800));
+        }
+      } else {
+        await new Promise(r => setTimeout(r, 800));
+      }
+    }
     this.tokenActivo = -1;
     this.isPlaying = false;
   }

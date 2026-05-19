@@ -126,7 +126,7 @@ export class PracticaAbecedarioModoBComponent implements OnInit, OnDestroy, Afte
               gltf: p.gltf || `${p.palabra.toLowerCase()}_lse.gltf`,
               _id: p._id
             }));
-            this.letras = todasLetras.filter(l => l._id && palabrasVistas.has(l._id));
+            this.letras = todasLetras.filter(l => l._id && palabrasVistas.has(l._id) && l.letra !== 'B');
             if (this.letras.length < 4) this.letras = todasLetras;
           } else {
             this.letras = this.letras_fallback;

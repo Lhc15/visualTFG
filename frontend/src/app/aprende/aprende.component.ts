@@ -251,6 +251,10 @@ export class AprendeComponent implements OnInit, OnDestroy, AfterViewInit {
     this.isLooping = loop;
   }
 
+  irAPractica(): void {
+    this.router.navigate(['/practica/vocabulario']);
+  }
+
   onPlayClicked(): void {
     this.isLooping = false;
     this.isPlaying = true;

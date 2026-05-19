@@ -85,7 +85,7 @@ export class PracticaAbecedarioModoAComponent implements OnInit, OnDestroy, Afte
               _id: p._id
             }));
             // Solo las que el usuario ha reproducido en Abecedario
-            this.letras = todasLetras.filter(l => l._id && palabrasVistas.has(l._id));
+            this.letras = todasLetras.filter(l => l._id && palabrasVistas.has(l._id) && l.letra !== 'B');
             // Fallback: si no hay ninguna vista, usar todas (no bloquear al usuario)
             if (this.letras.length < 2) this.letras = todasLetras;
           } else {

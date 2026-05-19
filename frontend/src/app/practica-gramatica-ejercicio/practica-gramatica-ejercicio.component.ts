@@ -106,13 +106,15 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
             );
             const estaticos = this.bloque!.ejercicios;
             const ejerciciosFinales = [...ejerciciosMotor, ...estaticos];
-            this.ejerciciosBarajados = ejerciciosFinales.sort(() => Math.random() - 0.5);
+            this.ejerciciosBarajados = this.bloqueId === 'preguntas'
+              ? ejerciciosFinales
+              : ejerciciosFinales.sort(() => Math.random() - 0.5);
             this.prepararEjercicio();
             this.cdr.detectChanges();
           },
           error: () => {
             // Si falla el backend, usar solo los estáticos
-            this.ejerciciosBarajados = [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
+            this.ejerciciosBarajados = this.bloqueId === 'preguntas' ? [...this.bloque!.ejercicios] : [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
             this.prepararEjercicio();
             this.cdr.detectChanges();
           }
@@ -125,12 +127,12 @@ export class PracticaGramaticaEjercicioComponent implements OnInit, OnDestroy, A
             const ejerciciosMotor: Ejercicio[] = motorResp.ejercicios.map(
               (e: EjercicioMotor) => this.motorAEjercicio(e)
             );
-            this.ejerciciosBarajados = [...ejerciciosMotor, ...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
+            this.ejerciciosBarajados = this.bloqueId === 'preguntas' ? [...ejerciciosMotor, ...this.bloque!.ejercicios] : [...ejerciciosMotor, ...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
             this.prepararEjercicio();
             this.cdr.detectChanges();
           },
           error: () => {
-            this.ejerciciosBarajados = [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
+            this.ejerciciosBarajados = this.bloqueId === 'preguntas' ? [...this.bloque!.ejercicios] : [...this.bloque!.ejercicios].sort(() => Math.random() - 0.5);
             this.prepararEjercicio();
             this.cdr.detectChanges();
           }
