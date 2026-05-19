@@ -28,8 +28,9 @@ router.get('/animaciones/:filename', async (req, res) => {
             return res.status(404).json({ msg: 'Archivo no encontrado' });
         }
 
-        // Configurar los headers apropiados
-        res.set('Content-Type', 'model/gltf+json');
+        // Configurar los headers apropiados según la extensión
+        const contentType = filename.endsWith('.glb') ? 'model/gltf-binary' : 'model/gltf+json';
+        res.set('Content-Type', contentType);
         // No establecer Access-Control-Allow-Origin aquí, dejarlo para el middleware CORS
         res.set('Cross-Origin-Resource-Policy', 'cross-origin');
         res.set('Cache-Control', 'public, max-age=31536000'); // Cache por 1 año
